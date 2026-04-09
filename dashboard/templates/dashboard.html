@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Shelter Dashboard</title>
+    <style>
+        body {
+            font-family: Arial;
+            background-color: #f5f6fa;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .dashboard-container {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 30px;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            width: 200px;
+            text-align: center;
+            border-radius: 10px;
+            box-shadow: 0px 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .card h2 {
+            margin: 10px 0;
+        }
+
+        .navbar {
+            background: #2c3e50;
+            padding: 15px;
+            color: white;
+        }
+
+        .navbar a {
+            color: white;
+            margin-right: 20px;
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="navbar">
+    <a href="/dashboard/">Dashboard</a>
+    <a href="/reports/">Reports</a>
+    <a href="/shelters/">Shelters</a>
+    <a href="/login/">Logout</a>
+</div>
+
+<h1>Shelter Dashboard</h1>
+
+<div class="dashboard-container">
+
+    <div class="card">
+        <h3>Total Guests</h3>
+        <h2>42</h2>
+    </div>
+
+    <div class="card">
+        <h3>Men</h3>
+        <h2>20</h2>
+    </div>
+
+    <div class="card">
+        <h3>Women</h3>
+        <h2>18</h2>
+    </div>
+
+    <div class="card">
+        <h3>White Flag</h3>
+        <h2>4</h2>
+    </div>
+
+</div>
+
+<br><br>
+
+<div class="dashboard-container">
+
+    <div class="card">
+        <h3>Current Shift</h3>
+        <h2>Close Shift</h2>
+    </div>
+
+    <div class="card">
+        <h3>Utilization</h3>
+        <h2>84%</h2>
+    </div>
+
+</div>
+
+</body>
+</html>

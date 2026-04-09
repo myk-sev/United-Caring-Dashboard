@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h2 class="mb-4">Submit Shift Report</h2>
+
+<form method="POST">
+    {% csrf_token %}
+
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <label class="form-label">Shelter</label>
+            <select class="form-control" name="shelter">
+                <option>Men's Shelter</option>
+                <option>Women's Shelter</option>
+                <option>Diversion Center</option>
+                <option>White Flag</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-md-4">
+            <label class="form-label">Regular Beds Occupied</label>
+            <input type="number" class="form-control" name="regular_occupied">
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Regular Open Beds</label>
+            <input type="number" class="form-control" name="regular_open">
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Guests On Pass</label>
+            <input type="number" class="form-control" name="guests_on_pass">
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-md-3">
+            <label class="form-label">Hospital</label>
+            <input type="number" class="form-control" name="hospital">
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">Jail</label>
+            <input type="number" class="form-control" name="jail">
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">NC/NS</label>
+            <input type="number" class="form-control" name="nc_ns">
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">Barred</label>
+            <input type="number" class="form-control" name="barred">
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <label class="form-label">Hold</label>
+            <input type="number" class="form-control" name="hold">
+        </div>
+        <div class="col-md-6">
+            <label class="form-label">Respite Occupied</label>
+            <input type="number" class="form-control" name="respite_occupied">
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <label class="form-label">Respite Open</label>
+            <input type="number" class="form-control" name="respite_open">
+        </div>
+    </div>
+
+    <button class="btn btn-primary">Submit</button>
+</form>
+
+{% endblock %}
