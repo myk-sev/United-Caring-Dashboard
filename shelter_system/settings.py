@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     'dashboard',
     'reports',
     'shelters',
+    'mainscreen',
+    'whiteflag',
 ]
 
 MIDDLEWARE = [
@@ -109,7 +111,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'CST' #'UTC'
+TIME_ZONE = 'America/Chicago' #'UTC'
 
 USE_I18N = True
 

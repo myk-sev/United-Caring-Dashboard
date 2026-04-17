@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@500&display=swap" rel="stylesheet"/>
+
+<style>
+  :root {
+    --bg: #f0eeeb; --surface: #ffffff; --border: #c8c4bc;
+    --border-focus: #2c2c2c; --text: #1a1a1a; --muted: #6b6760;
+    --badge-bg: #1a1a1a; --badge-text: #ffffff;
+    --btn-bg: #1a1a1a; --btn-hover: #3a3a3a;
+    --success-bg: #e8f5e9; --success-border: #a5d6a7; --success-text: #2e7d32;
+    --error-bg: #fdecea; --error-border: #ef9a9a; --error-text: #c62828;
+    --info-bg: #e3f2fd; --info-border: #90caf9; --info-text: #1565c0;
+  }
+
+  body { font-family: 'DM Sans', sans-serif; background: var(--bg); }
+
+  .card {
+    background: var(--surface); border: 1.5px solid var(--border);
+    border-radius: 4px; width: 100%; max-width: 580px;
+    padding: 2.5rem 2.75rem 2.75rem;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06); margin: 2rem auto;
+  }
+  .header { border: 1.5px solid var(--border); padding: 0.9rem 1.25rem; text-align: center; margin-bottom: 1.5rem; }
+  .header h1 { font-family: 'DM Mono', monospace; font-size: 1.35rem; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; }
+  .subtitle { font-size: 0.875rem; color: var(--muted); margin-bottom: 1.5rem; line-height: 1.5; }
+  .rec
