@@ -1,21 +1,25 @@
 {% extends 'base.html' %}
-
 {% block content %}
+<style>
+    {% if shelter == "Mens Shelter" %}
+        body { background-color: #bad8f8; }
+    {% elif shelter == "Womans Shelter" %}
+        body { background-color: rgb(228, 189, 203); }  /* or whatever color you want */
+    {% elif shelter == "Diversion Center" %}
+        body { background-color: rgb(205, 197, 197); }  /* or whatever color you want */
+    {% endif %}
+</style>
 
-<h2 class="mb-4">Submit Shift Report</h2>
 
-<form method="POST">
+<h2>Submit Shift Report - {{ shelter }}</h2>
+
+<form method="POST" action="/shelters/">
     {% csrf_token %}
 
     <div class="row mb-3">
         <div class="col-md-6">
             <label class="form-label">Shelter</label>
-            <select class="form-control" name="shelter">
-                <option>Men's Shelter</option>
-                <option>Women's Shelter</option>
-                <option>Diversion Center</option>
-                <option>White Flag</option>
-            </select>
+            <input type="text" class="form-control" name="shelter" value="{{ shelter }}" readonly>
         </div>
     </div>
 

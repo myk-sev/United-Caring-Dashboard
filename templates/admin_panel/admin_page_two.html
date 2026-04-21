@@ -1,0 +1,474 @@
+{% extends "base.html" %}
+{% block content %}
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Administration Page 2 of 2</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: Arial, sans-serif;
+    background: #f0f0f0;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 20px;
+    min-height: 100vh;
+  }
+
+  .page {
+    background: #f4a07a;
+    border: 2px dashed #c0a0a0;
+    width: 960px;
+    padding: 16px;
+  }
+
+  /* Header */
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+
+  .header-title {
+    flex: 1;
+    text-align: center;
+    font-size: 22px;
+    font-weight: bold;
+    letter-spacing: 1px;
+  }
+
+  .nav-buttons {
+    display: flex;
+    gap: 10px;
+  }
+
+  .btn-nav {
+    background: linear-gradient(to bottom, #c8c8c8, #a0a0a0);
+    border: 2px outset #d0d0d0;
+    padding: 10px 16px;
+    font-weight: bold;
+    font-size: 13px;
+    cursor: pointer;
+    min-width: 80px;
+    text-align: center;
+    border-radius: 3px;
+  }
+
+  .btn-nav:active { border-style: inset; }
+
+  /* Section divider */
+  .divider {
+    border-top: 2px solid #c87050;
+    margin: 8px 0;
+  }
+
+  /* Shelter column headers */
+  .shelter-headers {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    text-align: center;
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 6px;
+    padding: 0 8px;
+  }
+
+  /* Bed rows */
+  .bed-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 6px 8px;
+    flex-wrap: wrap;
+  }
+
+  .bed-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .num-box {
+    background: white;
+    border: 1px solid #888;
+    width: 52px;
+    height: 26px;
+    text-align: center;
+    font-size: 14px;
+    padding: 2px;
+    border-radius: 2px;
+  }
+
+  .bed-label {
+    font-size: 13px;
+  }
+
+  /* Spacing between bed groups */
+  .bed-row .bed-group:not(:first-child) {
+    margin-left: 32px;
+  }
+
+  /* Password section */
+  .password-section {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 14px 8px;
+    gap: 10px;
+  }
+
+  .pw-group {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex: 1;
+  }
+
+  .pw-input {
+    background: white;
+    border: 1px solid #888;
+    height: 32px;
+    flex: 1;
+    padding: 4px 6px;
+    font-size: 13px;
+    border-radius: 2px;
+  }
+
+  .pw-label {
+    font-size: 11px;
+    font-weight: bold;
+    white-space: nowrap;
+    text-align: center;
+    line-height: 1.2;
+  }
+
+  .btn-change-pw {
+    background: linear-gradient(to bottom, #b0b8c8, #8898b0);
+    border: 2px outset #c0c8d8;
+    padding: 8px 12px;
+    font-weight: bold;
+    font-size: 11px;
+    cursor: pointer;
+    text-align: center;
+    border-radius: 3px;
+    line-height: 1.3;
+    min-width: 90px;
+  }
+
+  .btn-change-pw:active { border-style: inset; }
+
+  /* Alter records section */
+  .alter-records {
+    text-align: center;
+    margin: 14px 0 8px;
+  }
+
+  .alter-records h2 {
+    font-size: 15px;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+  }
+
+  .alter-records p {
+    font-size: 13px;
+    font-weight: bold;
+    letter-spacing: 0.3px;
+  }
+
+  .search-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 24px;
+    margin: 10px 0;
+  }
+
+  .search-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .search-label {
+    font-size: 11px;
+    font-weight: bold;
+    text-decoration: underline;
+    text-align: center;
+  }
+
+  .search-input {
+    background: white;
+    border: 1px solid #888;
+    height: 32px;
+    width: 120px;
+    border-radius: 2px;
+    padding: 4px 6px;
+    font-size: 13px;
+  }
+
+  .or-label {
+    font-size: 13px;
+    font-weight: bold;
+    align-self: flex-end;
+    margin-bottom: 8px;
+  }
+
+  /* Table */
+  .table-section {
+    margin: 12px 8px;
+  }
+
+  .table-headers-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 2px;
+  }
+
+  .record-label {
+    font-size: 12px;
+    font-weight: bold;
+    text-align: center;
+    flex: 1;
+  }
+
+  .white-flag-label {
+    background: #c8c8c8;
+    border: 1px solid #999;
+    font-size: 12px;
+    font-weight: bold;
+    text-align: center;
+    padding: 3px 8px;
+    min-width: 300px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    font-size: 12px;
+  }
+
+  table th {
+    border: 1px solid #888;
+    padding: 5px 4px;
+    text-align: center;
+    font-weight: bold;
+    background: #e8e8e8;
+    line-height: 1.3;
+    vertical-align: middle;
+  }
+
+  table td {
+    border: 1px solid #888;
+    padding: 8px 4px;
+    text-align: center;
+    height: 32px;
+  }
+
+  /* Action buttons */
+  .action-buttons {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 14px 0 10px;
+    gap: 4px;
+  }
+
+  .btn-save {
+    background: linear-gradient(to bottom, #b0b8c8, #8898b0);
+    border: 2px outset #c0c8d8;
+    padding: 10px 24px;
+    font-weight: bold;
+    font-size: 13px;
+    cursor: pointer;
+    text-align: center;
+    border-radius: 3px;
+    line-height: 1.4;
+  }
+
+  .btn-save:active { border-style: inset; }
+
+  .bottom-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin: 10px 0 6px;
+  }
+
+  .btn-bottom {
+    background: linear-gradient(to bottom, #b0b8c8, #8898b0);
+    border: 2px outset #c0c8d8;
+    padding: 12px 18px;
+    font-weight: bold;
+    font-size: 13px;
+    cursor: pointer;
+    text-align: center;
+    border-radius: 3px;
+    line-height: 1.4;
+    min-width: 110px;
+  }
+
+  .btn-bottom:active { border-style: inset; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Header -->
+  <div class="header">
+    <div style="width:170px;"></div>
+    <div class="header-title">ADMINISTRATION Page 2 of 2</div>
+    <div class="nav-buttons">
+      <a class="btn-nav" href="{% url 'admin_page_one' %}" style="text-decoration:none;color:inherit;">Previous<br>Page</a>
+      <a class="btn-nav" href="{% url 'admin_logout' %}" style="text-decoration:none;color:inherit;">EXIT</a>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Shelter column labels -->
+  <div class="shelter-headers">
+    <span>Mens Shelter</span>
+    <span>Womans Shelter</span>
+    <span>Diversion Center</span>
+    <span>White Flag</span>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Regular Beds row -->
+  <div class="bed-row">
+    <div class="bed-group">
+      <input class="num-box" type="text" value="50">
+      <span class="bed-label">Alter Regular Beds</span>
+    </div>
+    <div class="bed-group">
+      <input class="num-box" type="text" value="22">
+      <span class="bed-label">Alter Regular Beds</span>
+    </div>
+    <div class="bed-group">
+      <input class="num-box" type="text" value="5">
+      <span class="bed-label">Alter Regular Beds</span>
+    </div>
+    <div class="bed-group">
+      <input class="num-box" type="text" value="80">
+      <span class="bed-label">Alter Openings</span>
+    </div>
+  </div>
+
+  <div style="height:6px;"></div>
+
+  <!-- Respite Beds row -->
+  <div class="bed-row">
+    <div class="bed-group">
+      <input class="num-box" type="text" value="7">
+      <span class="bed-label">Alter Respite Beds</span>
+    </div>
+    <div class="bed-group">
+      <input class="num-box" type="text" value="4">
+      <span class="bed-label">Alter Respite Beds</span>
+    </div>
+  </div>
+
+  <div style="height:10px;"></div>
+
+  <!-- Password section -->
+  <form method="POST">
+  {% csrf_token %}
+  <input type="hidden" name="change_password" value="1">
+  {% if messages %}{% for message in messages %}<div style="text-align:center;font-weight:bold;font-size:13px;color:{% if message.tags == 'error' %}#8b0000{% else %}#1a5c1a{% endif %};">{{ message }}</div>{% endfor %}{% endif %}
+  <div class="password-section">
+    <div class="pw-group">
+      <input class="pw-input" type="password" name="old_password" autocomplete="current-password">
+      <span class="pw-label">ENTER OLD<br>PASSWORD</span>
+    </div>
+    <div class="pw-group">
+      <input class="pw-input" type="password" name="new_password1" autocomplete="new-password">
+      <span class="pw-label">ENTER NEW<br>PASSWORD</span>
+    </div>
+    <div class="pw-group">
+      <input class="pw-input" type="password" name="new_password2" autocomplete="new-password">
+      <span class="pw-label">ENTER NEW<br>PASSWORD AGAIN</span>
+    </div>
+    <button class="btn-change-pw" type="submit">CHANGE<br>ADMIN<br>PASSWORD</button>
+  </div>
+  </form>
+
+  <div style="height:6px;"></div>
+
+  <!-- Alter Records -->
+  <div class="alter-records">
+    <h2>ALTER RECORDS</h2>
+    <p>SEARCH BY SHELTER, RECORD NUMBER OR DATE</p>
+  </div>
+
+  <div class="search-row">
+    <div class="search-group">
+      <span class="search-label">SELECT SHELTER</span>
+      <input class="search-input" type="text">
+    </div>
+    <div class="search-group">
+      <span class="search-label">SELECT RECORD NUMBER</span>
+      <input class="search-input" type="text" style="width:150px;">
+    </div>
+    <span class="or-label">or</span>
+    <div class="search-group">
+      <span class="search-label">SELECT DATE</span>
+      <input class="search-input" type="text" style="width:110px;">
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="table-section">
+    <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:2px;">
+      <span style="font-size:12px; font-weight:bold; flex:1; text-align:center;">Record To Alter</span>
+      <span class="white-flag-label">White Flag</span>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Shelter</th>
+          <th>Regular<br>Beds<br>Occupied</th>
+          <th>Guests on<br>Pass</th>
+          <th>Hospital</th>
+          <th>Jail</th>
+          <th>No<br>Call/No<br>Show</th>
+          <th>Barred</th>
+          <th>Hold</th>
+          <th>Respite<br>Occupied</th>
+          <th>Barred</th>
+          <th># of Men</th>
+          <th># of<br>Women</th>
+          <th># of<br>Children</th>
+          <th># of Non<br>Binary</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td></td><td></td><td></td><td></td><td></td><td></td>
+          <td></td><td></td><td></td><td></td><td></td><td></td>
+          <td></td><td></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Save button -->
+  <div class="action-buttons">
+    <button class="btn-save">SAVE<br>CHANGES TO<br>DATABASE</button>
+  </div>
+
+  <!-- Bottom buttons -->
+  <div class="bottom-buttons">
+    <button class="btn-bottom">COPY<br>DATABASE TO<br>USB</button>
+    <button class="btn-bottom">Export<br>Database to<br>Excel</button>
+    <button class="btn-bottom">Import<br>Database<br>From Excel</button>
+  </div>
+
+</div>
+{% endblock %}

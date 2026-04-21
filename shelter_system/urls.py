@@ -9,4 +9,5 @@ urlpatterns = [
     path('shelters/', include('shelters.urls')),
     path('', include('mainscreen.urls')),
     path('white-flag/', include('whiteflag.urls')),
+    path('', include('admin_panel.urls')),
 ]

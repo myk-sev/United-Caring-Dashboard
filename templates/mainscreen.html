@@ -112,12 +112,12 @@
         </form>
     </div>
 
-    <div class="admin-section">
-        <label>Administrator Login</label><br>
-        <input type="text" placeholder="Enter Admin Password">
-        <br>
-        <button>Go</button>
-    </div>
+    <form method="POST" class="admin-section">
+      {% csrf_token %}
+      <label>Administrator Login</label><br>
+      <input type="password" name="admin_password" autocomplete="current-password"><br>
+      <button type="submit" name="admin_login">Go</button>
+    </form>
 
 </div>
 
