@@ -12,17 +12,27 @@
     font-family: Arial, sans-serif;
     background: #f0f0f0;
     display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    padding: 20px;
-    min-height: 100vh;
+    flex-direction: column;
+    height: 100%;
+    overflow-x: hidden;
+    margin: 0;
+    padding: 0;
+    align-items: stretch;
+  }
+  /* This overides the Base code to allow the sides of the page to stretch */
+  .container { 
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
   }
 
   .page {
-    background: #f4a07a;
+        background: #f4a07a;
     border: 2px dashed #c0a0a0;
-    width: 960px;
-    padding: 16px;
+    width: 100%; <!-- This code causes the page to automatically adjust to the viewport width -->
+    max-width: 100vw;
+    min-height: calc(100vh - 56px);
   }
 
   /* Header */
@@ -89,6 +99,7 @@
   .bed-group {
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 8px;
   }
 
@@ -282,9 +293,9 @@
   .btn-save {
     background: linear-gradient(to bottom, #b0b8c8, #8898b0);
     border: 2px outset #c0c8d8;
-    padding: 10px 24px;
+    padding: 6px 16px;
     font-weight: bold;
-    font-size: 13px;
+    font-size: 11px;
     cursor: pointer;
     text-align: center;
     border-radius: 3px;
@@ -303,17 +314,42 @@
   .btn-bottom {
     background: linear-gradient(to bottom, #b0b8c8, #8898b0);
     border: 2px outset #c0c8d8;
-    padding: 12px 18px;
+    padding: 8px 12px;
     font-weight: bold;
-    font-size: 13px;
+    font-size: 11px;
     cursor: pointer;
     text-align: center;
     border-radius: 3px;
     line-height: 1.4;
-    min-width: 110px;
+    min-width: 80px;
   }
 
   .btn-bottom:active { border-style: inset; }
+
+    .shelter-select {
+    width: 120px;
+    height: 32px;
+    font-size: 13px;
+    padding: 2px 4px;
+    border: 1px solid #888;
+    border-radius: 2px;
+    background: white;
+    cursor: pointer;
+  }
+
+    .btn-go {
+    background: linear-gradient(to bottom, #c8c8c8, #a0a0a0);
+    border: 2px outset #d0d0d0;
+    padding: 5px 16px;
+    font-weight: bold;
+    font-size: 13px;
+    cursor: pointer;
+    border-radius: 3px;
+    height: 32px;
+  }
+
+  .btn-go:active { border-style: inset; }
+
 </style>
 </head>
 <body>
@@ -329,7 +365,7 @@
     </div>
   </div>
 
-  <div class="divider"></div>
+    <div class="divider"></div>
 
   <!-- Shelter column labels -->
   <div class="shelter-headers">
@@ -342,7 +378,7 @@
   <div class="divider"></div>
 
   <!-- Regular Beds row -->
-  <div class="bed-row">
+  <div class="shelter-headers" style="font-weight:normal; margin-top:8px;">
     <div class="bed-group">
       <input class="num-box" type="text" value="50">
       <span class="bed-label">Alter Regular Beds</span>
@@ -361,10 +397,8 @@
     </div>
   </div>
 
-  <div style="height:6px;"></div>
-
   <!-- Respite Beds row -->
-  <div class="bed-row">
+  <div class="shelter-headers" style="font-weight:normal; margin-top:8px;">
     <div class="bed-group">
       <input class="num-box" type="text" value="7">
       <span class="bed-label">Alter Respite Beds</span>
@@ -373,9 +407,9 @@
       <input class="num-box" type="text" value="4">
       <span class="bed-label">Alter Respite Beds</span>
     </div>
+    <div></div>
+    <div></div>
   </div>
-
-  <div style="height:10px;"></div>
 
   <!-- Password section -->
   <form method="POST">
@@ -409,9 +443,16 @@
 
   <div class="search-row">
     <div class="search-group">
-      <span class="search-label">SELECT SHELTER</span>
-      <input class="search-input" type="text">
+         <span class="search-label">SELECT SHELTER</span> <!-- DROP DOWN BOXES-->
+      <select class="search-input shelter-select">
+        <option value="">-- Select --</option>
+        <option value="mens">Mens Shelter</option>
+        <option value="womens">Womans Shelter</option>
+        <option value="diversion">Diversion Center</option>
+        <option value="whiteflag">White Flag</option>
+      </select>
     </div>
+
     <div class="search-group">
       <span class="search-label">SELECT RECORD NUMBER</span>
       <input class="search-input" type="text" style="width:150px;">
@@ -421,16 +462,24 @@
       <span class="search-label">SELECT DATE</span>
       <input class="search-input" type="text" style="width:110px;">
     </div>
+    <div class="search-group">
+      <span class="search-label" style="visibility:hidden;">GO</span>
+      <button class="btn-go">GO</button>
+    </div>
   </div>
 
   <!-- Table -->
   <div class="table-section">
-    <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:2px;">
-      <span style="font-size:12px; font-weight:bold; flex:1; text-align:center;">Record To Alter</span>
-      <span class="white-flag-label">White Flag</span>
-    </div>
+
+  <div style="font-size:12px; font-weight:bold; text-align:center; margin-bottom:2px;">Record To Alter</div>
+
     <table>
       <thead>
+                <tr>
+          <th colspan="10" style="background:transparent; border:none;"></th>
+          <th colspan="4" style="background:#c8c8c8;">White Flag</th>
+
+        </tr>
         <tr>
           <th>Shelter</th>
           <th>Regular<br>Beds<br>Occupied</th>
