@@ -436,38 +436,39 @@
   <div style="height:6px;"></div>
 
   <!-- Alter Records -->
-  <div class="alter-records">
-    <h2>ALTER RECORDS</h2>
-    <p>SEARCH BY SHELTER, RECORD NUMBER OR DATE</p>
-  </div>
-
-  <div class="search-row">
-    <div class="search-group">
-         <span class="search-label">SELECT SHELTER</span> <!-- DROP DOWN BOXES-->
-      <select class="search-input shelter-select">
-        <option value="">-- Select --</option>
-        <option value="mens">Mens Shelter</option>
-        <option value="womens">Womans Shelter</option>
-        <option value="diversion">Diversion Center</option>
-        <option value="whiteflag">White Flag</option>
-      </select>
+  <form>
+    {% csrf_token %}
+    <div class="alter-records">
+      <h2>ALTER RECORDS</h2>
+      <p>SEARCH BY SHELTER, RECORD NUMBER OR DATE</p>
     </div>
 
-    <div class="search-group">
-      <span class="search-label">SELECT RECORD NUMBER</span>
-      <input class="search-input" type="text" style="width:150px;">
-    </div>
-    <span class="or-label">or</span>
-    <div class="search-group">
-      <span class="search-label">SELECT DATE</span>
-      <input class="search-input" type="text" style="width:110px;">
-    </div>
-    <div class="search-group">
-      <span class="search-label" style="visibility:hidden;">GO</span>
-      <button class="btn-go">GO</button>
-    </div>
-  </div>
+    <div class="search-row">
+      <div class="search-group">
+           <span class="search-label">SELECT SHELTER</span> <!-- DROP DOWN BOXES-->
+        <select class="search-input shelter-select" name="search_shelter">
+          <option value="mens">Mens Shelter</option>
+          <option value="womens">Womans Shelter</option>
+          <option value="diversion">Diversion Center</option>
+          <option value="whiteflag">White Flag</option>
+        </select>
+      </div>
 
+      <div class="search-group">
+        <span class="search-label">SELECT RECORD NUMBER</span>
+        <input class="search-input" type="text" style="width:150px;" name="search_number">
+      </div>
+      <span class="or-label">or</span>
+      <div class="search-group">
+        <span class="search-label">SELECT DATE</span>
+        <input class="search-input" type="date" style="width:110px;" name="search_date">
+      </div>
+      <div class="search-group">
+        <span class="search-label" style="visibility:hidden;">GO</span>
+        <button type="submit" class="btn-go">GO</button>
+      </div>
+    </div>
+  </form>
   <!-- Table -->
   <div class="table-section">
 
@@ -481,6 +482,7 @@
 
         </tr>
         <tr>
+          <th>ID</th>
           <th>Shelter</th>
           <th>Regular<br>Beds<br>Occupied</th>
           <th>Guests on<br>Pass</th>
@@ -490,7 +492,6 @@
           <th>Barred</th>
           <th>Hold</th>
           <th>Respite<br>Occupied</th>
-          <th>Barred</th>
           <th># of Men</th>
           <th># of<br>Women</th>
           <th># of<br>Children</th>
@@ -499,9 +500,43 @@
       </thead>
       <tbody>
         <tr>
-          <td></td><td></td><td></td><td></td><td></td><td></td>
-          <td></td><td></td><td></td><td></td><td></td><td></td>
-          <td></td><td></td>
+          <td>ID</td>
+          <td>{{db_entry.shelter}}</td>
+          <td>{{db_entry.regular_occupied}}</td>
+          <td>{{db_entry.guests_on_pass}}</td>
+          <td>{{db_entry.hospital}}</td>
+          <td>{{db_entry.jail}}</td>
+          <td>{{db_entry.nc_ns}}</td>
+          <td>{{db_entry.barred}}</td>
+          <td>{{db_entry.hold}}</td>
+          <td>{{db_entry.respite_occupied}}</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td><input type="number" name="id" size="5"></td>
+          <td>
+            <select class="search-input shelter-select" name="search_shelter">
+              <option value="mens">Men's Shelter</option>
+              <option value="womens">Woman's Shelter</option>
+              <option value="diversion">Diversion Center</option>
+              <option value="whiteflag">White Flag</option>
+            </select>
+          </td>
+          <td><input type="number" name="regular_occupied" size="2"></td>
+          <td><input type="number" name="guests" size="2"></td>
+          <td><input type="number" name="hospital" size="2"></td>
+          <td><input type="number" name="jail" size="2"></td>
+          <td><input type="number" name="no_show" size="2"></td>
+          <td><input type="number" name="barred" size="2"></td>
+          <td><input type="number" name="hold" size="2"></td>
+          <td><input type="number" name="respite" size="2"></td>
+          <td><input type="number" name="men" size="2"></td>
+          <td><input type="number" name="women" size="2"></td>
+          <td><input type="number" name="children" size="2"></td>
+          <td><input type="number" name="non_binary" size="2"></td>
         </tr>
       </tbody>
     </table>

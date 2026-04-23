@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.conf import settings
+from shelters.models import ShelterInputModel
 
 
 def admin_page_one(request):
@@ -12,6 +13,8 @@ def admin_page_one(request):
 
 def admin_page_two(request):
     """Administration Page 2 of 2 — Alter Records / Settings."""
+    data_retrieval = ShelterInputModel.objects.last()
+
     if not request.session.get('is_admin'):
         return redirect('mainscreen')
 
@@ -30,7 +33,7 @@ def admin_page_two(request):
             settings.ADMIN_PANEL_PASSWORD = new_pw1
             messages.success(request, 'Password updated successfully.')
 
-    return render(request, 'admin_panel/admin_page_two.html')
+    return render(request, 'admin_panel/admin_page_two.html', {"db_entry": data_retrieval})
 
 
 def admin_logout(request):
