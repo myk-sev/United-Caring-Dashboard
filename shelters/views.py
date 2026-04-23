@@ -3,8 +3,9 @@ from django.http import HttpResponseRedirect
 from django import forms
 from shelters.form import ShelterInputForm
 from shelters.models import ShelterInputModel
+from django.contrib.auth.decorators import login_required
 
-
+@login_required
 def shelters_home(request):
     if request.method == "POST":
         form_data = ShelterInputForm(request.POST)
