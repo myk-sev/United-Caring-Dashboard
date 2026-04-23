@@ -9,5 +9,4 @@ urlpatterns = [
     path('reports/', include('reports.urls')),
     path('shelters/', include('shelters.urls')),
 
-    path('', RedirectView.as_view(url='/dashboard/', permanent=False)),
 ]
