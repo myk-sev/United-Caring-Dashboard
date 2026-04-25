@@ -1,0 +1,488 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<style>
+  :root {
+    --bg:             #f0eeeb;
+    --surface:        #ffffff;
+    --border:         #c8c4bc;
+    --border-focus:   #2c2c2c;
+    --text:           #1a1a1a;
+    --muted:          #6b6760;
+    --badge-bg:       #1a1a1a;
+    --badge-text:     #ffffff;
+    --btn-bg:         #1a1a1a;
+    --btn-hover:      #3a3a3a;
+    --btn-edit-bg:    #4a6fa5;
+    --btn-edit-hover: #3a5f95;
+    --success-bg:     #e8f5e9;
+    --success-border: #a5d6a7;
+    --success-text:   #2e7d32;
+    --error-bg:       #fdecea;
+    --error-border:   #ef9a9a;
+    --error-text:     #c62828;
+    --info-bg:        #e3f2fd;
+    --info-border:    #90caf9;
+    --info-text:      #1565c0;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    background: #d0d0d0;
+    font-family: 'DM Sans', Arial, sans-serif;
+  }
+
+  .topnav {
+    background: #1a1a1a;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1.25rem;
+    height: 52px;
+  }
+
+  .topnav .brand {
+    color: #fff;
+    font-size: 1.1rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+  }
+
+  .topnav .nav-btns {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+  }
+
+  .topnav .nav-btns a,
+  .topnav .nav-btns button {
+    padding: 0.4rem 1rem;
+    border-radius: 3px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    text-decoration: none;
+    border: 1.5px solid #555;
+    background: #2a2a2a;
+    color: #fff;
+    transition: background 0.15s;
+  }
+
+  .topnav .nav-btns a:hover,
+  .topnav .nav-btns button:hover { background: #3a3a3a; }
+
+  .topnav .nav-btns .btn-logout {
+    background: #c0392b;
+    border-color: #c0392b;
+  }
+
+  .topnav .nav-btns .btn-logout:hover { background: #a93226; }
+
+  .page-wrap {
+    max-width: 700px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1.5px solid #aaa;
+    border-radius: 2px;
+    padding: 1.75rem 2rem 2rem;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.12);
+  }
+
+  .card-title {
+    border: 2px solid #1a1a1a;
+    text-align: center;
+    padding: 0.6rem 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .card-title h1 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin: 0;
+  }
+
+  .subtitle {
+    font-size: 0.88rem;
+    color: var(--muted);
+    text-align: center;
+    margin-bottom: 1.25rem;
+  }
+
+  .top-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .instructions {
+    font-size: 0.88rem;
+    color: var(--text);
+    max-width: 340px;
+    line-height: 1.55;
+  }
+
+  .availability-badge {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+    min-width: 90px;
+  }
+
+  .availability-badge .label {
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+  }
+
+  .avail-box {
+    width: 60px;
+    height: 46px;
+    border: 2px solid var(--badge-bg);
+    border-radius: 3px;
+    background: var(--badge-bg);
+    color: var(--badge-text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.35rem;
+    font-weight: 700;
+  }
+
+  .avail-unit {
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+
+  #Below code alligns items to the center on this page.
+  .fields { display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 1.25rem; align-items: center; }
+
+.field-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    width: 280px;
+    margin: 0 auto;
+  }
+
+  .wf-input {
+    width: 100px;
+    height: 42px;
+    border: 1.5px solid #aaa;
+    border-radius: 2px;
+    padding: 0 0.6rem;
+    font-size: 1rem;
+    font-family: inherit;
+    color: var(--text);
+    background: var(--surface);
+    text-align: center;
+    transition: border-color 0.15s;
+  }
+
+  .wf-input:focus {
+    outline: none;
+    border-color: #4a6fa5;
+    box-shadow: 0 0 0 2px rgba(74,111,165,0.18);
+  }
+
+  .field-row label {
+    font-size: 0.92rem;
+    color: var(--text);
+    width: 160px;
+  }
+
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 1.1rem 0;
+  }
+
+  .bottom-fields {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .last-submitted-group {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  .last-submitted-group label {
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  .last-sub-box {
+    width: 88px;
+    height: 42px;
+    border: 1.5px solid #aaa;
+    border-radius: 2px;
+    background: #f5f5f5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .total-group {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .total-box {
+    width: 88px;
+    height: 42px;
+    border: 2px solid var(--border-focus);
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--text);
+    background: #fafafa;
+    transition: border-color 0.2s, color 0.2s;
+  }
+
+  .total-label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+  }
+
+  .total-label span { font-size: 0.88rem; }
+  .total-label small { font-size: 0.74rem; color: var(--muted); }
+
+  .over-cap .total-box {
+    border-color: var(--error-border);
+    color: var(--error-text);
+  }
+
+  .btn-row {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-bottom: 0.75rem;
+  }
+
+  .btn-submit, .btn-new-record {
+    min-width: 120px;
+    padding: 0.7rem 1.5rem;
+    border: 2px solid #888;
+    border-radius: 3px;
+    font-size: 0.92rem;
+    font-weight: 600;
+    cursor: pointer;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    transition: background 0.15s, border-color 0.15s;
+    background: linear-gradient(180deg, #e0e0e0 0%, #b8b8b8 100%);
+    color: #1a1a1a;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.18);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .btn-submit:hover, .btn-new-record:hover {
+    background: linear-gradient(180deg, #d0d0d0 0%, #a8a8a8 100%);
+  }
+
+  .btn-submit.resubmit {
+    background: linear-gradient(180deg, #4a7fd4 0%, #3260b0 100%);
+    border-color: #2a50a0;
+    color: #fff;
+  }
+
+  .btn-submit.resubmit:hover {
+    background: linear-gradient(180deg, #3a6fc4 0%, #2250a0 100%);
+  }
+
+  .toast {
+    display: none;
+    padding: 0.65rem 1rem;
+    border-radius: 3px;
+    font-size: 0.875rem;
+    margin-top: 0.5rem;
+    text-align: center;
+  }
+
+  .toast.success {
+    display: block;
+    background: var(--success-bg);
+    border: 1px solid var(--success-border);
+    color: var(--success-text);
+  }
+
+  .toast.error {
+    display: block;
+    background: var(--error-bg);
+    border: 1px solid var(--error-border);
+    color: var(--error-text);
+  }
+
+  .last-submitted-ts {
+    font-size: 0.78rem;
+    color: var(--muted);
+    text-align: center;
+    margin-top: 0.4rem;
+    min-height: 1.2em;
+  }
+
+  .submitted-mode .wf-input {
+    background: #eef4ff;
+    border-color: #90b8e8;
+    color: var(--text);
+  }
+
+  .submitted-mode .wf-input:focus {
+    border-color: #4a6fa5;
+    box-shadow: 0 0 0 2px rgba(74,111,165,0.22);
+    background: #fff;
+  }
+
+  .submitted-mode .last-sub-box {
+    background: #eef4ff;
+    border-color: #90b8e8;
+    font-weight: 700;
+  }
+</style>
+
+
+<div class="page-wrap">
+<div class="card {% if record %}submitted-mode{% endif %}" id="mainCard">
+
+  <div class="card-title">
+    <h1>White Flag</h1>
+  </div>
+
+  <p class="subtitle">These numbers taken during the Close Shift as appropriate.</p>
+
+  <div class="top-row">
+    <p class="instructions">Instructions: Enter the number of Openings taken then press the SUBMIT button.</p>
+    <div class="availability-badge">
+      <span class="label">Availability</span>
+      <div class="avail-box">{{ capacity }}</div>
+      <span class="avail-unit">Openings</span>
+    </div>
+  </div>
+
+  <form method="POST" id="wfForm">
+    {% csrf_token %}
+
+    <div class="fields">
+      <div class="field-row">
+        {{ form.men }}
+        <label for="{{ form.men.id_for_label }}">Number of Men</label>
+      </div>
+      <div class="field-row">
+        {{ form.women }}
+        <label for="{{ form.women.id_for_label }}">Number of Women</label>
+      </div>
+      <div class="field-row">
+        {{ form.children }}
+        <label for="{{ form.children.id_for_label }}">Number of Children</label>
+      </div>
+      <div class="field-row">
+        {{ form.non_binary }}
+        <label for="{{ form.non_binary.id_for_label }}">Number of Non-Binary</label>
+      </div>
+    </div>
+
+    <hr class="divider" />
+
+    <div class="bottom-fields">
+      <div class="last-submitted-group">
+        <label>Last Submitted</label>
+        <div class="last-sub-box" id="lastSubBox">
+          {% if record %}{{ record.total }}{% endif %}
+        </div>
+      </div>
+
+      <div class="total-group" id="totalRow">
+        <div class="total-box" id="totalBox">
+          {% if record %}{{ record.total }}{% else %}0{% endif %}
+        </div>
+        <div class="total-label">
+          <span>Total number of Openings taken</span>
+          <small>(This field is automatically filled)</small>
+        </div>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button type="submit" class="btn-submit {% if record %}resubmit{% endif %}" id="submitBtn">
+        {% if record %}Re-Submit{% else %}Submit{% endif %}
+      </button>
+      <a href="{% url 'white_flag' %}" class="btn-new-record">New Record</a>
+    </div>
+
+  </form>
+
+  <div class="last-submitted-ts" id="lastSubmittedTs">
+    {% if record %}Last submitted: {{ record.submitted_at|date:"m/d/Y g:i A" }}{% endif %}
+  </div>
+
+  <div class="toast" id="toast">
+    {% if messages %}{% for message in messages %}{{ message }}{% endfor %}{% endif %}
+  </div>
+
+</div>
+</div>
+
+<script>
+  const CAPACITY = {{ capacity }};
+  const fields   = ['id_men', 'id_women', 'id_children', 'id_non_binary'];
+
+  function updateTotal() {
+    let total = 0;
+    fields.forEach(id => {
+      const v = parseInt(document.getElementById(id)?.value, 10);
+      total += isNaN(v) || v < 0 ? 0 : v;
+    });
+    const box = document.getElementById('totalBox');
+    const row = document.getElementById('totalRow');
+    box.textContent = total;
+    total > CAPACITY ? row.classList.add('over-cap') : row.classList.remove('over-cap');
+  }
+
+  fields.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('input', updateTotal);
+  });
+
+  updateTotal();
+
+  const toast = document.getElementById('toast');
+  if (toast && toast.textContent.trim() !== '') {
+    toast.classList.add('success');
+    setTimeout(() => {
+      toast.style.transition = 'opacity 0.6s';
+      toast.style.opacity = '0';
+    }, 5000);
+  }
+</script>
+
+{% endblock %}

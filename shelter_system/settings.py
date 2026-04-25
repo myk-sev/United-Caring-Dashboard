@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'shelters',
     'mainscreen',
     'whiteflag',
+    'admin_panel',
 ]
 
 MIDDLEWARE = [
@@ -116,6 +117,9 @@ TIME_ZONE = 'America/Chicago' #'UTC'
 USE_I18N = True
 
 USE_TZ = True
+
+
+ADMIN_PANEL_PASSWORD = "admin1234"
 
 
 # Static files (CSS, JavaScript, Images)

@@ -1,77 +1,496 @@
 {% extends 'base.html' %}
-
 {% block content %}
+<style>
+    {% if shelter == "Mens Shelter" %}
+        body { background-color: #bad8f8; }
+    {% elif shelter == "Womans Shelter" %}
+        body { background-color: rgb(228, 189, 203); }  /* or whatever color you want */
+    {% elif shelter == "Diversion Center" %}
+        body { background-color: rgb(205, 197, 197); }  /* or whatever color you want */
+    {% endif %}
+</style>
 
-<h2 class="mb-4">Submit Shift Report</h2>
 
-<form method="POST">
-    {% csrf_token %}
+<style>
+  * { box-sizing: border-box; }
 
-    <div class="row mb-3">
-        <div class="col-md-6">
-            <label class="form-label">Shelter</label>
-            <select class="form-control" name="shelter">
-                <option>Men's Shelter</option>
-                <option>Women's Shelter</option>
-                <option>Diversion Center</option>
-                <option>White Flag</option>
-            </select>
-        </div>
+  body {
+    {% if shelter == "Mens Shelter" %}
+      background-color: #bad8f8;
+    {% elif shelter == "Womans Shelter" %}
+      background-color: rgb(228, 189, 203);
+    {% elif shelter == "Diversion Center" %}
+      background-color: rgb(205, 197, 197);
+    {% else %}
+      background-color: #d0d0d0;
+    {% endif %}
+    font-family: Arial, sans-serif;
+  }
+
+  /* Override Bootstrap container */
+  .container {
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+  }
+
+  :root {
+    --surface:       #ffffff;
+    --border:        #aaaaaa;
+    --text:          #1a1a1a;
+    --muted:         #6b6760;
+    --badge-bg:      #1a1a1a;
+    --badge-text:    #ffffff;
+    --error-bg:      #fdecea;
+    --error-border:  #ef9a9a;
+    --error-text:    #c62828;
+    --success-bg:    #e8f5e9;
+    --success-border:#a5d6a7;
+    --success-text:  #2e7d32;
+  }
+
+  .page-wrap {
+    max-width: 680px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 2px;
+    padding: 1.75rem 2rem 2rem;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.12);
+  }
+
+  .card-title {
+    border: 2px solid #1a1a1a;
+    text-align: center;
+    padding: 0.6rem 1rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .card-title h1 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin: 0;
+  }
+
+  .subtitle {
+    font-size: 0.88rem;
+    color: var(--muted);
+    text-align: center;
+    margin-bottom: 1.25rem;
+  }
+
+  .top-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .instructions {
+    font-size: 0.88rem;
+    color: var(--text);
+    max-width: 320px;
+    line-height: 1.55;
+  }
+
+  .badges-col {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    align-items: center;
+  }
+
+  .availability-badge {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.2rem;
+    min-width: 90px;
+  }
+
+  .availability-badge .label {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    text-align: center;
+  }
+
+  .avail-box {
+    width: 60px;
+    height: 42px;
+    border: 2px solid var(--badge-bg);
+    border-radius: 3px;
+    background: var(--badge-bg);
+    color: var(--badge-text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    font-weight: 700;
+  }
+
+  .avail-unit {
+    font-size: 0.72rem;
+    color: var(--muted);
+    text-align: center;
+  }
+
+  .section-label {
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    font-weight: 700;
+    margin: 1rem 0 0.5rem;
+    text-align: center;
+  }
+
+  .fields {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+    margin-bottom: 0.5rem;
+    align-items: center;
+  }
+
+  .field-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    width: 320px;
+    margin: 0 auto;
+  }
+
+  .field-row label {
+    font-size: 0.92rem;
+    color: var(--text);
+    width: 200px;
+  }
+
+  .s-input {
+    width: 100px;
+    height: 42px;
+    border: 1.5px solid #aaa;
+    border-radius: 2px;
+    padding: 0 0.6rem;
+    font-size: 1rem;
+    font-family: inherit;
+    color: var(--text);
+    background: var(--surface);
+    text-align: center;
+    transition: border-color 0.15s;
+  }
+
+  .s-input:focus {
+    outline: none;
+    border-color: #4a6fa5;
+    box-shadow: 0 0 0 2px rgba(74,111,165,0.18);
+  }
+
+  .divider {
+    border: none;
+    border-top: 1px solid #ccc;
+    margin: 1.1rem 0;
+  }
+
+  .bottom-fields {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    margin-bottom: 1.25rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .last-submitted-group {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  .last-submitted-group label {
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  .last-sub-box {
+    width: 88px;
+    height: 42px;
+    border: 1.5px solid #aaa;
+    border-radius: 2px;
+    background: #f5f5f5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .btn-row {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-bottom: 0.75rem;
+  }
+
+  .btn-submit, .btn-new-record {
+    min-width: 120px;
+    padding: 0.7rem 1.5rem;
+    border: 2px solid #888;
+    border-radius: 3px;
+    font-size: 0.92rem;
+    font-weight: 600;
+    cursor: pointer;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    background: linear-gradient(180deg, #e0e0e0 0%, #b8b8b8 100%);
+    color: #1a1a1a;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.18);
+    transition: background 0.15s;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .btn-submit:hover, .btn-new-record:hover {
+    background: linear-gradient(180deg, #d0d0d0 0%, #a8a8a8 100%);
+  }
+
+  .btn-submit.resubmit {
+    background: linear-gradient(180deg, #4a7fd4 0%, #3260b0 100%);
+    border-color: #2a50a0;
+    color: #fff;
+  }
+
+  .btn-submit.resubmit:hover {
+    background: linear-gradient(180deg, #3a6fc4 0%, #2250a0 100%);
+  }
+
+  .toast {
+    display: none;
+    padding: 0.65rem 1rem;
+    border-radius: 3px;
+    font-size: 0.875rem;
+    margin-top: 0.5rem;
+    text-align: center;
+  }
+
+  .toast.success {
+    display: block;
+    background: var(--success-bg);
+    border: 1px solid var(--success-border);
+    color: var(--success-text);
+  }
+
+  .toast.error {
+    display: block;
+    background: var(--error-bg);
+    border: 1px solid var(--error-border);
+    color: var(--error-text);
+  }
+
+  .last-submitted-ts {
+    font-size: 0.78rem;
+    color: var(--muted);
+    text-align: center;
+    margin-top: 0.4rem;
+    min-height: 1.2em;
+  }
+
+  .submitted-mode .s-input {
+    background: #eef4ff;
+    border-color: #90b8e8;
+  }
+
+  .submitted-mode .s-input:focus {
+    border-color: #4a6fa5;
+    box-shadow: 0 0 0 2px rgba(74,111,165,0.22);
+    background: #fff;
+  }
+
+  .submitted-mode .last-sub-box {
+    background: #eef4ff;
+    border-color: #90b8e8;
+    font-weight: 700;
+  }
+</style>
+
+<div class="page-wrap">
+  <div class="card {% if record %}submitted-mode{% endif %}" id="mainCard">
+
+    <!-- Title -->
+    <div class="card-title">
+      <h1>
+        {% if shelter == "Mens Shelter" %}Mens Shelter
+        {% elif shelter == "Womans Shelter" %}Womans Shelter
+        {% elif shelter == "Diversion Center" %}Diversion Center
+        {% else %}Submit Shift Report{% endif %}
+      </h1>
     </div>
 
-    <div class="row mb-3">
-        <div class="col-md-4">
-            <label class="form-label">Regular Beds Occupied</label>
-            <input type="number" class="form-control" name="regular_occupied">
+    <p class="subtitle">Enter shift numbers for each field and press SUBMIT.</p>
+
+    <!-- Instructions + capacity badges -->
+    <div class="top-row">
+      <p class="instructions">Instructions: Enter the number for each field then press the SUBMIT button.</p>
+
+      <div class="badges-col">
+        <div class="availability-badge">
+          <span class="label">Regular Beds</span>
+          <div class="avail-box">
+            {% if shelter == "Mens Shelter" %}50
+            {% elif shelter == "Womans Shelter" %}22
+            {% elif shelter == "Diversion Center" %}5
+            {% else %}—{% endif %}
+          </div>
+          <span class="avail-unit">Available</span>
         </div>
-        <div class="col-md-4">
-            <label class="form-label">Regular Open Beds</label>
-            <input type="number" class="form-control" name="regular_open">
+
+        {% if shelter != "Diversion Center" %}
+        <div class="availability-badge">
+          <span class="label">Respite Beds</span>
+          <div class="avail-box">
+            {% if shelter == "Mens Shelter" %}7
+            {% elif shelter == "Womans Shelter" %}4
+            {% endif %}
+          </div>
+          <span class="avail-unit">Available</span>
         </div>
-        <div class="col-md-4">
-            <label class="form-label">Guests On Pass</label>
-            <input type="number" class="form-control" name="guests_on_pass">
-        </div>
+        {% endif %}
+      </div>
     </div>
 
-    <div class="row mb-3">
-        <div class="col-md-3">
-            <label class="form-label">Hospital</label>
-            <input type="number" class="form-control" name="hospital">
+    <form method="POST" action="/shelters/" id="shelterForm">
+      {% csrf_token %}
+      <input type="hidden" name="shelter" value="{{ shelter }}">
+
+      <!-- Regular Beds -->
+      <div class="section-label">Regular Beds</div>
+      <div class="fields">
+        <div class="field-row">
+          <input class="s-input" type="number" name="regular_occupied" min="0"
+                 value="{% if record %}{{ record.regular_occupied }}{% else %}0{% endif %}">
+          <label>Regular Beds Occupied</label>
         </div>
-        <div class="col-md-3">
-            <label class="form-label">Jail</label>
-            <input type="number" class="form-control" name="jail">
+        <div class="field-row">
+          <input class="s-input" type="number" name="regular_open" min="0"
+                 value="{% if record %}{{ record.regular_open }}{% else %}0{% endif %}">
+          <label>Regular Open Beds</label>
         </div>
-        <div class="col-md-3">
-            <label class="form-label">NC/NS</label>
-            <input type="number" class="form-control" name="nc_ns">
+        <div class="field-row">
+          <input class="s-input" type="number" name="guests_on_pass" min="0"
+                 value="{% if record %}{{ record.guests_on_pass }}{% else %}0{% endif %}">
+          <label>Guests On Pass</label>
         </div>
-        <div class="col-md-3">
-            <label class="form-label">Barred</label>
-            <input type="number" class="form-control" name="barred">
+      </div>
+
+      <hr class="divider">
+
+      <!-- Absences -->
+      <div class="section-label">Absences</div>
+      <div class="fields">
+        <div class="field-row">
+          <input class="s-input" type="number" name="hospital" min="0"
+                 value="{% if record %}{{ record.hospital }}{% else %}0{% endif %}">
+          <label>Hospital</label>
         </div>
+        <div class="field-row">
+          <input class="s-input" type="number" name="jail" min="0"
+                 value="{% if record %}{{ record.jail }}{% else %}0{% endif %}">
+          <label>Jail</label>
+        </div>
+        <div class="field-row">
+          <input class="s-input" type="number" name="nc_ns" min="0"
+                 value="{% if record %}{{ record.nc_ns }}{% else %}0{% endif %}">
+          <label>No Call / No Show</label>
+        </div>
+        <div class="field-row">
+          <input class="s-input" type="number" name="barred" min="0"
+                 value="{% if record %}{{ record.barred }}{% else %}0{% endif %}">
+          <label>Barred</label>
+        </div>
+        <div class="field-row">
+          <input class="s-input" type="number" name="hold" min="0"
+                 value="{% if record %}{{ record.hold }}{% else %}0{% endif %}">
+          <label>Hold</label>
+        </div>
+      </div>
+
+      <!-- Respite Beds — Mens and Womans only -->
+      {% if shelter != "Diversion Center" %}
+      <hr class="divider">
+      <div class="section-label">Respite Beds</div>
+      <div class="fields">
+        <div class="field-row">
+          <input class="s-input" type="number" name="respite_occupied" min="0"
+                 value="{% if record %}{{ record.respite_occupied }}{% else %}0{% endif %}">
+          <label>Respite Occupied</label>
+        </div>
+        <div class="field-row">
+          <input class="s-input" type="number" name="respite_open" min="0"
+                 value="{% if record %}{{ record.respite_open }}{% else %}0{% endif %}">
+          <label>Respite Open</label>
+        </div>
+      </div>
+      {% endif %}
+
+      <hr class="divider">
+
+      <!-- Last Submitted -->
+      <div class="bottom-fields">
+        <div class="last-submitted-group">
+          <label>Last Submitted</label>
+          <div class="last-sub-box" id="lastSubBox">
+            {% if record %}{{ record.submitted_at|date:"g:i A" }}{% endif %}
+          </div>
+        </div>
+      </div>
+
+      <!-- Submit / New Record buttons -->
+      <div class="btn-row">
+        <button type="submit" class="btn-submit {% if record %}resubmit{% endif %}" id="submitBtn">
+          {% if record %}Re-Submit{% else %}Submit{% endif %}
+        </button>
+        <a href="/shelters/?shelter={{ shelter }}" class="btn-new-record">New Record</a>
+      </div>
+
+    </form>
+
+    <div class="last-submitted-ts">
+      {% if record %}Last submitted: {{ record.submitted_at|date:"m/d/Y g:i A" }}{% endif %}
     </div>
 
-    <div class="row mb-3">
-        <div class="col-md-6">
-            <label class="form-label">Hold</label>
-            <input type="number" class="form-control" name="hold">
-        </div>
-        <div class="col-md-6">
-            <label class="form-label">Respite Occupied</label>
-            <input type="number" class="form-control" name="respite_occupied">
-        </div>
+    <div class="toast" id="toast">
+      {% if messages %}{% for message in messages %}{{ message }}{% endfor %}{% endif %}
     </div>
 
-    <div class="row mb-3">
-        <div class="col-md-6">
-            <label class="form-label">Respite Open</label>
-            <input type="number" class="form-control" name="respite_open">
-        </div>
-    </div>
+  </div>
+</div>
 
-    <button type="submit" class="btn btn-primary">Submit</button>
-</form>
+<script>
+  const toast = document.getElementById('toast');
+  if (toast && toast.textContent.trim() !== '') {
+    toast.classList.add('success');
+    setTimeout(() => {
+      toast.style.transition = 'opacity 0.6s';
+      toast.style.opacity = '0';
+    }, 5000);
+  }
+</script>
 
 {% endblock %}
