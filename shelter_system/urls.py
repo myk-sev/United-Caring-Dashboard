@@ -7,7 +7,7 @@ urlpatterns = [
     path('dashboard/', include('dashboard.urls')),
     path('reports/', include('reports.urls')),
     path('shelters/', include('shelters.urls')),
-    #path('', include('mainscreen.urls')),
+    path('mainscreen/', include('mainscreen.urls')),
     path('white-flag/', include('whiteflag.urls')),
     path('', include('admin_panel.urls')),
 ]
