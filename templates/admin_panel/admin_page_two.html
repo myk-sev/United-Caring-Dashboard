@@ -1,26 +1,11 @@
 {% extends "base.html" %}
 {% block content %}
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Administration Page 2 of 2</title>
+
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
-  body {
-    font-family: Arial, sans-serif;
-    background: #f0f0f0;
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    overflow-x: hidden;
-    margin: 0;
-    padding: 0;
-    align-items: stretch;
-  }
-  /* This overides the Base code to allow the sides of the page to stretch */
-  .container { 
+  /* Override Bootstrap container to allow full-width */
+  .container {
     max-width: 100% !important;
     padding: 0 !important;
     margin: 0 !important;
@@ -28,11 +13,12 @@
   }
 
   .page {
-        background: #f4a07a;
+    background: #f4a07a;
     border: 2px dashed #c0a0a0;
-    width: 100%; <!-- This code causes the page to automatically adjust to the viewport width -->
+    width: 100%;
     max-width: 100vw;
     min-height: calc(100vh - 56px);
+    font-family: Arial, sans-serif;
   }
 
   /* Header */
@@ -41,6 +27,7 @@
     align-items: center;
     justify-content: space-between;
     margin-bottom: 12px;
+    padding: 10px 12px 0;
   }
 
   .header-title {
@@ -87,15 +74,7 @@
     padding: 0 8px;
   }
 
-  /* Bed rows */
-  .bed-row {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin: 6px 8px;
-    flex-wrap: wrap;
-  }
-
+  /* Bed groups */
   .bed-group {
     display: flex;
     align-items: center;
@@ -114,14 +93,7 @@
     border-radius: 2px;
   }
 
-  .bed-label {
-    font-size: 13px;
-  }
-
-  /* Spacing between bed groups */
-  .bed-row .bed-group:not(:first-child) {
-    margin-left: 32px;
-  }
+  .bed-label { font-size: 13px; }
 
   /* Password section */
   .password-section {
@@ -229,32 +201,33 @@
     margin-bottom: 8px;
   }
 
+  .shelter-select {
+    width: 120px;
+    height: 32px;
+    font-size: 13px;
+    padding: 2px 4px;
+    border: 1px solid #888;
+    border-radius: 2px;
+    background: white;
+    cursor: pointer;
+  }
+
+  .btn-go {
+    background: linear-gradient(to bottom, #c8c8c8, #a0a0a0);
+    border: 2px outset #d0d0d0;
+    padding: 5px 16px;
+    font-weight: bold;
+    font-size: 13px;
+    cursor: pointer;
+    border-radius: 3px;
+    height: 32px;
+  }
+
+  .btn-go:active { border-style: inset; }
+
   /* Table */
   .table-section {
     margin: 12px 8px;
-  }
-
-  .table-headers-row {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 2px;
-  }
-
-  .record-label {
-    font-size: 12px;
-    font-weight: bold;
-    text-align: center;
-    flex: 1;
-  }
-
-  .white-flag-label {
-    background: #c8c8c8;
-    border: 1px solid #999;
-    font-size: 12px;
-    font-weight: bold;
-    text-align: center;
-    padding: 3px 8px;
-    min-width: 300px;
   }
 
   table {
@@ -276,18 +249,57 @@
 
   table td {
     border: 1px solid #888;
-    padding: 8px 4px;
+    padding: 4px;
     text-align: center;
     height: 32px;
+    vertical-align: middle;
   }
 
-  /* Action buttons */
-  .action-buttons {
+  /* Row label cell (Existing Data / Altered Data) */
+  .row-label-cell {
+    background: #f0f0f0;
+    font-size: 11px;
+    font-weight: bold;
+    white-space: nowrap;
+    text-align: right;
+    padding-right: 6px;
+    width: 75px;
+    border: 1px solid #888;
+  }
+
+  /* Editable cells in Altered Data row */
+  .alter-input {
+    width: 100%;
+    height: 26px;
+    border: 1px solid #aaa;
+    border-radius: 2px;
+    font-size: 12px;
+    text-align: center;
+    background: #fffde7;
+    padding: 0 2px;
+  }
+
+  /* Dual save button row */
+  .save-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin: 14px 8px 10px;
+    gap: 10px;
+  }
+
+  .save-center {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin: 14px 0 10px;
-    gap: 4px;
+    flex: 1;
+  }
+
+  .save-right {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 130px;
   }
 
   .btn-save {
@@ -304,11 +316,12 @@
 
   .btn-save:active { border-style: inset; }
 
+  /* Bottom buttons */
   .bottom-buttons {
     display: flex;
     justify-content: center;
     gap: 20px;
-    margin: 10px 0 6px;
+    margin: 10px 0 16px;
   }
 
   .btn-bottom {
@@ -351,6 +364,7 @@
   .btn-go:active { border-style: inset; }
 
 </style>
+
 </head>
 <body>
 <div class="page">
@@ -365,7 +379,7 @@
     </div>
   </div>
 
-    <div class="divider"></div>
+  <div class="divider"></div>
 
   <!-- Shelter column labels -->
   <div class="shelter-headers">
@@ -413,17 +427,29 @@
 
   <!-- Password section -->
   <form method="POST">
-  {% csrf_token %}
-  <input type="hidden" name="change_password" value="1">
-  {% if messages %}{% for message in messages %}<div style="text-align:center;font-weight:bold;font-size:13px;color:{% if message.tags == 'error' %}#8b0000{% else %}#1a5c1a{% endif %};">{{ message }}</div>{% endfor %}{% endif %}
-  <div class="password-section">
-    <div class="pw-group">
-      <input class="pw-input" type="password" name="old_password" autocomplete="current-password">
-      <span class="pw-label">ENTER OLD<br>PASSWORD</span>
-    </div>
-    <div class="pw-group">
-      <input class="pw-input" type="password" name="new_password1" autocomplete="new-password">
-      <span class="pw-label">ENTER NEW<br>PASSWORD</span>
+    {% csrf_token %}
+    <input type="hidden" name="change_password" value="1">
+    {% if messages %}
+      {% for message in messages %}
+        <div style="text-align:center;font-weight:bold;font-size:13px;color:{% if message.tags == 'error' %}#8b0000{% else %}#1a5c1a{% endif %};">
+          {{ message }}
+        </div>
+      {% endfor %}
+    {% endif %}
+    <div class="password-section">
+      <div class="pw-group">
+        <input class="pw-input" type="password" name="old_password" autocomplete="current-password">
+        <span class="pw-label">ENTER OLD<br>PASSWORD</span>
+      </div>
+      <div class="pw-group">
+        <input class="pw-input" type="password" name="new_password1" autocomplete="new-password">
+        <span class="pw-label">ENTER NEW<br>PASSWORD</span>
+      </div>
+      <div class="pw-group">
+        <input class="pw-input" type="password" name="new_password2" autocomplete="new-password">
+        <span class="pw-label">ENTER NEW<br>PASSWORD AGAIN</span>
+      </div>
+      <button class="btn-change-pw" type="submit">CHANGE<br>ADMIN<br>PASSWORD</button>
     </div>
     <div class="pw-group">
       <input class="pw-input" type="password" name="new_password2" autocomplete="new-password">
@@ -471,18 +497,22 @@
   </form>
   <!-- Table -->
   <div class="table-section">
+    <div style="font-size:12px; font-weight:bold; text-align:center; margin-bottom:2px;">Record To Alter</div>
 
   <div style="font-size:12px; font-weight:bold; text-align:center; margin-bottom:2px;">Record To Alter</div>
 
     <table>
       <thead>
-                <tr>
-          <th colspan="10" style="background:transparent; border:none;"></th>
+        <tr>
+          <!-- blank cell for the row-label column -->
+          <th style="background:transparent; border:none;"></th>
+          <th colspan="11" style="background:transparent; border:none;"></th>
           <th colspan="4" style="background:#c8c8c8;">White Flag</th>
 
         </tr>
         <tr>
-          <th>ID</th>
+          <th style="background:#e8e8e8; width:75px;"></th><!-- row label header (blank) -->
+          <th>Date</th>
           <th>Shelter</th>
           <th>Regular<br>Beds<br>Occupied</th>
           <th>Guests on<br>Pass</th>
@@ -492,6 +522,7 @@
           <th>Barred</th>
           <th>Hold</th>
           <th>Respite<br>Occupied</th>
+          <th>Barred</th>
           <th># of Men</th>
           <th># of<br>Women</th>
           <th># of<br>Children</th>
@@ -499,6 +530,7 @@
         </tr>
       </thead>
       <tbody>
+        <!-- Existing Data row — read-only, populated by Django -->
         <tr>
           <td>ID</td>
           <td>{{db_entry.shelter}}</td>
@@ -525,34 +557,46 @@
               <option value="whiteflag">White Flag</option>
             </select>
           </td>
-          <td><input type="number" name="regular_occupied" size="2"></td>
-          <td><input type="number" name="guests" size="2"></td>
-          <td><input type="number" name="hospital" size="2"></td>
-          <td><input type="number" name="jail" size="2"></td>
-          <td><input type="number" name="no_show" size="2"></td>
-          <td><input type="number" name="barred" size="2"></td>
-          <td><input type="number" name="hold" size="2"></td>
-          <td><input type="number" name="respite" size="2"></td>
-          <td><input type="number" name="men" size="2"></td>
-          <td><input type="number" name="women" size="2"></td>
-          <td><input type="number" name="children" size="2"></td>
-          <td><input type="number" name="non_binary" size="2"></td>
+          <td><input class="alter-input" type="number" name="regular_occupied" size="2"></td>
+          <td><input class="alter-input" type="number" name="guests" size="2"></td>
+          <td><input class="alter-input" type="number" name="hospital" size="2"></td>
+          <td><input class="alter-input" type="number" name="jail" size="2"></td>
+          <td><input class="alter-input" type="number" name="no_show" size="2"></td>
+          <td><input class="alter-input" type="number" name="barred" size="2"></td>
+          <td><input class="alter-input" type="number" name="hold" size="2"></td>
+          <td><input class="alter-input" type="number" name="respite" size="2"></td>
+          <td><input class="alter-input" type="number" name="men" size="2"></td>
+          <td><input class="alter-input" type="number" name="women" size="2"></td>
+          <td><input class="alter-input" type="number" name="children" size="2"></td>
+          <td><input class="alter-input" type="number" name="non_binary" size="2"></td>
         </tr>
       </tbody>
     </table>
   </div>
 
-  <!-- Save button -->
-  <div class="action-buttons">
-    <button class="btn-save">SAVE<br>CHANGES TO<br>DATABASE</button>
+  <!-- Dual Save buttons -->
+  <div class="save-row">
+    <!-- left spacer to balance layout -->
+    <div style="flex:1;"></div>
+
+    <!-- centre: Save Changes to Database -->
+    <div class="save-center">
+      <button class="btn-save">SAVE CHANGES<br>TO DATABASE</button>
+    </div>
+
+    <!-- right: Save Changes for White Flag -->
+    <div class="save-right">
+      <button class="btn-save">SAVE CHANGES<br>FOR WHITE FLAG</button>
+    </div>
   </div>
 
   <!-- Bottom buttons -->
   <div class="bottom-buttons">
-    <button class="btn-bottom">COPY<br>DATABASE TO<br>USB</button>
+    <button class="btn-bottom">COPY<br>DATABASE TO<br>USB STORAGE</button>
     <button class="btn-bottom">Export<br>Database to<br>Excel</button>
     <button class="btn-bottom">Import<br>Database<br>From Excel</button>
   </div>
 
 </div>
+
 {% endblock %}

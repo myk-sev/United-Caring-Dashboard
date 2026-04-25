@@ -1,12 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<title>UCS Shelter Management</title>
+{% extends "base.html" %}
+{% block content %}
 
 <style>
     body {
-        background-color: #7fd3a6;
+        background-color: #d0d0d0;
         font-family: Arial, sans-serif;
         text-align: center;
     }
@@ -81,6 +78,7 @@
 
 <body>
 
+<div style="background-color: #d0d0d0; min-height: calc(100vh - 56px); padding-bottom: 2rem;">
 <div class="container">
 
     <div class="header">
@@ -120,6 +118,7 @@
     </form>
 
 </div>
+</div>
 
 <script>
     function handleGo() {
@@ -132,5 +131,4 @@
     }
 </script>
 
-</body>
-</html>
+{% endblock %}

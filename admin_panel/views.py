@@ -3,11 +3,26 @@ from django.contrib import messages
 from django.conf import settings
 from shelters.models import ShelterInputModel
 
+def admin_login(request): #Creates a login page for the admin panel. If the password is correct, it sets a session variable to indicate that the user is an admin and redirects to the first admin page. If the password is incorrect, it shows an error message.
+    """Standalone Admin login page."""
+    if request.session.get('is_admin'):
+        return redirect('admin_page_one')
+
+    if request.method == 'POST':
+        password = request.POST.get('admin_password', '')
+
+        if password == settings.ADMIN_PANEL_PASSWORD:
+            request.session['is_admin'] = True
+            return redirect('admin_page_one')
+        else:
+            messages.error(request, 'Incorrect administrator password.')
+
+    return render(request, 'admin_panel/admin_login.html')
 
 def admin_page_one(request):
     """Administration Page 1 of 2 — Daily Records / Charts."""
     if not request.session.get('is_admin'):
-        return redirect('mainscreen')
+        return redirect('admin_login')
     return render(request, 'admin_panel/admin_page_one.html')
 
 
@@ -16,7 +31,7 @@ def admin_page_two(request):
     data_retrieval = ShelterInputModel.objects.last()
 
     if not request.session.get('is_admin'):
-        return redirect('mainscreen')
+        return redirect('admin_login')
 
     if request.method == 'POST' and 'change_password' in request.POST:
         old_pw  = request.POST.get('old_password', '')
