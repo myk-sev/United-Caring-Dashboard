@@ -336,9 +336,9 @@
     <!-- Title -->
     <div class="card-title">
       <h1>
-        {% if shelter == "mens" %}Men's Shelter
-        {% elif shelter == "womans" %}Woman's Shelter
-        {% elif shelter == "diversion" %}Diversion Center
+        {% if selected == "mens" %}Men's Shelter
+        {% elif selected == "womens" %}Woman's Shelter
+        {% elif selected == "diversion" %}Diversion Center
         {% else %}Submit Shift Report{% endif %}
       </h1>
     </div>
@@ -378,12 +378,12 @@
       <div class="section-label">Regular Beds</div>
       <div class="fields">
         <div class="field-row">
-          <input class="s-input" type="number" name="regular_occupied" min="0"
+          <input id="regular_occupied" class="s-input" type="number" name="regular_occupied" min="0"
                  value="{% if record %}{{ record.regular_occupied }}{% else %}0{% endif %}">
           <label>Regular Beds Occupied</label>
         </div>
         <div class="field-row">
-          <input class="s-input" type="number" name="regular_open" min="0"
+          <input id="regular_open" class="s-input" type="number" name="regular_open" min="0"
                  value="{% if record %}{{ record.regular_open }}{% else %}0{% endif %}">
           <label>Regular Open Beds</label>
         </div>
@@ -432,12 +432,12 @@
       <div class="section-label">Respite Beds</div>
       <div class="fields">
         <div class="field-row">
-          <input class="s-input" type="number" name="respite_occupied" min="0"
+          <input id="respite_occupied" class="s-input" type="number" name="respite_occupied" min="0"
                  value="{% if record %}{{ record.respite_occupied }}{% else %}0{% endif %}">
           <label>Respite Occupied</label>
         </div>
         <div class="field-row">
-          <input class="s-input" type="number" name="respite_open" min="0"
+          <input id="respite_open" class="s-input" type="number" name="respite_open" min="0"
                  value="{% if record %}{{ record.respite_open }}{% else %}0{% endif %}">
           <label>Respite Open</label>
         </div>
@@ -488,40 +488,22 @@
   }
 </script>
 
-<!--<input id="inputA" type="number" placeholder="Enter a number">
-<input id="inputB" type="text" placeholder="Result will appear here">
-
 <script>
-  const inputA = document.getElementById('inputA');
-  const inputB = document.getElementById('inputB');
-
-  function update(id, value) {
-    const element = document.getElementById(id);
-    element.value = value;
+  function update(target_id, event) {
+    let target = document.getElementById(target_id);
+    //event.currentTarget.value = ({{ test_settings_db.capacity }} - free_el.value);
+     target.value = {{ test_settings_db.capacity }} - event.currentTarget.value;
   }
 
-  function calculate_occupied(n_free) {
-    return {{ test_settings_db }}
-  }
+  const regular_occupied = document.getElementById('regular_occupied');
+  const regular_open = document.getElementById('regular_open');
+  const respite_occupied = document.getElementById('respite_occupied');
+  const respite_open = document.getElementById('respite_open');
 
-  function add_update_listener("id", function () {
-
-  }) {
-    var element = document.getElementById(id);
-
-    element.addEventListener("input", calculate_occupied)
-
-  }
-
-  inputA.addEventListener('input', function () {
-    const value = parseFloat(inputA.value);
-
-    if (!isNaN(value)) {
-      inputB.value = value * 2;  // example dependency
-    } else {
-      inputB.value = '';
-    }
-  });
-</script>-->
+  regular_occupied.addEventListener('input', update.bind(null, "regular_open"));
+  regular_open.addEventListener('input', update.bind(null, "regular_occupied"));
+  respite_occupied.addEventListener('input', update.bind(null, "respite_open"));
+  respite_open.addEventListener('input', update.bind(null, "respite_occupied"));
+</script>
 
 {% endblock %}
