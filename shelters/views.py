@@ -3,6 +3,11 @@ from django.http import HttpResponseRedirect
 from shelters.form import ShelterInputForm
 from shelters.models import ShelterInputModel
 
+class TestSettingsModel:
+    mens_capacity_regular = 50
+    womens_capacity_regular = 40
+    diversion_capacity_regular = 30
+
 def shelters_home(request):
     shelter = request.GET.get('shelter', '')
 
@@ -13,4 +18,13 @@ def shelters_home(request):
             return HttpResponseRedirect('/shelters/')
 
     form = ShelterInputForm(initial={'shelter': shelter})
-    return render(request, 'shelters.html', {'form': form, 'shelter': shelter})
+    return render(
+        request,
+        'shelters.html',
+        {
+            'form': form,
+            'shelter': shelter,
+            "test_settings_db": TestSettingsModel
+        }
+
+    )

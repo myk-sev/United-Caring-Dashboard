@@ -353,9 +353,9 @@
         <div class="availability-badge">
           <span class="label">Regular Beds</span>
           <div class="avail-box">
-            {% if shelter == "Mens Shelter" %}50
-            {% elif shelter == "Womans Shelter" %}22
-            {% elif shelter == "Diversion Center" %}5
+            {% if shelter == "Mens Shelter" %} {{ test_settings_db.mens_capacity_regular }}
+            {% elif shelter == "Womans Shelter" %} {{ test_settings_db.womens_capacity_regular }}
+            {% elif shelter == "Diversion Center" %} {{ test_settings_db.diversion_capacity_regular }}
             {% else %}—{% endif %}
           </div>
           <span class="avail-unit">Available</span>
