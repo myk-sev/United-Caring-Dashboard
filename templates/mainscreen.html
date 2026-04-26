@@ -122,11 +122,11 @@
 
 <script>
     function handleGo() {
-        const selected = document.getElementById('shelterSelect').value;
-        if (selected === 'whiteflag') {
+        const shelter = document.getElementById('shelterSelect').value;
+        if (shelter === 'whiteflag') {
             window.location.href = '/white-flag/';
         } else {
-            window.location.href = '/shelters/?selected=' + encodeURIComponent(selected);
+            window.location.href = '/shelters/?shelter=' + encodeURIComponent(shelter);
         }
     }
 </script>

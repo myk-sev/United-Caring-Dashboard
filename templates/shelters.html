@@ -336,9 +336,9 @@
     <!-- Title -->
     <div class="card-title">
       <h1>
-        {% if selected == "mens" %}Men's Shelter
-        {% elif selected == "womens" %}Woman's Shelter
-        {% elif selected == "diversion" %}Diversion Center
+        {% if shelter == "mens" %}Men's Shelter
+        {% elif shelter == "womens" %}Woman's Shelter
+        {% elif shelter == "diversion" %}Diversion Center
         {% else %}Submit Shift Report{% endif %}
       </h1>
     </div>
@@ -356,12 +356,12 @@
           <span class="avail-unit">Available</span>
         </div>
 
-        {% if selected != "diversion" %}
+        {% if shelter != "diversion" %}
         <div class="availability-badge">
           <span class="label">Respite Beds</span>
           <div class="avail-box">
-            {% if selected == "mens" %}7
-            {% elif selected == "womens" %}4
+            {% if shelter == "mens" %}7
+            {% elif shelter == "womens" %}4
             {% endif %}
           </div>
           <span class="avail-unit">Available</span>
@@ -372,7 +372,7 @@
 
     <form method="POST" action="/shelters/" id="shelterForm">
       {% csrf_token %}
-      <input type="hidden" name="shelter" value="{{ selected }}">
+      <input type="hidden" name="shelter" value="{{ shelter }}">
 
       <!-- Regular Beds -->
       <div class="section-label">Regular Beds</div>
