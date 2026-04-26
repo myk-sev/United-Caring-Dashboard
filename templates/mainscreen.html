@@ -100,10 +100,10 @@
     <div class="dropdown-section">
         <form method="GET" action="" id="mainForm">
             <select name="shelter" id="shelterSelect">
-                <option value="Mens Shelter">Mens Shelter</option>
-                <option value="Womans Shelter">Womans Shelter</option>
-                <option value="Diversion Center">Diversion Center</option>
-                <option value="White Flag">White Flag</option>
+                <option value="mens">Men's Shelter</option>
+                <option value="womans">Woman's Shelter</option>
+                <option value="diversion">Diversion Center</option>
+                <option value="whiteflag">White Flag</option>
             </select>
             <p>Select the Drop-Down menu for the Shelter to Report on and press Go below</p>
             <button type="button" class="go-btn" onclick="handleGo()">Go</button>
@@ -123,7 +123,7 @@
 <script>
     function handleGo() {
         const selected = document.getElementById('shelterSelect').value;
-        if (selected === 'White Flag') {
+        if (selected === 'whiteflag') {
             window.location.href = '/white-flag/';
         } else {
             window.location.href = '/shelters/?shelter=' + encodeURIComponent(selected);

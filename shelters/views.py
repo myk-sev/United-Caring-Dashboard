@@ -6,6 +6,7 @@ class TestSettingsModel:
     mens_capacity_regular = 50
     womens_capacity_regular = 40
     diversion_capacity_regular = 30
+    capacity = -1
 
 def shelters_home(request):
     shelter = request.GET.get('shelter', '')

@@ -336,9 +336,9 @@
     <!-- Title -->
     <div class="card-title">
       <h1>
-        {% if shelter == "Mens Shelter" %}Mens Shelter
-        {% elif shelter == "Womans Shelter" %}Womans Shelter
-        {% elif shelter == "Diversion Center" %}Diversion Center
+        {% if shelter == "mens" %}Men's Shelter
+        {% elif shelter == "womans" %}Woman's Shelter
+        {% elif shelter == "diversion" %}Diversion Center
         {% else %}Submit Shift Report{% endif %}
       </h1>
     </div>
@@ -353,9 +353,9 @@
         <div class="availability-badge">
           <span class="label">Regular Beds</span>
           <div class="avail-box">
-            {% if shelter == "Mens Shelter" %} {{ test_settings_db.mens_capacity_regular }}
-            {% elif shelter == "Womans Shelter" %} {{ test_settings_db.womens_capacity_regular }}
-            {% elif shelter == "Diversion Center" %} {{ test_settings_db.diversion_capacity_regular }}
+            {% if shelter == "mens" %} {{ test_settings_db.mens_capacity_regular }}
+            {% elif shelter == "womans" %} {{ test_settings_db.womens_capacity_regular }}
+            {% elif shelter == "diversion" %} {{ test_settings_db.diversion_capacity_regular }}
             {% else %}—{% endif %}
           </div>
           <span class="avail-unit">Available</span>
@@ -365,8 +365,8 @@
         <div class="availability-badge">
           <span class="label">Respite Beds</span>
           <div class="avail-box">
-            {% if shelter == "Mens Shelter" %}7
-            {% elif shelter == "Womans Shelter" %}4
+            {% if shelter == "mens" %}7
+            {% elif shelter == "womans" %}4
             {% endif %}
           </div>
           <span class="avail-unit">Available</span>
