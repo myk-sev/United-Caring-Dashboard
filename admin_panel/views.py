@@ -48,10 +48,27 @@ def admin_page_two(request):
             settings.ADMIN_PANEL_PASSWORD = new_pw1
             messages.success(request, 'Password updated successfully.')
 
-    return render(request, 'admin_panel/admin_page_two.html', {"db_entry": data_retrieval})
+    return render(request, 'admin_panel/admin_page_two.html', {"db_entry": data_retrieval, "test": "diversion", "test_db": temp})
 
 
 def admin_logout(request):
     """Clear admin session and return to main screen."""
     request.session.pop('is_admin', None)
     return redirect('mainscreen')
+
+class temp:
+    id = 5
+    date = "2026-12-12"
+    shelter = "diversion"
+    regular_occupied = 10
+    guests = 21
+    hospital = 31
+    jail = 41
+    no_show = 10
+    barred = 7
+    hold = 5
+    respite = 10
+    men = 40
+    women = 50
+    children = 2
+    non_binary = 100
