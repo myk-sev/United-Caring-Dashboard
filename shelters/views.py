@@ -9,7 +9,6 @@ class TestSettingsModel:
     capacity = -1
 
 def shelters_home(request):
-    selected = request.GET.get('selected', '')
     if (selected == 'mens'): TestSettingsModel.capacity = TestSettingsModel.mens_regular
     elif (selected == 'womens'): TestSettingsModel.capacity = TestSettingsModel.womens_regular
     elif (selected == 'diversion'): TestSettingsModel.capacity = TestSettingsModel.diversion_regular
@@ -18,7 +17,9 @@ def shelters_home(request):
     if request.method == "POST":
         form_data = ShelterInputForm(request.POST)
         if form_data.is_valid():
-            form_data.save()
+            record = form_data.save(commit=False)
+            record.save()
+
             return HttpResponseRedirect('/shelters/')
 
     form = ShelterInputForm(initial={'shelter': selected})

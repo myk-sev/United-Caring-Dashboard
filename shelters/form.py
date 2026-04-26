@@ -5,18 +5,15 @@ from .models import WhiteFlag
 class ShelterInputForm(forms.ModelForm):
     class Meta:
         model = ShelterInputModel
-        fields = ["shelter",
-                "regular_occupied",
-                "regular_open",
-                "guests_on_pass",
-                "hospital",
-                "jail",
-                "nc_ns",
-                "barred",
-                "hold",
-                "respite_occupied",
-                "respite_open"
-                ]
+        fields = [ "shelter",
+                   "regular",
+                   "respite",
+                   "guests",
+                   "hospital",
+                   "jail",
+                   "no_show",
+                   "barred",
+                   "hold" ]
         
 class WhiteFlagForm(forms.ModelForm):
     class Meta:

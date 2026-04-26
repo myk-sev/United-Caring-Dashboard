@@ -372,13 +372,13 @@
 
     <form method="POST" action="/shelters/" id="shelterForm">
       {% csrf_token %}
-      <input type="hidden" name="shelter" value="{{ shelter }}">
+      <input type="hidden" name="shelter" value="{{ selected }}">
 
       <!-- Regular Beds -->
       <div class="section-label">Regular Beds</div>
       <div class="fields">
         <div class="field-row">
-          <input id="regular_occupied" class="s-input" type="number" name="regular_occupied" min="0"
+          <input id="regular_occupied" class="s-input" type="number" name="regular" min="0"
                  value="{% if record %}{{ record.regular_occupied }}{% else %}0{% endif %}">
           <label>Regular Beds Occupied</label>
         </div>
@@ -388,7 +388,7 @@
           <label>Regular Open Beds</label>
         </div>
         <div class="field-row">
-          <input class="s-input" type="number" name="guests_on_pass" min="0"
+          <input class="s-input" type="number" name="guests" min="0"
                  value="{% if record %}{{ record.guests_on_pass }}{% else %}0{% endif %}">
           <label>Guests On Pass</label>
         </div>
@@ -410,7 +410,7 @@
           <label>Jail</label>
         </div>
         <div class="field-row">
-          <input class="s-input" type="number" name="nc_ns" min="0"
+          <input class="s-input" type="number" name="no_show" min="0"
                  value="{% if record %}{{ record.nc_ns }}{% else %}0{% endif %}">
           <label>No Call / No Show</label>
         </div>

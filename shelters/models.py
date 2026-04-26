@@ -3,17 +3,16 @@ from django.db import models
 
 
 class ShelterInputModel(models.Model):
+    date = models.DateField(auto_now_add=True)
     shelter = models.CharField(max_length=100)
-    regular_occupied = models.IntegerField()
-    regular_open = models.IntegerField()
-    guests_on_pass = models.IntegerField()
+    regular = models.IntegerField()
+    respite = models.IntegerField()
+    guests = models.IntegerField()
     hospital = models.IntegerField()
     jail = models.IntegerField()
-    nc_ns = models.IntegerField()
+    no_show = models.IntegerField()
     barred = models.IntegerField()
     hold = models.IntegerField()
-    respite_occupied = models.IntegerField()
-    respite_open = models.IntegerField()
 
 class Shelter(models.Model):
     name = models.CharField(max_length=100)
