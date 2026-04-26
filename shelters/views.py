@@ -1,7 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from shelters.form import ShelterInputForm
-from shelters.models import ShelterInputModel
 
 class TestSettingsModel:
     mens_capacity_regular = 50
