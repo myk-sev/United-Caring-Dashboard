@@ -502,14 +502,13 @@
     <table>
       <thead>
         <tr>
-          <!-- blank cell for the row-label column -->
-          <th style="background:transparent; border:none;"></th>
+          <th style="background:transparent; border:none;"></th> <!-- blank cell for the row-label column -->
           <th colspan="11" style="background:transparent; border:none;"></th>
           <th colspan="4" style="background:#c8c8c8;">White Flag</th>
 
         </tr>
         <tr>
-          <th>ID</th><!-- row label header (blank) -->
+          <th>ID</th>
           <th>Date</th>
           <th>Shelter</th>
           <th>Regular<br>Beds<br>Occupied</th>
@@ -527,24 +526,6 @@
         </tr>
       </thead>
       <tbody>
-        <!-- Existing Data row — read-only, populated by Django -->
-<!--        <tr>
-          <td>{{db_entry.id}}</td>
-          <td>{{db_entry.date}}</td>
-          <td>{{db_entry.shelter}}</td>
-          <td>{{db_entry.regular_occupied}}</td>
-          <td>{{db_entry.guests_on_pass}}</td>
-          <td>{{db_entry.hospital}}</td>
-          <td>{{db_entry.jail}}</td>
-          <td>{{db_entry.nc_ns}}</td>
-          <td>{{db_entry.barred}}</td>
-          <td>{{db_entry.hold}}</td>
-          <td>{{db_entry.respite_occupied}}</td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-        </tr>-->
         <tr>
           <td><input class="alter-input" type="number" name="id" size="5" value={{ test_db.id }}></td>
           <td><input class="alter-input" type="date" name="date" value={{ test_db.date }}></td>
