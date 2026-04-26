@@ -3,13 +3,17 @@ from django.http import HttpResponseRedirect
 from shelters.form import ShelterInputForm
 
 class TestSettingsModel:
-    mens_capacity_regular = 50
-    womens_capacity_regular = 40
-    diversion_capacity_regular = 30
+    mens_regular = 50
+    womens_regular = 40
+    diversion_regular = 30
     capacity = -1
 
 def shelters_home(request):
-    shelter = request.GET.get('shelter', '')
+    selected = request.GET.get('selected', '')
+    if (selected == 'mens'): TestSettingsModel.capacity = TestSettingsModel.mens_regular
+    elif (selected == 'womens'): TestSettingsModel.capacity = TestSettingsModel.womens_regular
+    elif (selected == 'diversion'): TestSettingsModel.capacity = TestSettingsModel.diversion_regular
+    else: raise
 
     if request.method == "POST":
         form_data = ShelterInputForm(request.POST)
@@ -17,13 +21,13 @@ def shelters_home(request):
             form_data.save()
             return HttpResponseRedirect('/shelters/')
 
-    form = ShelterInputForm(initial={'shelter': shelter})
+    form = ShelterInputForm(initial={'shelter': selected})
     return render(
         request,
         'shelters.html',
         {
             'form': form,
-            'shelter': shelter,
+            'selected': selected,
             "test_settings_db": TestSettingsModel
         }
 

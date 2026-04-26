@@ -352,21 +352,16 @@
       <div class="badges-col">
         <div class="availability-badge">
           <span class="label">Regular Beds</span>
-          <div class="avail-box">
-            {% if shelter == "mens" %} {{ test_settings_db.mens_capacity_regular }}
-            {% elif shelter == "womans" %} {{ test_settings_db.womens_capacity_regular }}
-            {% elif shelter == "diversion" %} {{ test_settings_db.diversion_capacity_regular }}
-            {% else %}—{% endif %}
-          </div>
+          <div class="avail-box">{{ test_settings_db.capacity }}</div>
           <span class="avail-unit">Available</span>
         </div>
 
-        {% if shelter != "Diversion Center" %}
+        {% if selected != "diversion" %}
         <div class="availability-badge">
           <span class="label">Respite Beds</span>
           <div class="avail-box">
-            {% if shelter == "mens" %}7
-            {% elif shelter == "womans" %}4
+            {% if selected == "mens" %}7
+            {% elif selected == "womens" %}4
             {% endif %}
           </div>
           <span class="avail-unit">Available</span>
@@ -492,5 +487,41 @@
     }, 5000);
   }
 </script>
+
+<!--<input id="inputA" type="number" placeholder="Enter a number">
+<input id="inputB" type="text" placeholder="Result will appear here">
+
+<script>
+  const inputA = document.getElementById('inputA');
+  const inputB = document.getElementById('inputB');
+
+  function update(id, value) {
+    const element = document.getElementById(id);
+    element.value = value;
+  }
+
+  function calculate_occupied(n_free) {
+    return {{ test_settings_db }}
+  }
+
+  function add_update_listener("id", function () {
+
+  }) {
+    var element = document.getElementById(id);
+
+    element.addEventListener("input", calculate_occupied)
+
+  }
+
+  inputA.addEventListener('input', function () {
+    const value = parseFloat(inputA.value);
+
+    if (!isNaN(value)) {
+      inputB.value = value * 2;  // example dependency
+    } else {
+      inputB.value = '';
+    }
+  });
+</script>-->
 
 {% endblock %}

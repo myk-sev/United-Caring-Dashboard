@@ -101,7 +101,7 @@
         <form method="GET" action="" id="mainForm">
             <select name="shelter" id="shelterSelect">
                 <option value="mens">Men's Shelter</option>
-                <option value="womans">Woman's Shelter</option>
+                <option value="womens">Woman's Shelter</option>
                 <option value="diversion">Diversion Center</option>
                 <option value="whiteflag">White Flag</option>
             </select>
@@ -126,7 +126,7 @@
         if (selected === 'whiteflag') {
             window.location.href = '/white-flag/';
         } else {
-            window.location.href = '/shelters/?shelter=' + encodeURIComponent(selected);
+            window.location.href = '/shelters/?selected=' + encodeURIComponent(selected);
         }
     }
 </script>
