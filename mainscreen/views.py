@@ -1,5 +1,5 @@
 #from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 import os
 
 #from django.shortcuts import render
@@ -10,6 +10,9 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.conf import settings
 
+
+def HomepageRedirect(request):
+    return HttpResponseRedirect('/mainscreen/')
 
 def mainscreen(request):
     """
