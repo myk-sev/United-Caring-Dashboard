@@ -10,7 +10,7 @@ class TestSettingsModel:
 
 def shelters_home(request):
     if request.method == "POST": shelter = request.POST.get("shelter", "")
-    else: shelter = request.POST.get("shelter", "")
+    else: shelter = request.GET.get("shelter", "")
 
     if (shelter == 'mens'): TestSettingsModel.capacity = TestSettingsModel.mens_regular
     elif (shelter == 'womens'): TestSettingsModel.capacity = TestSettingsModel.womens_regular

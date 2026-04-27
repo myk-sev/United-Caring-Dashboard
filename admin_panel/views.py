@@ -48,7 +48,12 @@ def admin_page_two(request):
             settings.ADMIN_PANEL_PASSWORD = new_pw1
             messages.success(request, 'Password updated successfully.')
 
-    return render(request, 'admin_panel/admin_page_two.html', {"db_entry": data_retrieval, "test": "diversion", "test_db": temp})
+    return render(
+        request,
+        'admin_panel/admin_page_two.html',
+        {#"db_entry": data_retrieval,
+         "test": "diversion",
+         "test_db": temp})
 
 
 def admin_logout(request):
