@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from shelters.form import ShelterInputForm
+from django.contrib.auth.decorators import login_required
 
 class TestSettingsModel:
     mens_regular = 50
@@ -8,6 +9,7 @@ class TestSettingsModel:
     diversion_regular = 30
     capacity = -1
 
+@login_required
 def shelters_home(request):
     if request.method == "POST": shelter = request.POST.get("shelter", "")
     else: shelter = request.GET.get("shelter", "")

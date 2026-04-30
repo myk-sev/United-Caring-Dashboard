@@ -1,9 +1,11 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import WhiteFlag
 from .forms  import WhiteFlagForm
+from django.contrib.auth.decorators import login_required
 
 CAPACITY = 80
 
+@login_required
 def white_flag(request):
     if request.method == 'POST':
         form = WhiteFlagForm(request.POST)
@@ -19,7 +21,7 @@ def white_flag(request):
         'record'  : None,
     })
 
-
+@login_required
 def white_flag_edit(request, pk):
     record = get_object_or_404(WhiteFlag, pk=pk)
 

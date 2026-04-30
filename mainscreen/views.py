@@ -9,11 +9,13 @@ import os
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.conf import settings
+from django.contrib.auth.decorators import login_required
 
 
 def HomepageRedirect(request):
     return HttpResponseRedirect('/mainscreen/')
 
+@login_required
 def mainscreen(request):
     """
     Main screen — shown to all users without login.

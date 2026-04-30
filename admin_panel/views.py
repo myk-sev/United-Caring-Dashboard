@@ -2,7 +2,9 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.conf import settings
 from shelters.models import ShelterInputModel
+from django.contrib.auth.decorators import login_required
 
+@login_required
 def admin_login(request): #Creates a login page for the admin panel. If the password is correct, it sets a session variable to indicate that the user is an admin and redirects to the first admin page. If the password is incorrect, it shows an error message.
     """Standalone Admin login page."""
     if request.session.get('is_admin'):
@@ -19,13 +21,14 @@ def admin_login(request): #Creates a login page for the admin panel. If the pass
 
     return render(request, 'admin_panel/admin_login.html')
 
+@login_required
 def admin_page_one(request):
     """Administration Page 1 of 2 — Daily Records / Charts."""
     if not request.session.get('is_admin'):
         return redirect('admin_login')
     return render(request, 'admin_panel/admin_page_one.html')
 
-
+@login_required
 def admin_page_two(request):
     """Administration Page 2 of 2 — Alter Records / Settings."""
     data_retrieval = ShelterInputModel.objects.last()
@@ -55,7 +58,7 @@ def admin_page_two(request):
          "test": "diversion",
          "test_db": temp})
 
-
+@login_required
 def admin_logout(request):
     """Clear admin session and return to main screen."""
     request.session.pop('is_admin', None)
