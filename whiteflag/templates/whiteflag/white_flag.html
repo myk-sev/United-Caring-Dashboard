@@ -1,0 +1,154 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<style>
+  :root {
+    --bg: #f0eeeb; --surface: #ffffff; --border: #c8c4bc;
+    --border-focus: #2c2c2c; --text: #1a1a1a; --muted: #6b6760;
+    --badge-bg: #1a1a1a; --badge-text: #ffffff;
+    --btn-bg: #1a1a1a; --btn-hover: #3a3a3a;
+    --success-bg: #e8f5e9; --success-border: #a5d6a7; --success-text: #2e7d32;
+    --error-bg: #fdecea; --error-border: #ef9a9a; --error-text: #c62828;
+    --info-bg: #e3f2fd; --info-border: #90caf9; --info-text: #1565c0;
+  }
+  .card {
+    background: var(--surface); border: 1.5px solid var(--border);
+    border-radius: 4px; width: 100%; max-width: 580px;
+    padding: 2.5rem 2.75rem 2.75rem;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06); margin: 2rem auto;
+    font-family: 'DM Sans', sans-serif; color: var(--text);
+  }
+  .header { border: 1.5px solid var(--border); padding: 0.9rem 1.25rem; text-align: center; margin-bottom: 1.5rem; }
+  .header h1 { font-size: 1.35rem; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; }
+  .subtitle { font-size: 0.875rem; color: var(--muted); margin-bottom: 1.5rem; line-height: 1.5; }
+  .record-bar { background: var(--info-bg); border: 1px solid var(--info-border); color: var(--info-text); border-radius: 3px; padding: 0.6rem 1rem; font-size: 0.83rem; margin-bottom: 1.4rem; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 0.25rem; }
+  .record-bar strong { font-weight: 600; }
+  .availability-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.75rem; flex-wrap: wrap; gap: 0.75rem; }
+  .instructions { font-size: 0.85rem; color: var(--muted); max-width: 310px; line-height: 1.55; }
+  .availability-badge { display: flex; align-items: center; gap: 0.6rem; flex-shrink: 0; }
+  .availability-badge .label { font-size: 0.8rem; color: var(--muted); font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; }
+  .avail-box { background: var(--badge-bg); color: var(--badge-text); font-size: 1rem; width: 52px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 3px; }
+  .avail-unit { font-size: 0.82rem; color: var(--muted); }
+  .fields { display: flex; flex-direction: column; gap: 0.85rem; margin-bottom: 1.5rem; }
+  .django-field { display: flex; align-items: center; gap: 1rem; }
+  .django-field label { font-size: 0.95rem; color: var(--text); }
+  .field-errors { font-size: 0.78rem; color: var(--error-text); margin-top: 0.2rem; margin-left: 92px; }
+  input.wf-input { width: 80px; height: 44px; border: 1.5px solid var(--border); border-radius: 3px; font-size: 1rem; text-align: center; color: var(--text); background: #fff; transition: border-color 0.15s; flex-shrink: 0; -moz-appearance: textfield; }
+  input.wf-input::-webkit-outer-spin-button, input.wf-input::-webkit-inner-spin-button { -webkit-appearance: none; }
+  input.wf-input:focus { outline: none; border-color: var(--border-focus); }
+  .divider { border: none; border-top: 1px solid var(--border); margin: 0.5rem 0 1.25rem; }
+  .total-row { display: flex; align-items: flex-start; gap: 1rem; margin-bottom: 2rem; }
+  .total-box { width: 80px; height: 44px; border: 1.5px solid var(--border); border-radius: 3px; font-size: 1rem; text-align: center; background: #f7f6f4; color: var(--text); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .total-label { display: flex; flex-direction: column; gap: 0.2rem; }
+  .total-label span { font-size: 0.95rem; color: var(--text); }
+  .total-label small { font-size: 0.75rem; color: var(--muted); }
+  .btn-row { display: flex; gap: 0.75rem; }
+  .btn-submit { flex: 1; height: 48px; background: var(--btn-bg); color: #fff; font-size: 0.9rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; border: none; border-radius: 3px; cursor: pointer; transition: background 0.15s; }
+  .btn-submit:hover { background: var(--btn-hover); }
+  .btn-new { height: 48px; padding: 0 1.25rem; background: transparent; color: var(--muted); font-size: 0.82rem; letter-spacing: 0.06em; text-transform: uppercase; border: 1.5px solid var(--border); border-radius: 3px; cursor: pointer; white-space: nowrap; text-decoration: none; display: flex; align-items: center; transition: border-color 0.15s, color 0.15s; }
+  .btn-new:hover { border-color: var(--border-focus); color: var(--text); }
+  .toast { display: none; border-radius: 3px; padding: 0.75rem 1rem; font-size: 0.85rem; margin-top: 1rem; line-height: 1.4; }
+  .toast.success { display: block; background: var(--success-bg); border: 1px solid var(--success-border); color: var(--success-text); }
+  .over-cap .total-box { border-color: var(--error-border); color: var(--error-text); }
+</style>
+
+<div class="card">
+  <div class="header"><h1>White Flag</h1></div>
+  <p class="subtitle">These numbers taken during the Close Shift as appropriate.</p>
+
+  {% if record %}
+  <div class="record-bar">
+    <span><strong>Record #{{ record.record_number }}</strong></span>
+    <span>Submitted: {{ record.submitted_at|date:"N j, Y  g:i A" }}</span>
+  </div>
+  {% endif %}
+
+  <div class="availability-row">
+    <p class="instructions">
+      {% if record %}
+        Edit the fields below and press <strong>Update</strong> to save changes.
+      {% else %}
+        Instructions: Enter the number of Openings taken then press the <strong>Submit</strong> button.
+      {% endif %}
+    </p>
+    <div class="availability-badge">
+      <span class="label">Availability</span>
+      <div class="avail-box">{{ capacity }}</div>
+      <span class="avail-unit">Openings</span>
+    </div>
+  </div>
+
+  <form method="post">
+    {% csrf_token %}
+    <div class="fields">
+      {% for field in form %}
+      <div>
+        <div class="django-field">
+          {{ field }}
+          <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+        </div>
+        {% if field.errors %}
+          <div class="field-errors">{{ field.errors|striptags }}</div>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+
+    <hr class="divider"/>
+
+    <div class="total-row" id="totalRow">
+      <div class="total-box" id="totalBox">
+        {% if record %}{{ record.total }}{% else %}0{% endif %}
+      </div>
+      <div class="total-label">
+        <span>Total number of Openings taken</span>
+        <small>(This field is automatically filled)</small>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button type="submit" class="btn-submit">
+        {% if record %}Update{% else %}Submit{% endif %}
+      </button>
+      {% if record %}
+        <a href="{% url 'white_flag' %}" class="btn-new">+ New Record</a>
+      {% endif %}
+    </div>
+
+    <div class="toast" id="toast">
+      {% if record %}✓ Record #{{ record.record_number }} saved successfully.{% endif %}
+    </div>
+  </form>
+</div>
+
+<script>
+  const CAPACITY = {{ capacity }};
+  const fields = ['id_men', 'id_women', 'id_children', 'id_non_binary'];
+
+  function updateTotal() {
+    let total = 0;
+    fields.forEach(id => {
+      const v = parseInt(document.getElementById(id)?.value, 10);
+      total += isNaN(v) || v < 0 ? 0 : v;
+    });
+    const box = document.getElementById('totalBox');
+    const row = document.getElementById('totalRow');
+    box.textContent = total;
+    total > CAPACITY ? row.classList.add('over-cap') : row.classList.remove('over-cap');
+  }
+
+  fields.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('input', updateTotal);
+  });
+
+  {% if record %}
+  const toast = document.getElementById('toast');
+  toast.className = 'toast success';
+  setTimeout(() => { toast.style.transition = 'opacity 0.6s'; toast.style.opacity = '0'; }, 4000);
+  {% endif %}
+
+  updateTotal();
+</script>
+
+{% endblock %}

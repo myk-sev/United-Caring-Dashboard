@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+    body {
+        background-color: #d0d0d0;
+        font-family: Arial, sans-serif;
+        text-align: center;
+    }
+
+    .container {
+        width: 80%;
+        margin: auto;
+        position: relative;
+    }
+
+    .header {
+        margin-top: 30px;
+        display: inline-block;
+        padding: 15px 40px;
+        border: 2px solid black;
+        background-color: #d9d9d9;
+        font-weight: bold;
+        font-size: 22px;
+    }
+
+    .description {
+        margin-top: 40px;
+        font-size: 18px;
+        line-height: 1.6;
+    }
+
+    .shelters {
+        margin-top: 20px;
+        font-size: 20px;
+        letter-spacing: 1px;
+    }
+
+    .dropdown-section {
+        margin-top: 40px;
+    }
+
+    select {
+        width: 300px;
+        height: 35px;
+    }
+
+    .go-btn {
+        margin-top: 20px;
+        padding: 15px 40px;
+        font-size: 18px;
+        background: linear-gradient(#cfd6df, #9aa3ad);
+        border: 2px solid #555;
+        cursor: pointer;
+    }
+
+    .admin-section {
+        position: absolute;
+        right: 0px;
+        top: 500px;
+        text-align: left;
+    }
+
+    .admin-section input {
+        width: 300px;
+        height: 35px;
+    }
+
+    .admin-section button {
+        margin-top: 20px;
+        padding: 15px 40px;
+        background: linear-gradient(#cfd6df, #9aa3ad);
+        border: 2px solid #555;
+        cursor: pointer;
+    }
+</style>
+</head>
+
+<body>
+
+<div style="background-color: #d0d0d0; min-height: calc(100vh - 56px); padding-bottom: 2rem;">
+<div class="container">
+
+    <div class="header">
+        Welcome to the UCS Shelter Management System
+    </div>
+
+    <div class="description">
+        This program will access the forms for each of the three<br>
+        Shelters depending upon the Drop-Down selection
+    </div>
+
+    <div class="shelters">
+        MENS SHELTER<br>
+        WOMANS SHELTER<br>
+        DIVERSION CENTER<br>
+        WHITE FLAG
+    </div>
+
+    <div class="dropdown-section">
+        <form method="GET" action="" id="mainForm">
+            <select name="shelter" id="shelterSelect">
+                <option value="mens">Men's Shelter</option>
+                <option value="womens">Woman's Shelter</option>
+                <option value="diversion">Diversion Center</option>
+                <option value="whiteflag">White Flag</option>
+            </select>
+            <p>Select the Drop-Down menu for the Shelter to Report on and press Go below</p>
+            <button type="button" class="go-btn" onclick="handleGo()">Go</button>
+        </form>
+    </div>
+
+    <form method="POST" class="admin-section">
+      {% csrf_token %}
+      <label>Administrator Login</label><br>
+      <input type="password" name="admin_password" autocomplete="current-password"><br>
+      <button type="submit" name="admin_login">Go</button>
+    </form>
+
+</div>
+</div>
+
+<script>
+    function handleGo() {
+        const shelter = document.getElementById('shelterSelect').value;
+        if (shelter === 'whiteflag') {
+            window.location.href = '/white-flag/';
+        } else {
+            window.location.href = '/shelters/?shelter=' + encodeURIComponent(shelter);
+        }
+    }
+</script>
+
+{% endblock %}

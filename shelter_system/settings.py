@@ -12,6 +12,11 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 
 from pathlib import Path
 import os
+from dotenv import load_dotenv
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+load_dotenv(BASE_DIR / ".env")
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -41,6 +46,9 @@ INSTALLED_APPS = [
     'dashboard',
     'reports',
     'shelters',
+    'mainscreen',
+    'whiteflag',
+    'admin_panel',
 ]
 
 MIDDLEWARE = [
@@ -116,12 +124,10 @@ USE_I18N = True
 USE_TZ = True
 
 
+ADMIN_PANEL_PASSWORD = "admin1234"
+
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
-STATIC_URL = '/static/'
-
-
-LOGIN_URL = '/login/'
-LOGIN_REDIRECT_URL = '/dashboard/'
-LOGOUT_REDIRECT_URL = '/login/'
+STATIC_URL = 'static/'

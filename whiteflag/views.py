@@ -1,0 +1,37 @@
+from django.shortcuts import render, get_object_or_404, redirect
+from .models import WhiteFlag
+from .forms  import WhiteFlagForm
+
+CAPACITY = 80
+
+def white_flag(request):
+    if request.method == 'POST':
+        form = WhiteFlagForm(request.POST)
+        if form.is_valid():
+            record = form.save()
+            return redirect('white_flag_edit', pk=record.pk)
+    else:
+        form = WhiteFlagForm()
+
+    return render(request, 'whiteflag/white_flag.html', {
+        'form'    : form,
+        'capacity': CAPACITY,
+        'record'  : None,
+    })
+
+
+def white_flag_edit(request, pk):
+    record = get_object_or_404(WhiteFlag, pk=pk)
+
+    if request.method == 'POST':
+        form = WhiteFlagForm(request.POST, instance=record)
+        if form.is_valid():
+            form.save()
+    else:
+        form = WhiteFlagForm(instance=record)
+
+    return render(request, 'whiteflag/white_flag.html', {
+        'form'    : form,
+        'capacity': CAPACITY,
+        'record'  : record,
+    })
