@@ -15,7 +15,7 @@ def shelters_home(request):
     if (shelter == 'mens'): TestSettingsModel.capacity = TestSettingsModel.mens_regular
     elif (shelter == 'womens'): TestSettingsModel.capacity = TestSettingsModel.womens_regular
     elif (shelter == 'diversion'): TestSettingsModel.capacity = TestSettingsModel.diversion_regular
-    else: raise
+    #else: raise
 
     if request.method == "POST":
         form_data = ShelterInputForm(request.POST)

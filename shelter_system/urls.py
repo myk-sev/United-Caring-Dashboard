@@ -6,7 +6,7 @@ import mainscreen.views
 urlpatterns = [
     path('', include('mainscreen.urls')),
     path('admin/', admin.site.urls),
-    path('accounts/', include('accounts.urls')),
+    path('', include('accounts.urls')),
     path('dashboard/', include('dashboard.urls')),
     path('reports/', include('reports.urls')),
     path('shelters/', include('shelters.urls')),

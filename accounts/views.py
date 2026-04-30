@@ -12,7 +12,7 @@ def login_view(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            return redirect('/dashboard/')  # redirect to dashboard after login
+            return redirect('')  # redirect to dashboard after login
         else:
             messages.error(request, 'Invalid username or password.')
 
