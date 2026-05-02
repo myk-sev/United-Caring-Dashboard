@@ -12,18 +12,39 @@
 
 
 <style>
-  * { box-sizing: border-box; }
+     * { box-sizing: border-box; }
 
-  body {
-    {% if shelter == "Mens Shelter" %}
+  html, body {
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+    {% if shelter == "mens" %}
       background-color: #bad8f8;
-    {% elif shelter == "Womans Shelter" %}
-      background-color: rgb(228, 189, 203);
-    {% elif shelter == "Diversion Center" %}
+    {% elif shelter == "womens" %}
+      background-color: #ffb6c1;
+    {% elif shelter == "diversion" %}
       background-color: rgb(205, 197, 197);
     {% else %}
       background-color: #d0d0d0;
     {% endif %}
+  }
+  html, body {
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+    {% if shelter == "mens" %}
+      background-color: #bad8f8;
+    {% elif shelter == "womens" %}
+      background-color: #ffb6c1;
+    {% elif shelter == "diversion" %}
+      background-color: rgb(205, 197, 197);
+    {% else %}
+      background-color: #d0d0d0;
+    {% endif %}
+  }
+
+  body {
+ 
     font-family: Arial, sans-serif;
   }
 
@@ -54,6 +75,16 @@
     max-width: 680px;
     margin: 2rem auto;
     padding: 0 1rem;
+    min-height: 100vh;
+    {% if shelter == "mens" %}
+      background-color: #bad8f8;
+    {% elif shelter == "womens" %}
+      background-color: rgb(228, 189, 203);
+    {% elif shelter == "diversion" %}
+      background-color: rgb(205, 197, 197);
+    {% else %}
+      background-color: #d0d0d0;
+    {% endif %}
   }
 
   .card {
