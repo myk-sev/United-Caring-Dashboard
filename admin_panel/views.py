@@ -31,7 +31,7 @@ def admin_page_one(request):
 @login_required
 def admin_page_two(request):
     """Administration Page 2 of 2 — Alter Records / Settings."""
-    data_retrieval = ShelterInputModel.objects.last()
+    #data_retrieval = ShelterInputModel.objects.last()
 
     if not request.session.get('is_admin'):
         return redirect('admin_login')
