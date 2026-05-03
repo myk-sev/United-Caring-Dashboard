@@ -30,7 +30,7 @@ SECRET_KEY = 'django-insecure-4q35w89iwpaf%c=5tvz6=65*i_$zcxmybvqllv-ip9kotw$350
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["united-caring.onrender.com"]
 
 
 # Application definition
@@ -138,3 +138,5 @@ ADMIN_PANEL_PASSWORD = "admin1234"
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / "staticfiles"
+DATABASE_URL= "postgresql://ucd_database_user:mw66M8RlXxaXgujwPo0fTlvQNULRUWAF@dpg-d7rqcrt7vvec73eaohs0-a/ucd_database"
