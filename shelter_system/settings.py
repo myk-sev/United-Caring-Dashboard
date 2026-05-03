@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/6.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
-
+import dj_database_url
 from pathlib import Path
 import os
 from dotenv import load_dotenv
@@ -25,12 +25,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-4q35w89iwpaf%c=5tvz6=65*i_$zcxmybvqllv-ip9kotw$350'
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["united-caring.onrender.com"]
+ALLOWED_HOSTS = ["united-caring-dashboard.onrender.com"]
 
 
 # Application definition
@@ -89,14 +89,10 @@ WSGI_APPLICATION = 'shelter_system.wsgi.application'
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'united_caring_dashboard',
-        'USER': 'postgres',
-        'PASSWORD': 'password',
-        'HOST': 'localhost',
-        'PORT': '5432',
-    }
+    "default": dj_database_url.config(
+        default=os.environ.get("DATABASE_URL"),
+        conn_max_age=600,
+    )
 }
 
 
@@ -139,4 +135,3 @@ ADMIN_PANEL_PASSWORD = "admin1234"
 
 STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR / "staticfiles"
-DATABASE_URL= "postgresql://ucd_database_user:mw66M8RlXxaXgujwPo0fTlvQNULRUWAF@dpg-d7rqcrt7vvec73eaohs0-a/ucd_database"
