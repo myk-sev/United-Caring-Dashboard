@@ -46,7 +46,7 @@ INSTALLED_APPS = [
     'dashboard',
     'reports',
     'shelters',
-    'mainscreen',
+    #'mainscreen',
     'whiteflag',
     'admin_panel',
 ]
@@ -90,8 +90,12 @@ WSGI_APPLICATION = 'shelter_system.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'united_caring_dashboard',
+        'USER': 'postgres',
+        'PASSWORD': 'password',
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
 
