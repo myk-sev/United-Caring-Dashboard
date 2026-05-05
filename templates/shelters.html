@@ -1,11 +1,11 @@
 {% extends 'base.html' %}
 {% block content %}
 <style>
-    {% if shelter == "Mens Shelter" %}
+    {% if shelter == "mens" %}
         body { background-color: #bad8f8; }
-    {% elif shelter == "Womans Shelter" %}
+    {% elif shelter == "womans" %}
         body { background-color: rgb(228, 189, 203); }  /* or whatever color you want */
-    {% elif shelter == "Diversion Center" %}
+    {% elif shelter == "diversion" %}
         body { background-color: rgb(205, 197, 197); }  /* or whatever color you want */
     {% endif %}
 </style>
@@ -15,11 +15,11 @@
   * { box-sizing: border-box; }
 
   body {
-    {% if shelter == "Mens Shelter" %}
+    {% if shelter == "mens" %}
       background-color: #bad8f8;
-    {% elif shelter == "Womans Shelter" %}
+    {% elif shelter == "womans" %}
       background-color: rgb(228, 189, 203);
-    {% elif shelter == "Diversion Center" %}
+    {% elif shelter == "diversion" %}
       background-color: rgb(205, 197, 197);
     {% else %}
       background-color: #d0d0d0;
@@ -379,17 +379,17 @@
       <div class="fields">
         <div class="field-row">
           <input id="regular_occupied" class="s-input" type="number" name="regular" min="0"
-                 value="{% if record %}{{ record.regular_occupied }}{% else %}0{% endif %}">
+                 value="{% if record %}{{ record.regular }}{% else %}0{% endif %}">
           <label>Regular Beds Occupied</label>
         </div>
         <div class="field-row">
           <input id="regular_open" class="s-input" type="number" name="regular_open" min="0"
-                 value="{% if record %}{{ record.regular_open }}{% else %}0{% endif %}">
+                 value="0">
           <label>Regular Open Beds</label>
         </div>
         <div class="field-row">
           <input class="s-input" type="number" name="guests" min="0"
-                 value="{% if record %}{{ record.guests_on_pass }}{% else %}0{% endif %}">
+                 value="{% if record %}{{ record.guests }}{% else %}0{% endif %}">
           <label>Guests On Pass</label>
         </div>
       </div>
@@ -432,13 +432,13 @@
       <div class="section-label">Respite Beds</div>
       <div class="fields">
         <div class="field-row">
-          <input id="respite_occupied" class="s-input" type="number" name="respite_occupied" min="0"
-                 value="{% if record %}{{ record.respite_occupied }}{% else %}0{% endif %}">
+          <input id="respite_occupied" class="s-input" type="number" name="respite" min="0"
+                 value="{% if record %}{{ record.respite }}{% else %}0{% endif %}">
           <label>Respite Occupied</label>
         </div>
         <div class="field-row">
           <input id="respite_open" class="s-input" type="number" name="respite_open" min="0"
-                 value="{% if record %}{{ record.respite_open }}{% else %}0{% endif %}">
+                 value="0">
           <label>Respite Open</label>
         </div>
       </div>

@@ -21,11 +21,15 @@ def shelters_home(request):
 
     if request.method == "POST":
         form_data = ShelterInputForm(request.POST)
+
         if form_data.is_valid():
             record = form_data.save(commit=False)
             record.save()
 
-            return HttpResponseRedirect(f"/shelters/shelter={record.shelter}")
+            return HttpResponseRedirect(f"/shelters/?shelter={record.shelter}")
+        else:
+            print("FORM ERRORS:", form_data.errors)
+            print("POST DATA:", request.POST)
 
     form = ShelterInputForm(initial={'shelter': shelter})
     return render(
