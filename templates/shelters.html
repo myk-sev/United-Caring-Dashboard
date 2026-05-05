@@ -442,7 +442,7 @@
         </div>
         <div class="field-row">
           <input class="s-input" type="number" name="no_show" min="0"
-                 value="{% if record %}{{ record.nc_ns }}{% else %}0{% endif %}">
+                 value="{% if record %}{{ record.no_show }}{% else %}0{% endif %}">
           <label>No Call / No Show</label>
         </div>
         <div class="field-row">
@@ -458,7 +458,7 @@
       </div>
 
       <!-- Respite Beds — Mens and Womans only -->
-      {% if shelter != "Diversion Center" %}
+      {% if shelter != "diversion" %}
       <hr class="divider">
       <div class="section-label">Respite Beds</div>
       <div class="fields">
