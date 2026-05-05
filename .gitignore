@@ -11,8 +11,5 @@ venv/
 .env
 myvenv/
 
-### Django ###
-migrations/
-
 ### Unknown ###
 /.idea/
