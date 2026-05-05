@@ -498,7 +498,7 @@
 <form method="POST">
 {% csrf_token %}
     <input type="hidden" name="alter_records" value="1">
-    <input type="hidden" name="old_id" value={{ id }}>
+    <input type="hidden" name="old_id" value={{ record.id }}>
   <div class="table-section">
     <div style="font-size:12px; font-weight:bold; text-align:center; margin-bottom:2px;">Record To Alter</div>
 
@@ -530,8 +530,8 @@
       </thead>
       <tbody>
         <tr>
-          <td><input class="alter-input" type="number" name="id" size="5" value={{ record.id }}></td>
-          <td><input class="alter-input" type="date" name="date" value={{ record.date }}></td>
+          <td><input class="alter-input" type="number" name="id" size="5" value="{{ record.id }}" disabled></td>
+          <td><input class="alter-input" type="date" name="date" value="{{ record.date|date:'Y-m-d' }}"></td>
           <td>
             <select class="alter-input" name="shelter">
               <option value="mens" {% if record.shelter == "mens" %}selected{% endif %}>Men's Shelter</option>
