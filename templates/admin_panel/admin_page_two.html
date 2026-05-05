@@ -427,7 +427,7 @@
 
   <!-- Password section -->
   <form method="POST">
-    {% csrf_token %}
+  {% csrf_token %}
     <input type="hidden" name="change_password" value="1">
     {% if messages %}
       {% for message in messages %}
@@ -456,7 +456,6 @@
       <span class="pw-label">ENTER NEW<br>PASSWORD AGAIN</span>
     </div>
     <button class="btn-change-pw" type="submit">CHANGE<br>ADMIN<br>PASSWORD</button>
-  </div>
   </form>
 
   <div style="height:6px;"></div>
@@ -464,6 +463,8 @@
   <!-- Alter Records -->
   <form>
     {% csrf_token %}
+      <input type="hidden" name="change_password" value="1">
+
     <div class="alter-records">
       <h2>ALTER RECORDS</h2>
       <p>SEARCH BY SHELTER, RECORD NUMBER OR DATE</p>
@@ -472,7 +473,7 @@
     <div class="search-row">
       <div class="search-group">
            <span class="search-label">SELECT SHELTER</span> <!-- DROP DOWN BOXES-->
-        <select class="shelter-select" name="search_shelter">
+        <select class="shelter-select" name="search_input_shelter">
           <option value="mens">Mens Shelter</option>
           <option value="womens">Womans Shelter</option>
           <option value="diversion">Diversion Center</option>
@@ -482,12 +483,12 @@
 
       <div class="search-group">
         <span class="search-label">SELECT RECORD NUMBER</span>
-        <input class="search-input" type="text" style="width:150px;" name="search_number">
+        <input class="search-input" type="text" style="width:150px;" name="search_input_id">
       </div>
       <span class="or-label">or</span>
       <div class="search-group">
         <span class="search-label">SELECT DATE</span>
-        <input class="search-input" type="date" style="width:110px;" name="search_date">
+        <input class="search-input" type="date" style="width:110px;" name="search_input_date">
       </div>
       <div class="search-group">
         <span class="search-label" style="visibility:hidden;">GO</span>
@@ -527,28 +528,28 @@
       </thead>
       <tbody>
         <tr>
-          <td><input class="alter-input" type="number" name="id" size="5" value={{ test_db.id }}></td>
-          <td><input class="alter-input" type="date" name="date" value={{ test_db.date }}></td>
+          <td><input class="alter-input" type="number" name="id" size="5" value={{ record.id }}></td>
+          <td><input class="alter-input" type="date" name="date" value={{ record.date }}></td>
           <td>
             <select class="alter-input" name="search_shelter">
-              <option value="mens" {% if test_db.shelter == "mens" %}selected{% endif %}>Men's Shelter</option>
-              <option value="womens" {% if test_db.shelter == "womens" %}selected{% endif %}>Woman's Shelter</option>
-              <option value="diversion" {% if test_db.shelter == "diversion" %}selected{% endif %}>Diversion Center</option>
-              <option value="whiteflag" {% if test_db.shelter == "whiteflag" %}selected{% endif %}>White Flag</option>
+              <option value="mens" {% if record.shelter == "mens" %}selected{% endif %}>Men's Shelter</option>
+              <option value="womens" {% if record.shelter == "womens" %}selected{% endif %}>Woman's Shelter</option>
+              <option value="diversion" {% if record.shelter == "diversion" %}selected{% endif %}>Diversion Center</option>
+              <option value="whiteflag" {% if record.shelter == "whiteflag" %}selected{% endif %}>White Flag</option>
             </select>
           </td>
-          <td><input class="alter-input" type="number" name="regular_occupied" size="2" value={{ test_db.regular_occupied }}></td>
-          <td><input class="alter-input" type="number" name="guests" size="2" value={{ test_db.guests }}></td>
-          <td><input class="alter-input" type="number" name="hospital" size="2" value={{ test_db.hospital }}></td>
-          <td><input class="alter-input" type="number" name="jail" size="2" value={{ test_db.jail }}></td>
-          <td><input class="alter-input" type="number" name="no_show" size="2" value={{ test_db.no_show }}></td>
-          <td><input class="alter-input" type="number" name="barred" size="2" value={{ test_db.barred }}></td>
-          <td><input class="alter-input" type="number" name="hold" size="2" value={{ test_db.hold }}></td>
-          <td><input class="alter-input" type="number" name="respite" size="2" value={{ test_db.respite }}></td>
-          <td><input class="alter-input" type="number" name="men" size="2" value={{ test_db.men }}></td>
-          <td><input class="alter-input" type="number" name="women" size="2" value={{ test_db.women }}></td>
-          <td><input class="alter-input" type="number" name="children" size="2" value={{ test_db.children }}></td>
-          <td><input class="alter-input" type="number" name="non_binary" size="2" value={{ test_db.non_binary }}></td>
+          <td><input class="alter-input" type="number" name="regular_occupied" size="2" value={{ record.regular_occupied }}></td>
+          <td><input class="alter-input" type="number" name="guests" size="2" value={{ record.guests }}></td>
+          <td><input class="alter-input" type="number" name="hospital" size="2" value={{ record.hospital }}></td>
+          <td><input class="alter-input" type="number" name="jail" size="2" value={{ record.jail }}></td>
+          <td><input class="alter-input" type="number" name="no_show" size="2" value={{ record.no_show }}></td>
+          <td><input class="alter-input" type="number" name="barred" size="2" value={{ record.barred }}></td>
+          <td><input class="alter-input" type="number" name="hold" size="2" value={{ record.hold }}></td>
+          <td><input class="alter-input" type="number" name="respite" size="2" value={{ record.respite }}></td>
+          <td><input class="alter-input" type="number" name="men" size="2" value={{ record.men }}></td>
+          <td><input class="alter-input" type="number" name="women" size="2" value={{ record.women }}></td>
+          <td><input class="alter-input" type="number" name="children" size="2" value={{ record.children }}></td>
+          <td><input class="alter-input" type="number" name="non_binary" size="2" value={{ record.non_binary }}></td>
         </tr>
       </tbody>
     </table>

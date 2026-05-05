@@ -31,52 +31,47 @@ def admin_page_one(request):
 @login_required
 def admin_page_two(request):
     """Administration Page 2 of 2 — Alter Records / Settings."""
-    #data_retrieval = ShelterInputModel.objects.last()
+    record = None #ensure default display is empty
 
     if not request.session.get('is_admin'):
         return redirect('admin_login')
 
-    if request.method == 'POST' and 'change_password' in request.POST:
-        old_pw  = request.POST.get('old_password', '')
-        new_pw1 = request.POST.get('new_password1', '')
-        new_pw2 = request.POST.get('new_password2', '')
+    if request.method == 'POST':
+        if 'change_password' in request.POST:
+            old_pw  = request.POST.get('old_password', '')
+            new_pw1 = request.POST.get('new_password1', '')
+            new_pw2 = request.POST.get('new_password2', '')
 
-        if old_pw != settings.ADMIN_PANEL_PASSWORD:
-            messages.error(request, 'Old password is incorrect.')
-        elif new_pw1 != new_pw2:
-            messages.error(request, 'New passwords do not match.')
-        elif len(new_pw1) < 4:
-            messages.error(request, 'New password is too short (minimum 4 characters).')
-        else:
-            settings.ADMIN_PANEL_PASSWORD = new_pw1
-            messages.success(request, 'Password updated successfully.')
+            if old_pw != settings.ADMIN_PANEL_PASSWORD:
+                messages.error(request, 'Old password is incorrect.')
+            elif new_pw1 != new_pw2:
+                messages.error(request, 'New passwords do not match.')
+            elif len(new_pw1) < 4:
+                messages.error(request, 'New password is too short (minimum 4 characters).')
+            else:
+                settings.ADMIN_PANEL_PASSWORD = new_pw1
+                messages.success(request, 'Password updated successfully.')
+
+        elif 'alter_records' in request.POST:
+            search_input_id = request.POST.get('search_input_id', '')
+            search_input_date = request.POST.get('search_input_date', '')
+            search_input_shelter = request.POST.get('search_input_shelter', '')
+            
+            if search_input_id != "":
+                record = ShelterInputModel.objects.get(id=int(search_input_id))
+            else:
+                record = ShelterInputModel.objects.filter(date=search_input_date).get(shelter=search_input_shelter)
+
+            return render( request, 'admin_panel/admin_page_two.html', {"record": record})
 
     return render(
         request,
         'admin_panel/admin_page_two.html',
-        {#"db_entry": data_retrieval,
-         "test": "diversion",
-         "test_db": temp})
+        {"record": record}
+    )
 
 @login_required
 def admin_logout(request):
     """Clear admin session and return to main screen."""
     request.session.pop('is_admin', None)
     return redirect('mainscreen')
-
-class temp:
-    id = 5
-    date = "2026-12-12"
-    shelter = "diversion"
-    regular_occupied = 10
-    guests = 21
-    hospital = 31
-    jail = 41
-    no_show = 10
-    barred = 7
-    hold = 5
-    respite = 10
-    men = 40
-    women = 50
-    children = 2
-    non_binary = 100
