@@ -11,5 +11,5 @@ venv/
 .env
 myvenv/
 
-### Unknown ###
+### PyCharm ###
 /.idea/

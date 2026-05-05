@@ -427,6 +427,7 @@
   <form method="POST">
   {% csrf_token %}
     <input type="hidden" name="change_password" value="1">
+        <div style="font-size:15px; font-weight:bold; margin: 8px 8px -30px;">ADMIN LOGIN CHANGE</div>
     {% if messages %}
       {% for message in messages %}
         <div style="text-align:center;font-weight:bold;font-size:13px;color:{% if message.tags == 'error' %}#8b0000{% else %}#1a5c1a{% endif %};">
@@ -449,13 +450,29 @@
       </div>
       <button class="btn-change-pw" type="submit">CHANGE<br>ADMIN<br>PASSWORD</button>
     </div>
-    <div class="pw-group">
-      <input class="pw-input" type="password" name="new_password2" autocomplete="new-password">
-      <span class="pw-label">ENTER NEW<br>PASSWORD AGAIN</span>
-    </div>
-    <button class="btn-change-pw" type="submit">CHANGE<br>ADMIN<br>PASSWORD</button>
   </form>
 
+<!-- Login Password section -->
+  <form method="POST">
+    {% csrf_token %}
+    <input type="hidden" name="change_login_password" value="1">
+    <div style="font-size:15px; font-weight:bold; margin: 8px 8px -30px;">APP LOGIN CHANGE</div>
+    <div class="password-section">
+      <div class="pw-group">
+        <input class="pw-input" type="password" name="login_old_password" autocomplete="current-password">
+        <span class="pw-label">ENTER OLD<br>PASSWORD</span>
+      </div>
+      <div class="pw-group">
+        <input class="pw-input" type="password" name="login_new_password1" autocomplete="new-password">
+        <span class="pw-label">ENTER NEW<br>PASSWORD</span>
+      </div>
+      <div class="pw-group">
+        <input class="pw-input" type="password" name="login_new_password2" autocomplete="new-password">
+        <span class="pw-label">ENTER NEW<br>PASSWORD AGAIN</span>
+      </div>
+      <button class="btn-change-pw" type="submit">CHANGE<br>LOGIN<br>PASSWORD</button>
+    </div>
+  </form>
   <div style="height:6px;"></div>
 
   <!-- Alter Records -->
