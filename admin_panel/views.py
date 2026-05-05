@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.conf import settings
 from shelters.models import ShelterInputModel
+from shelters.form import ShelterInputForm
 from django.contrib.auth.decorators import login_required
 
 @login_required
@@ -52,7 +53,7 @@ def admin_page_two(request):
                 settings.ADMIN_PANEL_PASSWORD = new_pw1
                 messages.success(request, 'Password updated successfully.')
 
-        elif 'alter_records' in request.POST:
+        elif "search_records" in request.POST:
             search_input_id = request.POST.get('search_input_id', '')
             search_input_date = request.POST.get('search_input_date', '')
             search_input_shelter = request.POST.get('search_input_shelter', '')
@@ -63,6 +64,21 @@ def admin_page_two(request):
                 record = ShelterInputModel.objects.filter(date=search_input_date).get(shelter=search_input_shelter)
 
             return render( request, 'admin_panel/admin_page_two.html', {"record": record})
+        elif "alter_records" in request.POST:
+            old_id = request.POST.get("old_id")
+            old_record = ShelterInputModel.objects.get(id=old_id)
+            old_record.delete()
+
+            form_data = ShelterInputForm(request.POST)
+
+            if form_data.is_valid():
+                record = form_data.save(commit=False)
+                record.save()
+
+                record = None
+            else:
+                print("FORM ERRORS:", form_data.errors)
+                print("POST DATA:", request.POST)
 
     return render(
         request,

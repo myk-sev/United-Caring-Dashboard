@@ -364,8 +364,6 @@
   .btn-go:active { border-style: inset; }
 
 </style>
-
-</head>
 <body>
 <div class="page">
 
@@ -383,8 +381,8 @@
 
   <!-- Shelter column labels -->
   <div class="shelter-headers">
-    <span>Mens Shelter</span>
-    <span>Womans Shelter</span>
+    <span>Men's Shelter</span>
+    <span>Woman's Shelter</span>
     <span>Diversion Center</span>
     <span>White Flag</span>
   </div>
@@ -461,9 +459,9 @@
   <div style="height:6px;"></div>
 
   <!-- Alter Records -->
-  <form>
+  <form method="POST">
     {% csrf_token %}
-      <input type="hidden" name="change_password" value="1">
+      <input type="hidden" name="search_records" value="1">
 
     <div class="alter-records">
       <h2>ALTER RECORDS</h2>
@@ -497,6 +495,10 @@
     </div>
   </form>
   <!-- Table -->
+<form method="POST">
+{% csrf_token %}
+    <input type="hidden" name="alter_records" value="1">
+    <input type="hidden" name="old_id" value={{ id }}>
   <div class="table-section">
     <div style="font-size:12px; font-weight:bold; text-align:center; margin-bottom:2px;">Record To Alter</div>
 
@@ -504,7 +506,7 @@
       <thead>
         <tr>
           <th style="background:transparent; border:none;"></th> <!-- blank cell for the row-label column -->
-          <th colspan="11" style="background:transparent; border:none;"></th>
+          <th colspan="10" style="background:transparent; border:none;"></th>
           <th colspan="4" style="background:#c8c8c8;">White Flag</th>
 
         </tr>
@@ -531,14 +533,14 @@
           <td><input class="alter-input" type="number" name="id" size="5" value={{ record.id }}></td>
           <td><input class="alter-input" type="date" name="date" value={{ record.date }}></td>
           <td>
-            <select class="alter-input" name="search_shelter">
+            <select class="alter-input" name="shelter">
               <option value="mens" {% if record.shelter == "mens" %}selected{% endif %}>Men's Shelter</option>
               <option value="womens" {% if record.shelter == "womens" %}selected{% endif %}>Woman's Shelter</option>
               <option value="diversion" {% if record.shelter == "diversion" %}selected{% endif %}>Diversion Center</option>
               <option value="whiteflag" {% if record.shelter == "whiteflag" %}selected{% endif %}>White Flag</option>
             </select>
           </td>
-          <td><input class="alter-input" type="number" name="regular_occupied" size="2" value={{ record.regular }}></td>
+          <td><input class="alter-input" type="number" name="regular" size="2" value={{ record.regular }}></td>
           <td><input class="alter-input" type="number" name="guests" size="2" value={{ record.guests }}></td>
           <td><input class="alter-input" type="number" name="hospital" size="2" value={{ record.hospital }}></td>
           <td><input class="alter-input" type="number" name="jail" size="2" value={{ record.jail }}></td>
@@ -570,6 +572,7 @@
       <button class="btn-save">SAVE CHANGES<br>FOR WHITE FLAG</button>
     </div>
   </div>
+</form>
 
   <!-- Bottom buttons -->
   <div class="bottom-buttons">
