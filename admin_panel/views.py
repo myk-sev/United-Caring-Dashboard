@@ -37,10 +37,11 @@ def admin_page_two(request):
     if not request.session.get('is_admin'):
         return redirect('admin_login')
 
-    if request.method == 'POST' and 'change_password' in request.POST:
-        old_pw  = request.POST.get('old_password', '')
-        new_pw1 = request.POST.get('new_password1', '')
-        new_pw2 = request.POST.get('new_password2', '')
+    if request.method == 'POST':
+        if 'change_password' in request.POST:
+            old_pw  = request.POST.get('old_password', '')
+            new_pw1 = request.POST.get('new_password1', '')
+            new_pw2 = request.POST.get('new_password2', '')
 
         if old_pw != settings.ADMIN_PANEL_PASSWORD:
             messages.error(request, 'Old password is incorrect.')
