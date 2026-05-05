@@ -31,7 +31,7 @@ class WhiteFlag(models.Model):
     submitted_at  = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        app_label = 'United-Caring-Dashboard'
+        app_label = 'shelters'
         ordering  = ['-submitted_at']
 
     def save(self, *args, **kwargs):

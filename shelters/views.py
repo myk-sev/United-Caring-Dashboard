@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 class TestSettingsModel:
     mens_regular = 50
     womens_regular = 40
-    diversion_regular = 30
+    diversion_regular = 5
     capacity = -1
 
 @login_required

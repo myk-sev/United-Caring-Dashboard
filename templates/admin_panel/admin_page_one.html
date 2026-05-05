@@ -321,23 +321,23 @@
           <div class="val-label">Respite Beds Total</div>
         </div>
         <div class="data-row centered">
-          <div class="val-box green">14</div>
+         <div class="val-box green">{{ mens_regular_available }}</div>
           <div class="val-label">Regular Beds<br>Available</div>
         </div>
         <div class="data-row centered">
-          <div class="val-box">36</div>
+          <div class="val-box">{{ mens_data.regular }}</div>
           <div class="val-label">Regular Beds<br>occupied</div>
         </div>
         <div class="data-row centered">
-          <div class="val-box green">4</div>
+          <div class="val-box green">{{ mens_respite_available }}</div>
           <div class="val-label">Respite Beds Available</div>
         </div>
         <div class="data-row centered">
-          <div class="val-box">3</div>
+         <div class="val-box">{{ mens_data.respite }}</div>
           <div class="val-label">Respite Beds occupied</div>
         </div>
         <div class="record-row">
-          <input class="record-input" type="text" placeholder="">
+        <input class="record-input" type="text" value="{{ mens_data.id }}" readonly>
           <span class="record-label">Record Number</span>
         </div>
       </div>
@@ -391,7 +391,7 @@
           <div class="val-label">Respite Beds occupied</div>
         </div>
         <div class="record-row">
-          <input class="record-input" type="text" placeholder="">
+          <input class="record-input" type="text" value="{{ womens_data.id }}" readonly>
           <span class="record-label">Record Number</span>
         </div>
       </div>
@@ -424,15 +424,20 @@
           <div class="val-box green">3</div>
           <div class="val-label">Regular Beds<br>Available</div>
         </div>
+
         <div class="data-row centered">
-          <div class="val-box">2</div>
+          <div class="val-box">{{ diversion_data.regular }}</div>
           <div class="val-label">Regular Beds<br>occupied</div>
         </div>
-        <div style="flex:0.55"></div> <!--This is where to adjust the height of the Record Number. Larger moves down, smaller up.-----------------------------------------------------   >  --> 
+        <!--<div style="flex:0.22"></div> This is where to adjust the height of the Record Number. Larger moves down, smaller up.----------------------------------   >  --> 
+        <div style="height:120px"></div>
+
+
         <div class="record-row">
-          <input class="record-input" type="text" placeholder="">
-          <span class="record-label">Record Number</span>
-        </div>
+        <input class="record-input" type="text" value="{{ diversion_data.id }}" readonly>
+        <span class="record-label">Record Number</span>
+      </div>
+
       </div>
       <div class="util-box-wrap">
         <div class="util-box"></div>
@@ -463,31 +468,31 @@
           <div class="wf-label">Openings Total</div>
         </div>
         <div class="wf-row">
-          <div class="wf-val">38</div>
+          <div class="wf-val">{{ whiteflag_data.men }}</div>
           <div class="wf-label">Number of Men</div>
         </div>
         <div class="wf-row">
-          <div class="wf-val">12</div>
+          <div class="wf-val">{{ whiteflag_data.women }}</div>
           <div class="wf-label">Number of<br>Women</div>
         </div>
         <div class="wf-row">
-          <div class="wf-val">3</div>
+          <div class="wf-val">{{ whiteflag_data.children }}</div>
           <div class="wf-label">Number of<br>Children</div>
         </div>
         <div class="wf-row">
-          <div class="wf-val">5</div>
+          <div class="wf-val">{{ whiteflag_data.non_binary }}</div>
           <div class="wf-label">Number of Non-<br>Binary</div>
         </div>
         <div class="wf-row">
-          <div class="wf-val green">22</div>
+          <div class="wf-val green">{{ whiteflag_available }}</div>
           <div class="wf-label">Openings Available</div>
         </div>
         <div class="wf-row">
-          <div class="wf-val">58</div>
+          <div class="wf-val">{{ whiteflag_occupied }}</div>
           <div class="wf-label">Openings occupied</div>
         </div>
         <div class="record-row">
-          <input class="record-input" type="text" placeholder="">
+          <input class="record-input" type="text" value="{{ whiteflag_data.record_number }}" readonly>
           <span class="record-label">Record Number</span>
         </div>
       </div>
@@ -525,16 +530,15 @@
   }
 
   // Mens Regular — scale to 50 (Regular Beds Total)
-  makeBar('mensRegChart', [''], [
-    { label: 'Occupied', data: [36], backgroundColor: '#4472c4', barPercentage: 0.5 },
-    { label: 'Available', data: [14], backgroundColor: '#70ad47', barPercentage: 0.5 }
-  ], 50);
+makeBar('mensRegChart', [''], [
+    { label: 'Occupied', data: [{{ mens_data.regular }}], backgroundColor: '#4472c4', barPercentage: 0.5 },
+    { label: 'Available', data: [{{ mens_regular_available }}], backgroundColor: '#70ad47', barPercentage: 0.5 }
+], 50);
 
-  // Mens Respite — scale to 7 (Respite Beds Total)
-  makeBar('mensRespChart', [''], [
-    { label: 'Occupied', data: [3], backgroundColor: '#ed7d31', barPercentage: 0.5 },
-    { label: 'Available', data: [4], backgroundColor: '#70ad47', barPercentage: 0.5 }
-  ], 7);
+makeBar('mensRespChart', [''], [
+    { label: 'Occupied', data: [{{ mens_data.respite }}], backgroundColor: '#ed7d31', barPercentage: 0.5 },
+    { label: 'Available', data: [{{ mens_respite_available }}], backgroundColor: '#70ad47', barPercentage: 0.5 }
+], 7);
 
   // Womens Regular — scale to 22 (Regular Beds Total)
   makeBar('womensRegChart', [''], [
@@ -555,13 +559,13 @@
   ], 5);
 
   // White Flag — scale to 80 (Openings Total)
-  makeBar('wfChart', [''], [
-    { label: 'Occupied',   data: [58], backgroundColor: '#4472c4', barPercentage: 0.5 },
-    { label: 'Available',  data: [22], backgroundColor: '#70ad47', barPercentage: 0.5 },
-    { label: 'Men',        data: [38], backgroundColor: '#ed7d31', barPercentage: 0.5 },
-    { label: 'Women',      data: [12], backgroundColor: '#ffc000', barPercentage: 0.5 },
-    { label: 'Children',   data: [3],  backgroundColor: '#5b9bd5', barPercentage: 0.5 },
-    { label: 'Non-Binary', data: [5],  backgroundColor: '#7030a0', barPercentage: 0.5 }
-  ], 80);
+makeBar('wfChart', [''], [
+    { label: 'Occupied',   data: [{{ whiteflag_occupied }}], backgroundColor: '#4472c4', barPercentage: 0.5 },
+    { label: 'Available',  data: [{{ whiteflag_available }}], backgroundColor: '#70ad47', barPercentage: 0.5 },
+    { label: 'Men',        data: [{{ whiteflag_data.men }}], backgroundColor: '#ed7d31', barPercentage: 0.5 },
+    { label: 'Women',      data: [{{ whiteflag_data.women }}], backgroundColor: '#ffc000', barPercentage: 0.5 },
+    { label: 'Children',   data: [{{ whiteflag_data.children }}], backgroundColor: '#5b9bd5', barPercentage: 0.5 },
+    { label: 'Non-Binary', data: [{{ whiteflag_data.non_binary }}], backgroundColor: '#7030a0', barPercentage: 0.5 }
+], 80);
 </script>
 {% endblock %}
