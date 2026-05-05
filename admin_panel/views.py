@@ -43,15 +43,6 @@ def admin_page_two(request):
             new_pw1 = request.POST.get('new_password1', '')
             new_pw2 = request.POST.get('new_password2', '')
 
-        if old_pw != settings.ADMIN_PANEL_PASSWORD:
-            messages.error(request, 'Old password is incorrect.')
-        elif new_pw1 != new_pw2:
-            messages.error(request, 'New passwords do not match.')
-        elif len(new_pw1) < 4:
-            messages.error(request, 'New password is too short (minimum 4 characters).')
-        else:
-            settings.ADMIN_PANEL_PASSWORD = new_pw1
-            messages.success(request, 'Password updated successfully.')
             if old_pw != settings.ADMIN_PANEL_PASSWORD:
                 messages.error(request, 'Old password is incorrect.')
             elif new_pw1 != new_pw2:
@@ -62,32 +53,32 @@ def admin_page_two(request):
                 settings.ADMIN_PANEL_PASSWORD = new_pw1
                 messages.success(request, 'Password updated successfully.')
 
-        elif "search_records" in request.POST:
-            search_input_id = request.POST.get('search_input_id', '')
-            search_input_date = request.POST.get('search_input_date', '')
-            search_input_shelter = request.POST.get('search_input_shelter', '')
-            
-            if search_input_id != "":
-                record = ShelterInputModel.objects.get(id=int(search_input_id))
-            else:
-                record = ShelterInputModel.objects.filter(date=search_input_date).get(shelter=search_input_shelter)
+    elif "search_records" in request.POST:
+        search_input_id = request.POST.get('search_input_id', '')
+        search_input_date = request.POST.get('search_input_date', '')
+        search_input_shelter = request.POST.get('search_input_shelter', '')
 
-            return render( request, 'admin_panel/admin_page_two.html', {"record": record})
-        elif "alter_records" in request.POST:
-            old_id = request.POST.get("old_id")
-            old_record = ShelterInputModel.objects.get(id=old_id)
-            old_record.delete()
+        if search_input_id != "":
+            record = ShelterInputModel.objects.get(id=int(search_input_id))
+        else:
+            record = ShelterInputModel.objects.filter(date=search_input_date).get(shelter=search_input_shelter)
 
-            form_data = ShelterInputForm(request.POST)
+        return render( request, 'admin_panel/admin_page_two.html', {"record": record})
+    elif "alter_records" in request.POST:
+        old_id = request.POST.get("old_id")
+        old_record = ShelterInputModel.objects.get(id=old_id)
+        old_record.delete()
 
-            if form_data.is_valid():
-                record = form_data.save(commit=False)
-                record.save()
+        form_data = ShelterInputForm(request.POST)
 
-                record = None
-            else:
-                print("FORM ERRORS:", form_data.errors)
-                print("POST DATA:", request.POST)
+        if form_data.is_valid():
+            record = form_data.save(commit=False)
+            record.save()
+
+            record = None
+        else:
+            print("FORM ERRORS:", form_data.errors)
+            print("POST DATA:", request.POST)
 
     return render(
         request,
