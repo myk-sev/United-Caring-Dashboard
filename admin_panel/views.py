@@ -3,6 +3,8 @@ from django.contrib import messages
 from django.conf import settings
 from shelters.models import ShelterInputModel
 from shelters.form import ShelterInputForm
+from whiteflag.models import WhiteFlag
+from whiteflag.forms import WhiteFlagForm
 from django.contrib.auth.decorators import login_required
 
 @login_required
@@ -33,6 +35,7 @@ def admin_page_one(request):
 def admin_page_two(request):
     """Administration Page 2 of 2 — Alter Records / Settings."""
     record = None #ensure default display is empty
+    record_type = None
 
     if not request.session.get('is_admin'):
         return redirect('admin_login')
@@ -57,33 +60,62 @@ def admin_page_two(request):
             search_input_id = request.POST.get('search_input_id', '')
             search_input_date = request.POST.get('search_input_date', '')
             search_input_shelter = request.POST.get('search_input_shelter', '')
-            
-            if search_input_id != "":
-                record = ShelterInputModel.objects.get(id=int(search_input_id))
-            else:
-                record = ShelterInputModel.objects.filter(date=search_input_date).get(shelter=search_input_shelter)
 
-            return render( request, 'admin_panel/admin_page_two.html', {"record": record})
+            if search_input_shelter == 'whiteflag':
+                if search_input_id != "":
+                    record = WhiteFlag.objects.get(record_number=int(search_input_id))
+
+                else:
+                    record = WhiteFlag.objects.filter(submitted_at__date=search_input_date).first()
+
+                record_type = 'whiteflag'
+
+            else:
+                if search_input_id != "":
+                    record = ShelterInputModel.objects.get(id=int(search_input_id))
+                else:
+                    record = ShelterInputModel.objects.filter(date=search_input_date).get(shelter=search_input_shelter)
+
+                record_type = 'shelter'
+            return render(request, 'admin_panel/admin_page_two.html', {"record": record, "record_type": record_type})
+
         elif "alter_records" in request.POST:
+            record_type = request.POST.get('record_type', 'shelter')
             old_id = request.POST.get("old_id")
-            old_record = ShelterInputModel.objects.get(id=old_id)
-            old_record.delete()
 
-            form_data = ShelterInputForm(request.POST)
+            if record_type == 'whiteflag':
+                old_record = WhiteFlag.objects.get(record_number=old_id)
+                form_data = WhiteFlagForm(request.POST, instance=old_record)
 
-            if form_data.is_valid():
-                record = form_data.save(commit=False)
-                record.save()
+                if form_data.is_valid():
+                    form_data.save()
+                    record = None
+                    record_type = None
 
-                record = None
+                else:
+                    record = old_record
+
             else:
-                print("FORM ERRORS:", form_data.errors)
-                print("POST DATA:", request.POST)
+                old_record = ShelterInputModel.objects.get(id=old_id)
+                old_record.delete()
+                form_data = ShelterInputForm(request.POST)
+
+                if form_data.is_valid():
+                    record = form_data.save(commit=False)
+                    record.save()
+                    record = None
+                    record_type = None
+
+                else:
+                    print("FORM ERRORS:", form_data.errors)
+                    print("POST DATA:", request.POST)
+                    record = old_record
+                    record_type = 'shelter'
 
     return render(
         request,
-        'admin_panel/admin_page_two.html',
-        {"record": record}
+    'admin_panel/admin_page_two.html',
+    {"record": record, "record_type": record_type}
     )
 
 @login_required

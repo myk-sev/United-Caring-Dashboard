@@ -458,6 +458,9 @@
       </div>
 
       <!-- Respite Beds — Mens and Womans only -->
+      {% if shelter == "diversion" %}
+        <input type="hidden" name="respite" value="0">
+      {% endif %}
       {% if shelter != "diversion" %}
       <hr class="divider">
       <div class="section-label">Respite Beds</div>
