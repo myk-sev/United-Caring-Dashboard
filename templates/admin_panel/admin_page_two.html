@@ -515,7 +515,8 @@
 <form method="POST">
 {% csrf_token %}
     <input type="hidden" name="alter_records" value="1">
-    <input type="hidden" name="old_id" value={{ record.id }}>
+    <input type="hidden" name="old_id" value="{% if record_type == 'whiteflag' %}{{ record.record_number }}{% else %}{{ record.id }}{% endif %}">
+    <input type="hidden" name="record_type" value="{{ record_type|default:'shelter' }}">
   <div class="table-section">
     <div style="font-size:12px; font-weight:bold; text-align:center; margin-bottom:2px;">Record To Alter</div>
 
@@ -547,28 +548,28 @@
       </thead>
       <tbody>
         <tr>
-          <td><input class="alter-input" type="number" name="id" size="5" value="{{ record.id }}" disabled></td>
-          <td><input class="alter-input" type="date" name="date" value="{{ record.date|date:'Y-m-d' }}"></td>
+          <td><input class="alter-input" type="number" name="id" size="5" value="{% if record_type == 'whiteflag' %}{{ record.record_number }}{% else %}{{ record.id }}{% endif %}" disabled></td>
+          <td><input class="alter-input" type="date" name="date" value="{% if record_type == 'whiteflag' %}{{ record.submitted_at|date:'Y-m-d' }}{% else %}{{ record.date|date:'Y-m-d' }}{% endif %}" {% if record_type == 'whiteflag' %}disabled{% endif %}></td>
           <td>
-            <select class="alter-input" name="shelter">
+            <select class="alter-input" name="shelter" {% if record_type == 'whiteflag' %}disabled{% endif %}>
               <option value="mens" {% if record.shelter == "mens" %}selected{% endif %}>Men's Shelter</option>
               <option value="womens" {% if record.shelter == "womens" %}selected{% endif %}>Woman's Shelter</option>
               <option value="diversion" {% if record.shelter == "diversion" %}selected{% endif %}>Diversion Center</option>
               <option value="whiteflag" {% if record.shelter == "whiteflag" %}selected{% endif %}>White Flag</option>
             </select>
           </td>
-          <td><input class="alter-input" type="number" name="regular" size="2" value={{ record.regular }}></td>
-          <td><input class="alter-input" type="number" name="guests" size="2" value={{ record.guests }}></td>
-          <td><input class="alter-input" type="number" name="hospital" size="2" value={{ record.hospital }}></td>
-          <td><input class="alter-input" type="number" name="jail" size="2" value={{ record.jail }}></td>
-          <td><input class="alter-input" type="number" name="no_show" size="2" value={{ record.no_show }}></td>
-          <td><input class="alter-input" type="number" name="barred" size="2" value={{ record.barred }}></td>
-          <td><input class="alter-input" type="number" name="hold" size="2" value={{ record.hold }}></td>
-          <td><input class="alter-input" type="number" name="respite" size="2" value={{ record.respite }}></td>
-          <td><input class="alter-input" type="number" name="men" size="2" value={{ record.men }}></td>
-          <td><input class="alter-input" type="number" name="women" size="2" value={{ record.women }}></td>
-          <td><input class="alter-input" type="number" name="children" size="2" value={{ record.children }}></td>
-          <td><input class="alter-input" type="number" name="non_binary" size="2" value={{ record.non_binary }}></td>
+          <td><input class="alter-input" type="number" name="regular" size="2" value="{{ record.regular }}" {% if record_type == 'whiteflag' %}disabled{% endif %}></td>
+          <td><input class="alter-input" type="number" name="guests" size="2" value="{{ record.guests }}" {% if record_type == 'whiteflag' %}disabled{% endif %}></td>
+          <td><input class="alter-input" type="number" name="hospital" size="2" value="{{ record.hospital }}" {% if record_type == 'whiteflag' %}disabled{% endif %}></td>
+          <td><input class="alter-input" type="number" name="jail" size="2" value="{{ record.jail }}" {% if record_type == 'whiteflag' %}disabled{% endif %}></td>
+          <td><input class="alter-input" type="number" name="no_show" size="2" value="{{ record.no_show }}" {% if record_type == 'whiteflag' %}disabled{% endif %}></td>
+          <td><input class="alter-input" type="number" name="barred" size="2" value="{{ record.barred }}" {% if record_type == 'whiteflag' %}disabled{% endif %}></td>
+          <td><input class="alter-input" type="number" name="hold" size="2" value="{{ record.hold }}" {% if record_type == 'whiteflag' %}disabled{% endif %}></td>
+          <td><input class="alter-input" type="number" name="respite" size="2" value="{{ record.respite }}" {% if record_type == 'whiteflag' %}disabled{% endif %}></td>
+          <td><input class="alter-input" type="number" name="men" size="2" value="{{ record.men }}"></td>
+          <td><input class="alter-input" type="number" name="women" size="2" value="{{ record.women }}"></td>
+          <td><input class="alter-input" type="number" name="children" size="2" value="{{ record.children }}"></td>
+          <td><input class="alter-input" type="number" name="non_binary" size="2" value="{{ record.non_binary }}"></td>
         </tr>
       </tbody>
     </table>
@@ -581,12 +582,12 @@
 
     <!-- centre: Save Changes to Database -->
     <div class="save-center">
-      <button class="btn-save">SAVE CHANGES<br>TO DATABASE</button>
+      <button class="btn-save" type="submit">SAVE CHANGES<br>TO DATABASE</button>
     </div>
 
     <!-- right: Save Changes for White Flag -->
     <div class="save-right">
-      <button class="btn-save">SAVE CHANGES<br>FOR WHITE FLAG</button>
+      <button class="btn-save" type="submit">SAVE CHANGES<br>FOR WHITE FLAG</button>
     </div>
   </div>
 </form>
