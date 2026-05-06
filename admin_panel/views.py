@@ -6,6 +6,8 @@ from shelters.form import ShelterInputForm
 from whiteflag.models import WhiteFlag
 from whiteflag.forms import WhiteFlagForm
 from django.contrib.auth.decorators import login_required
+from shelters.models import ShelterInputModel
+from whiteflag.models import WhiteFlag
 
 @login_required
 def admin_login(request): #Creates a login page for the admin panel. If the password is correct, it sets a session variable to indicate that the user is an admin and redirects to the first admin page. If the password is incorrect, it shows an error message.
@@ -29,7 +31,41 @@ def admin_page_one(request):
     """Administration Page 1 of 2 — Daily Records / Charts."""
     if not request.session.get('is_admin'):
         return redirect('admin_login')
-    return render(request, 'admin_panel/admin_page_one.html')
+    
+    mens_data = ShelterInputModel.objects.filter(shelter='mens').last()
+    womens_data = ShelterInputModel.objects.filter(shelter='womens').last()
+    diversion_data = ShelterInputModel.objects.filter(shelter='diversion').last()
+    whiteflag_data = WhiteFlag.objects.first()
+    
+    mens_regular_total = 50
+    mens_respite_total = 7
+    womens_regular_total = 22
+    womens_respite_total = 4
+    diversion_regular_total = 5
+    whiteflag_total = 80
+
+    mens_regular_available = mens_regular_total - mens_data.regular if mens_data else 0
+    mens_respite_available = mens_respite_total - mens_data.respite if mens_data else 0
+    womens_regular_available = womens_regular_total - womens_data.regular if womens_data else 0
+    womens_respite_available = womens_respite_total - womens_data.respite if womens_data else 0
+    diversion_regular_available = diversion_regular_total - diversion_data.regular if diversion_data else 0
+    whiteflag_occupied = whiteflag_data.total if whiteflag_data else 0
+    whiteflag_available = whiteflag_total - whiteflag_occupied if whiteflag_data else 0
+
+    return render(request, 'admin_panel/admin_page_one.html', {
+        'mens_data': mens_data,
+        'mens_regular_available': mens_regular_available,
+        'mens_respite_available': mens_respite_available,
+        'womens_data': womens_data,
+        'womens_regular_available': womens_regular_available,
+        'womens_respite_available': womens_respite_available,
+        'diversion_data': diversion_data,
+        'diversion_regular_available': diversion_regular_available,
+        'whiteflag_data': whiteflag_data,
+        'whiteflag_available': whiteflag_available,
+        'whiteflag_occupied': whiteflag_occupied,
+    })
+
 
 @login_required
 def admin_page_two(request):
