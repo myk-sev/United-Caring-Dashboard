@@ -1,3 +1,4 @@
+"""
 Reports URL Configuration
 
 This module defines URL routes for the reports system in the UCS application.
