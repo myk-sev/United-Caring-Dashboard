@@ -1,12 +1,16 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from shelters.models import ShelterInputModel
-from whiteflag.models import WhiteFlag
 from django.http import HttpResponse
+
 import csv
 from datetime import datetime
+
+from shelters.models import ShelterInputModel, Shelter
+from whiteflag.models import WhiteFlag
 from .models import ShiftReport
-from shelters.models import Shelter, ShelterInputModel
+
+from openpyxl import Workbook  # (kept if you plan XLSX export later)
+
 
 # =========================
 # REPORTS PAGE (FILTERING)
@@ -21,14 +25,24 @@ def reports_home(request):
     shelter_data = ShelterInputModel.objects.all().order_by('-date')
     whiteflag_data = WhiteFlag.objects.all().order_by('-submitted_at')
 
+    # Apply shelter filter
     if shelter:
         shelter_data = shelter_data.filter(shelter=shelter)
 
+    # Safe date parsing
     if start:
-        shelter_data = shelter_data.filter(date__gte=start)
+        try:
+            start_date = datetime.strptime(start, "%Y-%m-%d").date()
+            shelter_data = shelter_data.filter(date__gte=start_date)
+        except ValueError:
+            pass
 
     if end:
-        shelter_data = shelter_data.filter(date__lte=end)
+        try:
+            end_date = datetime.strptime(end, "%Y-%m-%d").date()
+            shelter_data = shelter_data.filter(date__lte=end_date)
+        except ValueError:
+            pass
 
     return render(request, 'reports.html', {
         'shelter_data': shelter_data,
@@ -40,7 +54,7 @@ def reports_home(request):
 
 
 # =========================
-# EXPORT (ALL DATA + FILTERED)
+# EXPORT (CSV - FILTERED)
 # =========================
 @login_required
 def export_all_data(request):
@@ -52,22 +66,31 @@ def export_all_data(request):
     shelter_data = ShelterInputModel.objects.all()
     whiteflag_data = WhiteFlag.objects.all()
 
-    # Apply filters
+    # Shelter filter
     if shelter:
         shelter_data = shelter_data.filter(shelter=shelter)
 
+    # Safe date parsing
     if start:
-        shelter_data = shelter_data.filter(date__gte=start)
+        try:
+            start_date = datetime.strptime(start, "%Y-%m-%d").date()
+            shelter_data = shelter_data.filter(date__gte=start_date)
+        except ValueError:
+            pass
 
     if end:
-        shelter_data = shelter_data.filter(date__lte=end)
+        try:
+            end_date = datetime.strptime(end, "%Y-%m-%d").date()
+            shelter_data = shelter_data.filter(date__lte=end_date)
+        except ValueError:
+            pass
 
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="ucs_reports.csv"'
 
     writer = csv.writer(response)
 
-    # FULL HEADER (ALL YOUR FORM DATA)
+    # HEADER
     writer.writerow([
         "Type",
         "Date",
@@ -89,7 +112,9 @@ def export_all_data(request):
         "Submitted At"
     ])
 
-    # SHELTER REPORT DATA (FULL)
+    # =========================
+    # SHELTER DATA
+    # =========================
     for s in shelter_data:
         writer.writerow([
             "Shelter",
@@ -106,7 +131,9 @@ def export_all_data(request):
             "", "", "", "", "", "", ""
         ])
 
+    # =========================
     # WHITE FLAG DATA
+    # =========================
     for w in whiteflag_data:
         writer.writerow([
             "WhiteFlag",
@@ -144,11 +171,17 @@ def import_all_data(request):
         decoded = file.read().decode("utf-8").splitlines()
         reader = csv.reader(decoded)
 
-        next(reader, None)
+        next(reader, None)  # skip header
 
         for row in reader:
 
-            # ---- SHELTER FULL DATA ----
+            # Guard against broken rows
+            if not row or len(row) < 2:
+                continue
+
+            # =========================
+            # SHELTER IMPORT
+            # =========================
             if row[0] == "Shelter":
                 try:
                     ShelterInputModel.objects.update_or_create(
@@ -168,7 +201,9 @@ def import_all_data(request):
                 except Exception:
                     continue
 
-            # ---- WHITE FLAG ----
+            # =========================
+            # WHITE FLAG IMPORT
+            # =========================
             elif row[0] == "WhiteFlag":
                 try:
                     WhiteFlag.objects.update_or_create(
@@ -178,6 +213,7 @@ def import_all_data(request):
                             "women": int(row[13] or 0),
                             "children": int(row[14] or 0),
                             "non_binary": int(row[15] or 0),
+                            "total": int(row[16] or 0),
                         }
                     )
                 except Exception:
