@@ -1,3 +1,17 @@
+"""
+Reports Views Module
+
+This module handles all reporting functionality for the UCS system.
+
+It includes:
+- Filtering shelter and WhiteFlag data by date and shelter type
+- Exporting filtered data to CSV format
+- Importing CSV data back into the system
+- Data validation and safe parsing of external files
+
+This module represents the core data exchange system of the project.
+"""
+
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
@@ -25,11 +39,15 @@ def reports_home(request):
     shelter_data = ShelterInputModel.objects.all().order_by('-date')
     whiteflag_data = WhiteFlag.objects.all().order_by('-submitted_at')
 
-    # Apply shelter filter
+    # -----------------------------
+    # Shelter Type Filtering
+    # -----------------------------
     if shelter:
         shelter_data = shelter_data.filter(shelter=shelter)
 
-    # Safe date parsing
+    # -----------------------------
+    # Date Range Filtering (Start)
+    # -----------------------------
     if start:
         try:
             start_date = datetime.strptime(start, "%Y-%m-%d").date()
@@ -37,6 +55,9 @@ def reports_home(request):
         except ValueError:
             pass
 
+    # -----------------------------
+    # Date Range Filtering (End)
+    # -----------------------------
     if end:
         try:
             end_date = datetime.strptime(end, "%Y-%m-%d").date()
@@ -58,7 +79,18 @@ def reports_home(request):
 # =========================
 @login_required
 def export_all_data(request):
+    """
+    Exports filtered system data into a CSV file.
 
+    Includes:
+    - Shelter intake records
+    - WhiteFlag records
+    - Applied filters (shelter type and date range)
+
+    Output:
+    - Downloadable CSV file for external analysis or editing
+    """
+    
     shelter = request.GET.get('shelter')
     start = request.GET.get('start')
     end = request.GET.get('end')
@@ -90,7 +122,9 @@ def export_all_data(request):
 
     writer = csv.writer(response)
 
-    # HEADER
+    # -----------------------------
+    # CSV HEADER
+    # -----------------------------
     writer.writerow([
         "Type",
         "Date",
@@ -159,12 +193,25 @@ def export_all_data(request):
     return response
 
 
-# =========================
-# IMPORT (SAFE + FULL DATA)
-# =========================
+# =========================================================
+# CSV IMPORT FUNCTION (CORE FEATURE)
+# =========================================================
 @login_required
 def import_all_data(request):
+    """
+    Imports CSV data into the system.
 
+    Features:
+    - Reads uploaded CSV file
+    - Separates Shelter and WhiteFlag data
+    - Updates or creates records safely
+    - Handles malformed rows without crashing system
+
+    Security:
+    - Uses try/except blocks to prevent import failures
+    - Validates row structure before processing
+    """
+    
     if request.method == "POST" and request.FILES.get("file"):
 
         file = request.FILES["file"]
