@@ -1,8 +1,7 @@
 from django.db import models
-from shelters.models import Shelter
-
+from shelters.models import Shelter, ShelterInputModel
 class ShiftReport(models.Model):
-    shelter = models.ForeignKey(Shelter, on_delete=models.CASCADE)
+    shelter = models.CharField(max_length=100)
     shift = models.CharField(max_length=50)
     beds_used = models.IntegerField()
     beds_available = models.IntegerField()

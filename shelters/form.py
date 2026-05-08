@@ -1,6 +1,6 @@
 from django import forms
 from shelters.models import ShelterInputModel
-from .models import WhiteFlag
+from whiteflag.models import WhiteFlag
 
 class ShelterInputForm(forms.ModelForm):
     class Meta:

@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.conf import settings
 from shelters.models import ShelterInputModel
+from whiteflag.models import WhiteFlag
 from django.contrib.auth.decorators import login_required
 
 @login_required
