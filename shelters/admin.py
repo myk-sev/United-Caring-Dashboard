@@ -9,8 +9,8 @@ data through Django’s built-in admin interface.
 """
 
 from django.contrib import admin
-from .models import Shelter
+from .models import ShelterInputModel
 
 # Register the Shelter model in Django admin interface
 # This enables CRUD operations for shelter records via admin panel
-admin.site.register(Shelter)
+admin.site.register(ShelterInputModel)

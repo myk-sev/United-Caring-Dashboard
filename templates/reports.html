@@ -1,27 +1,145 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 
 {% block content %}
 
-<h2>Reports</h2>
+<div class="container mt-4">
 
-<p>Monthly Utilization Rate</p>
+    <h2>Reports</h2>
 
-<table class="table">
+    <!-- ========================= -->
+    <!-- FILTER SECTION -->
+    <!-- ========================= -->
+    <form method="GET" class="row g-3 mb-4">
 
-<tr>
-<th>Date</th>
-<th>Shelter</th>
-<th>Utilization</th>
-</tr>
+        <div class="col-md-3">
+            <label class="form-label">Shelter</label>
+            <select name="shelter" class="form-control">
+                <option value="">All Shelters</option>
+                <option value="mens" {% if selected_shelter == "mens" %}selected{% endif %}>Men's Shelter</option>
+                <option value="womens" {% if selected_shelter == "womens" %}selected{% endif %}>Woman's Shelter</option>
+                <option value="diversion" {% if selected_shelter == "diversion" %}selected{% endif %}>Diversion Center</option>
+            </select>
+        </div>
 
-<tr>
-<td>--</td>
-<td>--</td>
-<td>--</td>
-</tr>
+        <div class="col-md-3">
+            <label class="form-label">Start Date</label>
+            <input type="date" name="start" value="{{ start }}" class="form-control">
+        </div>
 
-</table>
+        <div class="col-md-3">
+            <label class="form-label">End Date</label>
+            <input type="date" name="end" value="{{ end }}" class="form-control">
+        </div>
 
-<button class="btn btn-success">Export to Excel</button>
+        <div class="col-md-3 d-flex align-items-end">
+            <button type="submit" class="btn btn-primary w-100">Apply Filters</button>
+        </div>
+
+    </form>
+
+
+    <!-- ========================= -->
+    <!-- ACTION BUTTONS -->
+    <!-- ========================= -->
+    <div class="mb-4 d-flex gap-2">
+
+        <!-- EXPORT (FILTERED) -->
+        <a href="/reports/export/?shelter={{ selected_shelter }}&start={{ start }}&end={{ end }}"
+           class="btn btn-success">
+            Export CSV
+        </a>
+
+        <!-- IMPORT -->
+        <form method="POST" enctype="multipart/form-data" action="/reports/import/">
+            {% csrf_token %}
+            <input type="file" name="file" required>
+            <button type="submit" class="btn btn-secondary">Import CSV</button>
+        </form>
+
+    </div>
+
+
+    <!-- ========================= -->
+    <!-- SHELTER REPORT TABLE -->
+    <!-- ========================= -->
+    <h4>Shelter Reports</h4>
+
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Shelter</th>
+                <th>Regular Beds</th>
+                <th>Respite Beds</th>
+                <th>Guests</th>
+                <th>Hospital</th>
+                <th>Jail</th>
+                <th>No Show</th>
+                <th>Barred</th>
+                <th>Hold</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for s in shelter_data %}
+            <tr>
+                <td>{{ s.date }}</td>
+                <td>{{ s.shelter }}</td>
+                <td>{{ s.regular }}</td>
+                <td>{{ s.respite }}</td>
+                <td>{{ s.guests }}</td>
+                <td>{{ s.hospital }}</td>
+                <td>{{ s.jail }}</td>
+                <td>{{ s.no_show }}</td>
+                <td>{{ s.barred }}</td>
+                <td>{{ s.hold }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="10" class="text-center">No data found</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+
+    <!-- ========================= -->
+    <!-- WHITE FLAG TABLE -->
+    <!-- ========================= -->
+    <h4 class="mt-5">White Flag Reports</h4>
+
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>Record #</th>
+                <th>Men</th>
+                <th>Women</th>
+                <th>Children</th>
+                <th>Non Binary</th>
+                <th>Total</th>
+                <th>Submitted At</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for w in whiteflag_data %}
+            <tr>
+                <td>{{ w.record_number }}</td>
+                <td>{{ w.men }}</td>
+                <td>{{ w.women }}</td>
+                <td>{{ w.children }}</td>
+                <td>{{ w.non_binary }}</td>
+                <td>{{ w.total }}</td>
+                <td>{{ w.submitted_at }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="7" class="text-center">No data found</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</div>
 
 {% endblock %}

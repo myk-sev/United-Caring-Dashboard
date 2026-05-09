@@ -17,9 +17,7 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.conf import settings
 from shelters.models import ShelterInputModel
-from shelters.form import ShelterInputForm
 from whiteflag.models import WhiteFlag
-from whiteflag.forms import WhiteFlagForm
 from django.contrib.auth.decorators import login_required
 from shelters.models import ShelterInputModel
 from whiteflag.models import WhiteFlag
