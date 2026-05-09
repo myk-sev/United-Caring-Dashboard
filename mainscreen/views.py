@@ -1,11 +1,19 @@
-#from django.shortcuts import render
+"""
+Mainscreen Views
+
+This module controls the main landing page of the UCS system.
+
+It is responsible for:
+- Redirecting users to the main screen
+- Handling administrator login authentication
+- Routing users to shelter selection pages
+- Managing basic navigation logic across the system
+
+This acts as the central entry point for user interactions.
+"""
+
 from django.http import HttpResponse, HttpResponseRedirect
 import os
-
-#from django.shortcuts import render
-#from django.contrib.auth.decorators import login_required
-# Create your views here.
-
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.conf import settings
@@ -13,15 +21,24 @@ from django.contrib.auth.decorators import login_required
 
 
 def HomepageRedirect(request):
+    """
+    Redirects root URL requests to the mainscreen page.
+    Ensures consistent landing page routing.
+    """
+
     return HttpResponseRedirect('/mainscreen/')
 
 @login_required
 def mainscreen(request):
     """
-    Main screen — shown to all users without login.
-    Handles two Go buttons:
-      1. Shelter dropdown  → routes to the selected shelter's submit page
-      2. Administrator Login password → validates and routes to admin_page_one
+    Main application dashboard view.
+
+    Handles:
+    - Administrator login validation
+    - Shelter selection routing
+    - Error messaging for invalid input
+
+    This page serves as the central navigation hub for the UCS system.
     """
 
     if request.method == 'POST':
@@ -30,13 +47,11 @@ def mainscreen(request):
         if 'admin_login' in request.POST:
             password = request.POST.get('admin_password', '')
 
-            # ----------------------------------------------------------------
-            # COLLABORATOR NOTE:
-            # Replace the settings check below with DB lookup:
-            #   from admin_panel.models import AdminSettings
-            #   config = AdminSettings.objects.first()
-            #   if password == config.admin_password:
-            # ----------------------------------------------------------------
+            # SECURITY NOTE:
+            # Currently uses settings-based password validation.
+            # Future improvement: replace with database-driven authentication
+            # using AdminSettings model or Django user permissions.
+
 
             if password == settings.ADMIN_PANEL_PASSWORD:
                 request.session['is_admin'] = True
@@ -44,7 +59,9 @@ def mainscreen(request):
             else:
                 messages.error(request, 'Incorrect administrator password.')
 
-        # ---- Shelter dropdown Go ----
+        # ------------------------------------------------------------
+        # Shelter Selection Routing
+        # ------------------------------------------------------------
         elif 'shelter_go' in request.POST:
             shelter = request.POST.get('shelter_select', '')
             if shelter == 'mens':
@@ -56,4 +73,5 @@ def mainscreen(request):
             else:
                 messages.error(request, 'Please select a shelter.')
 
+    # Render main dashboard page
     return render(request, 'mainscreen.html')

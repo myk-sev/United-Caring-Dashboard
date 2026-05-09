@@ -1,3 +1,18 @@
+"""
+Admin Panel Views
+
+This module controls all administrative functionality within the UCS system.
+
+It provides:
+- Admin authentication and session handling
+- Dashboard analytics (Page 1)
+- Record search and modification tools (Page 2)
+- Password management
+- Admin logout functionality
+
+This module is restricted to authenticated admin users only.
+"""
+
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.conf import settings
@@ -9,6 +24,9 @@ from django.contrib.auth.decorators import login_required
 from shelters.models import ShelterInputModel
 from whiteflag.models import WhiteFlag
 
+# -----------------------------------------------------------
+# Admin Login
+# -----------------------------------------------------------
 @login_required
 def admin_login(request): #Creates a login page for the admin panel. If the password is correct, it sets a session variable to indicate that the user is an admin and redirects to the first admin page. If the password is incorrect, it shows an error message.
     """Standalone Admin login page."""
@@ -26,17 +44,23 @@ def admin_login(request): #Creates a login page for the admin panel. If the pass
 
     return render(request, 'admin_panel/admin_login.html')
 
+
+# -----------------------------------------------------------
+# Admin Dashboard Page 1 (Analytics)
+# -----------------------------------------------------------
 @login_required
 def admin_page_one(request):
     """Administration Page 1 of 2 — Daily Records / Charts."""
     if not request.session.get('is_admin'):
         return redirect('admin_login')
     
+    # Retrieve latest records for each shelter type
     mens_data = ShelterInputModel.objects.filter(shelter='mens').last()
     womens_data = ShelterInputModel.objects.filter(shelter='womens').last()
     diversion_data = ShelterInputModel.objects.filter(shelter='diversion').last()
     whiteflag_data = WhiteFlag.objects.first()
     
+    # Predefined shelter capacity values
     mens_regular_total = 50
     mens_respite_total = 7
     womens_regular_total = 22
@@ -44,11 +68,15 @@ def admin_page_one(request):
     diversion_regular_total = 5
     whiteflag_total = 80
 
+    # Calculate available capacity for each shelter
     mens_regular_available = mens_regular_total - mens_data.regular if mens_data else 0
     mens_respite_available = mens_respite_total - mens_data.respite if mens_data else 0
     womens_regular_available = womens_regular_total - womens_data.regular if womens_data else 0
     womens_respite_available = womens_respite_total - womens_data.respite if womens_data else 0
+    
     diversion_regular_available = diversion_regular_total - diversion_data.regular if diversion_data else 0
+    
+    # WhiteFlag calculations
     whiteflag_occupied = whiteflag_data.total if whiteflag_data else 0
     whiteflag_available = whiteflag_total - whiteflag_occupied if whiteflag_data else 0
 
@@ -67,6 +95,9 @@ def admin_page_one(request):
     })
 
 
+# -----------------------------------------------------------
+# Admin Dashboard Page 2 (Search + Modify Records)
+# -----------------------------------------------------------
 @login_required
 def admin_page_two(request):
     """Administration Page 2 of 2 — Alter Records / Settings."""
@@ -77,6 +108,10 @@ def admin_page_two(request):
         return redirect('admin_login')
 
     if request.method == 'POST':
+
+        # -------------------------------------------------------
+        # Password Change Functionality
+        # -------------------------------------------------------
         if 'change_password' in request.POST:
             old_pw  = request.POST.get('old_password', '')
             new_pw1 = request.POST.get('new_password1', '')
@@ -92,6 +127,9 @@ def admin_page_two(request):
                 settings.ADMIN_PANEL_PASSWORD = new_pw1
                 messages.success(request, 'Password updated successfully.')
 
+        # -------------------------------------------------------
+        # Record Search Functionality
+        # -------------------------------------------------------
         elif "search_records" in request.POST:
             search_input_id = request.POST.get('search_input_id', '')
             search_input_date = request.POST.get('search_input_date', '')
@@ -115,6 +153,9 @@ def admin_page_two(request):
                 record_type = 'shelter'
             return render(request, 'admin_panel/admin_page_two.html', {"record": record, "record_type": record_type})
 
+        # -------------------------------------------------------
+        # Record Modification Functionality
+        # -------------------------------------------------------
         elif "alter_records" in request.POST:
             record_type = request.POST.get('record_type', 'shelter')
             old_id = request.POST.get("old_id")
@@ -154,6 +195,9 @@ def admin_page_two(request):
     {"record": record, "record_type": record_type}
     )
 
+# -----------------------------------------------------------
+# Admin Logout
+# -----------------------------------------------------------
 @login_required
 def admin_logout(request):
     """Clear admin session and return to main screen."""

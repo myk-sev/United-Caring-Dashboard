@@ -1,16 +1,19 @@
 """
-WSGI config for shelter_system project.
+WSGI Configuration for Shelter System Project
 
-It exposes the WSGI callable as a module-level variable named ``application``.
+This module serves as the entry point for WSGI-compatible web servers
+to run the UCS Django application in a production environment.
 
-For more information on this file, see
-https://docs.djangoproject.com/en/6.0/howto/deployment/wsgi/
+WSGI (Web Server Gateway Interface) is used to connect the Django
+application to web servers such as Gunicorn or Apache.
 """
 
 import os
 
 from django.core.wsgi import get_wsgi_application
 
+# Set the default Django settings module for the WSGI application
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'shelter_system.settings')
 
+# Create WSGI application callable for the web server
 application = get_wsgi_application()

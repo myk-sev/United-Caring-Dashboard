@@ -1,10 +1,42 @@
+"""
+Shelters Models
+
+This module defines the database structure for the shelters system
+within the UCS dashboard.
+
+It stores shelter intake data, including occupancy tracking and
+bed capacity information for different shelter types.
+"""
+
 from django import forms
 from django.db import models
 
 
 class ShelterInputModel(models.Model):
+    """
+    Represents a daily shelter intake record.
+
+    This model tracks how many individuals are assigned to
+    different categories within a shelter system, including:
+    - Regular admissions
+    - Respite care
+    - Guests
+    - Hospital transfers
+    - Jail transfers
+    - No-shows
+    - Barred individuals
+    - Holds
+
+    Each record is timestamped automatically when created.
+    """
+
+    # Date the record was created (auto-generated)
     date = models.DateField(auto_now_add=True)
+
+    # Shelter type associated with this record
     shelter = models.CharField(max_length=100)
+
+    # Breakdown of shelter occupancy categories
     regular = models.IntegerField()
     respite = models.IntegerField()
     guests = models.IntegerField()
@@ -15,28 +47,23 @@ class ShelterInputModel(models.Model):
     hold = models.IntegerField()
 
 class Shelter(models.Model):
+    """
+    Represents a shelter location and its capacity configuration.
+
+    Stores basic shelter information including:
+    - Shelter name
+    - Total bed capacity
+    - Respite bed capacity
+    """
+
     name = models.CharField(max_length=100)
     total_beds = models.IntegerField()
     respite_beds = models.IntegerField()
 
     def __str__(self):
+        """
+        Returns a readable name for the shelter object
+        (used in admin panel and debugging).
+        """
+        
         return self.name
-class WhiteFlag(models.Model):
-    record_number = models.AutoField(primary_key=True)
-    men           = models.PositiveIntegerField(default=0)
-    women         = models.PositiveIntegerField(default=0)
-    children      = models.PositiveIntegerField(default=0)
-    non_binary    = models.PositiveIntegerField(default=0)
-    total         = models.PositiveIntegerField(default=0)
-    submitted_at  = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        app_label = 'shelters'
-        ordering  = ['-submitted_at']
-
-    def save(self, *args, **kwargs):
-        self.total = self.men + self.women + self.children + self.non_binary
-        super().save(*args, **kwargs)
-
-    def __str__(self):
-        return f"Record #{self.record_number} — {self.submitted_at:%Y-%m-%d %H:%M}"   
