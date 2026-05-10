@@ -150,7 +150,7 @@ USE_I18N = True
 USE_TZ = True
 
 # Custom admin panel configuration
-ADMIN_PANEL_PASSWORD = "admin1234"
+ADMIN_PANEL_PASSWORD = os.getenv("ADMIN_PANEL_PASSWORD")
 
 
 # ---------------------------------------------------
