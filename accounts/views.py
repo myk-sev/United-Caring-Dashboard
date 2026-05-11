@@ -69,9 +69,9 @@ def create_superuser():
 
     User = get_user_model()
 
-    username = os.environ.get("DJANGO_SUPERUSER_USERNAME")
-    email = os.environ.get("DJANGO_SUPERUSER_EMAIL", "")
-    password = os.environ.get("DJANGO_SUPERUSER_PASSWORD")
+    username = os.getenv("DJANGO_SUPERUSER_USERNAME")
+    email = os.getenv("DJANGO_SUPERUSER_EMAIL")
+    password = os.getenv("DJANGO_SUPERUSER_PASSWORD")
 
     # Create superuser only if it does not already exist
     if not User.objects.filter(username=username).exists():
