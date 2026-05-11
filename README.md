@@ -1,58 +1,109 @@
-# United Caring Dashboard
+<p align="center">
+  <img src="docs/united-caring-dashboard-logo.svg" alt="United Caring Dashboard logo" width="140">
+</p>
 
-![United Caring Dashboard logo](docs/united-caring-dashboard-logo.svg)
+<h1 align="center">United Caring Dashboard</h1>
 
-United Caring Dashboard is a Django-based web application for tracking shelter operations, occupancy, white-flag conditions, and reporting in one shared interface for administrators and staff.
+<p align="center">
+  A Django dashboard for shelter operations, shift reporting, white-flag workflows, and administrative review.
+</p>
 
 ## Live Demo
 
-Try the deployed app here:
+The deployed application is available at:
 
-➡️ **https://united-caring-dashboard.onrender.com/**
+[https://united-caring-dashboard.onrender.com/](https://united-caring-dashboard.onrender.com/)
 
-## How it Operates
+## Overview
+
+United Caring Dashboard brings common shelter management workflows into one shared interface for staff and administrators. The application supports shelter selection, shift submissions, white-flag condition tracking, report review, and custom administrative pages.
 
 The project is organized as a multi-app Django system:
 
-- **`mainscreen`**: Provides the main landing workflow.
-- **`accounts`**: Handles user account-related views/models.
-- **`dashboard`**: Displays central dashboard views and metrics.
-- **`shelters`**: Manages shelter-related data and forms.
-- **`whiteflag`**: Handles white-flag status workflows and pages.
-- **`reports`**: Provides report-oriented views and data models.
-- **`admin_panel`**: Contains custom admin login/pages and related routes.
-
-At runtime, requests are routed through Django URL configurations (`shelter_system/urls.py` and app-level `urls.py` files), rendered with shared templates in `templates/`, and backed by app models/migrations.
-
-## Local Development
-
-1. Install dependencies:
-
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-2. Run migrations:
-
-   ```bash
-   python manage.py migrate
-   ```
-
-3. Start the development server:
-
-   ```bash
-   python manage.py runserver
-   ```
-
-4. Open:
-
-   ```
-   http://127.0.0.1:8000/
-   ```
+- `mainscreen`: Main landing workflow and shelter selection.
+- `accounts`: Login, logout, and account-related views.
+- `dashboard`: Central dashboard views and metrics.
+- `shelters`: Shelter data, forms, and shift submission flows.
+- `whiteflag`: White-flag status pages and related forms.
+- `reports`: Report-oriented views and data models.
+- `admin_panel`: Custom admin login and administrative pages.
 
 ## Tech Stack
 
 - Python
 - Django
 - HTML templates
-- SQLite (default Django local DB)
+- Bootstrap
+- SQLite for local development
+- Render for deployment
+
+## Local Development
+
+1. Clone the repository and move into the project folder.
+
+2. Create and activate a virtual environment:
+
+   ```bash
+   python -m venv .venv
+   .venv\Scripts\activate
+   ```
+
+3. Install dependencies:
+
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+4. Configure environment variables in a local `.env` file as needed:
+
+   ```env
+   ADMIN_PANEL_PASSWORD=your-local-admin-password
+   ```
+
+5. Run database migrations:
+
+   ```bash
+   python manage.py migrate
+   ```
+
+6. Start the development server:
+
+   ```bash
+   python manage.py runserver
+   ```
+
+7. Open the local site:
+
+   [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
+
+## Project Structure
+
+```text
+United-Caring-Dashboard/
++-- accounts/
++-- admin_panel/
++-- dashboard/
++-- docs/
++-- mainscreen/
++-- reports/
++-- shelters/
++-- shelter_system/
++-- templates/
++-- whiteflag/
++-- manage.py
++-- README.md
++-- requirements.txt
+```
+
+## Key Routes
+
+- `/`: Main screen and shelter selection.
+- `/login/`: User login.
+- `/shelters/`: Shelter shift submission flow.
+- `/white-flag/`: White-flag reporting workflow.
+- `/reports/`: Reports view.
+- `/admin-panel/`: Custom admin panel login.
+
+## Notes
+
+This repository is configured for local SQLite development by default. Production deployment settings should be managed through environment variables and the hosting platform.
