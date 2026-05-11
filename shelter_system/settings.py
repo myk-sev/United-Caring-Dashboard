@@ -60,6 +60,7 @@ if not DEBUG: # Productions settings for cookies and redirects
 ALLOWED_HOSTS = []
 if PRODUCTION:
     ALLOWED_HOSTS = [os.getenv("ALLOWED_HOSTS")]
+    CSRF_TRUSTED_ORIGINS  = [os.getenv("CSRF_TRUSTED_ORIGINS")]
 
 
 # ---------------------------------------------------
