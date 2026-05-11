@@ -21,6 +21,8 @@ from pathlib import Path
 import os
 from dotenv import load_dotenv
 
+PRODUCTION = False
+
 # Base directory of the project
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -54,9 +56,10 @@ if not DEBUG: # Productions settings for cookies and redirects
     REFERRER_POLICY = "same-origin"
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
-
 # Allowed hosts for deployment (empty in development)
 ALLOWED_HOSTS = []
+if PRODUCTION:
+    ALLOWED_HOSTS = [os.getenv("ALLOWED_HOSTS")]
 
 
 # ---------------------------------------------------
