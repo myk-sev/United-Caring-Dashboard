@@ -11,7 +11,7 @@ class DashboardViewTests(TestCase):
     def test_home_requires_authentication(self):
         response = self.client.get(reverse("home"))
         self.assertEqual(response.status_code, 302)
-        self.assertIn("/accounts/login/", response.url)
+        self.assertIn("/login/", response.url)
 
     def test_home_renders_for_authenticated_user(self):
         self.client.login(username="dash", password="secret123")
