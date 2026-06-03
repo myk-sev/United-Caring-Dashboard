@@ -17,21 +17,25 @@ from .forms import WhiteFlagForm
 from .models import WhiteFlag
 from django.contrib.auth.decorators import login_required
 
+from datetime import date
+
 # Maximum capacity constant used in shelter tracking logic
 CAPACITY = 80
 
 @login_required
 def white_flag(request):
-     
-    """
-    Handles creation of new WhiteFlag records.
+    """Handles creation of new WhiteFlag records.
 
     - Displays an empty form on GET requests
     - Processes form submission on POST requests
     - Saves valid data to the database
     - Redirects user to edit page after successful submission
     """
-     
+
+    latest_record = WhiteFlag.objects.latest("submitted_at")
+    if latest_record.submitted_at.date() == date.today():
+        return redirect('white_flag_edit', pk=latest_record.pk)
+
     if request.method == 'POST':
         form = WhiteFlagForm(request.POST)
 
