@@ -13,6 +13,7 @@ Access is restricted to logged-in users only for security purposes.
 """
 
 from django.shortcuts import get_object_or_404, redirect, render
+from django.http import Http404
 from .forms import WhiteFlagForm
 from .models import WhiteFlag
 from django.contrib.auth.decorators import login_required
@@ -23,7 +24,20 @@ from datetime import date
 CAPACITY = 80
 
 @login_required
-def white_flag(request):
+def flow_control(request):
+    if request.method == "GET":
+        latest_record = WhiteFlag.objects.latest("submitted_at")
+
+        ### Data has been submitted for today ###
+        if latest_record.submitted_at.date() == date.today():
+            return redirect('whiteflag_edit', pk=latest_record.pk)
+
+        ### No data submitted yet ###
+        return blank_page(request)
+
+
+@login_required
+def blank_page(request):
     """Handles creation of new WhiteFlag records.
 
     - Displays an empty form on GET requests
@@ -32,33 +46,44 @@ def white_flag(request):
     - Redirects user to edit page after successful submission
     """
 
-    latest_record = WhiteFlag.objects.latest("submitted_at")
-    if latest_record.submitted_at.date() == date.today():
-        return redirect('white_flag_edit', pk=latest_record.pk)
-
-    if request.method == 'POST':
-        form = WhiteFlagForm(request.POST)
-
-        # Validate submitted form data before saving
-        if form.is_valid():
-            record = form.save()
-
-            # Redirect to edit page for further updates
-            return redirect('white_flag_edit', pk=record.pk)
-    else:
-        # Initialize empty form for new entry
-        form = WhiteFlagForm()
-
-    # Render form page with capacity information
+    form = WhiteFlagForm() #blank form
     return render(request, 'whiteflag/white_flag.html', {
         'form': form,
         'capacity': CAPACITY,
         'record': None,
     })
 
+@login_required
+def handle_submission(request):
+    form = WhiteFlagForm(request.POST)
+    submission_type = None
+
+    if request.POST.get("record_number") == None: submission_type = "new"
+    else: submission_type = "edit"
+
+    # Validate submitted form data before saving
+    if form.is_valid():
+        if submission_type == "new":
+            record = form.save()
+            return redirect('edit_page', pk=record.pk)
+
+        if submission_type == "edit":
+            pk = request.POST.get("record_number")
+            record = get_object_or_404(WhiteFlag, pk=pk)
+
+            record.men = int(request.POST.get("men"))
+            record.women = int(request.POST.get("women"))
+            record.children = int(request.POST.get("children"))
+            record.non_binary = int(request.POST.get("non_binary"))
+
+            record.save()
+
+        # Redirect to edit page for further updates
+        return redirect('whiteflag_edit', pk=record.pk)
+    raise Http404
 
 @login_required
-def white_flag_edit(request, pk):
+def edit_page(request, pk):
     """
     Handles editing of existing WhiteFlag records.
 
@@ -67,20 +92,8 @@ def white_flag_edit(request, pk):
     - Updates record when valid POST data is submitted
     - Saves changes and reloads edit page
     """
-
-    # Retrieve record or return 404 if not found
-    record = get_object_or_404(WhiteFlag, pk=pk)
-
-    if request.method == 'POST':
-        form = WhiteFlagForm(request.POST, instance=record)
-
-        # Validate and update existing record
-        if form.is_valid():
-            record = form.save()
-            return redirect('white_flag_edit', pk=record.pk)
-    else:
-        # Load form with existing record data
-        form = WhiteFlagForm(instance=record)
+    record = get_object_or_404(WhiteFlag, pk=pk) # Retrieve record or return 404 if not found
+    form = WhiteFlagForm(instance=record)
 
     # Render edit page with current record data
     return render(request, 'whiteflag/white_flag.html', {

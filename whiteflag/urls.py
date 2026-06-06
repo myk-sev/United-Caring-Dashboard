@@ -16,8 +16,8 @@ from . import views
 
 urlpatterns = [
     # Route for creating a new WhiteFlag record (main entry page)
-    path('',          views.white_flag,      name='white_flag'),
-
+    path('', views.flow_control, name='whiteflag'), #landing page
+    path("submission", views.handle_submission, name="whiteflag_submission"),
     # Route for editing an existing WhiteFlag record by primary key (pk
-    path('<int:pk>/', views.white_flag_edit, name='white_flag_edit'),
+    path('<int:pk>/', views.edit_page, name="whiteflag_edit"),
 ]

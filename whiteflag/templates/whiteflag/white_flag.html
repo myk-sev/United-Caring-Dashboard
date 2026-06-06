@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% block content %}
-    <link rel="stylesheet" href="{% static 'whiteflag/whiteflag.html' %}">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'whiteflag/whiteflag.css' %}">
 
     <div class="page-wrap">
         <div class="card {% if record %}submitted-mode{% endif %}" id="mainCard">
@@ -20,7 +21,7 @@
             </div>
           </div>
 
-          <form method="POST" id="wfForm">
+          <form method="POST" id="wfForm" action="{% url 'whiteflag_submission' %}">
             {% csrf_token %}
 
             <div class="fields">
@@ -67,9 +68,11 @@
               <button type="submit" class="btn-submit {% if record %}resubmit{% endif %}" id="submitBtn">
                 {% if record %}Re-Submit{% else %}Submit{% endif %}
               </button>
-              <a href="{% url 'white_flag' %}" class="btn-new-record">New Record</a>
+              <a href="{% url 'whiteflag' %}" class="btn-new-record">New Record</a>
             </div>
-
+            {% if record %}
+                <input hidden name="record_number" value={{ record.record_number }}>
+            {% endif %}
           </form>
 
           <div class="last-submitted-ts" id="lastSubmittedTs">
