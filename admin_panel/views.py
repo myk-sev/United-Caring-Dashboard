@@ -25,6 +25,8 @@ from whiteflag.models import WhiteFlag
 from django.contrib.auth.decorators import login_required
 from shelters.models import ShelterInputModel
 from whiteflag.models import WhiteFlag
+from django.contrib.auth import get_user_model
+
 
 # -----------------------------------------------------------
 # Admin Login
@@ -116,22 +118,67 @@ def admin_page_two(request):
         # Password Change Functionality
         # -------------------------------------------------------
         if 'change_password' in request.POST:
-            old_pw  = request.POST.get('old_password', '')
+            old_pw = request.POST.get('old_password', '')
             new_pw1 = request.POST.get('new_password1', '')
             new_pw2 = request.POST.get('new_password2', '')
 
             admin_settings = AdminSettings.objects.first()
-            if not admin_settings or not check_password(old_pw, admin_settings.admin_password):
+
+            if not admin_settings or not check_password(
+                old_pw,
+                admin_settings.admin_password
+            ):
                 messages.error(request, 'Old password is incorrect.')
+
             elif new_pw1 != new_pw2:
                 messages.error(request, 'New passwords do not match.')
+
             elif len(new_pw1) < 4:
-                messages.error(request, 'New password is too short (minimum 4 characters).')
+                messages.error(
+                    request,
+                    'New password is too short (minimum 4 characters).'
+                )
+
             else:
                 admin_settings.admin_password = make_password(new_pw1)
                 admin_settings.save()
-                messages.success(request, 'Password updated successfully.')
+                messages.success(
+                    request,
+                    'Admin password updated successfully.'
+                )
 
+        # -------------------------------------------------------
+        # App Login Password Change Functionality
+        # -------------------------------------------------------
+        elif 'change_login_password' in request.POST:
+
+            username = request.POST.get('target_username', '').strip()
+            new_pw1 = request.POST.get('login_new_password1', '')
+            new_pw2 = request.POST.get('login_new_password2', '')
+
+            User = get_user_model()
+
+            try:
+                user = User.objects.get(username=username)
+
+            except User.DoesNotExist:
+                messages.error(request, 'Username not found.')
+                return redirect('admin_page_two')
+
+            if new_pw1 != new_pw2:
+                messages.error(request, 'New passwords do not match.')
+
+            elif len(new_pw1) < 4:
+                messages.error(request, 'New password is too short.')
+
+            else:
+                user.set_password(new_pw1)
+                user.save()
+
+                messages.success(
+                    request,
+                    f'Password successfully changed for {username}.'
+                )
         # -------------------------------------------------------
         # Record Search Functionality
         # -------------------------------------------------------
