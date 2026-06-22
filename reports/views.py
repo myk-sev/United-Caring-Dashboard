@@ -52,6 +52,10 @@ def reports_home(request):
         try:
             start_date = datetime.strptime(start, "%Y-%m-%d").date()
             shelter_data = shelter_data.filter(date__gte=start_date)
+            whiteflag_data = whiteflag_data.filter(
+                submitted_at__date__gte=start_date
+            )
+
         except ValueError:
             pass
 
@@ -62,6 +66,9 @@ def reports_home(request):
         try:
             end_date = datetime.strptime(end, "%Y-%m-%d").date()
             shelter_data = shelter_data.filter(date__lte=end_date)
+            whiteflag_data = whiteflag_data.filter(
+            submitted_at__date__lte=end_date
+        )
         except ValueError:
             pass
 
@@ -107,6 +114,9 @@ def export_all_data(request):
         try:
             start_date = datetime.strptime(start, "%Y-%m-%d").date()
             shelter_data = shelter_data.filter(date__gte=start_date)
+            whiteflag_data = whiteflag_data.filter(
+                submitted_at__date__gte=start_date
+        )
         except ValueError:
             pass
 
@@ -114,6 +124,9 @@ def export_all_data(request):
         try:
             end_date = datetime.strptime(end, "%Y-%m-%d").date()
             shelter_data = shelter_data.filter(date__lte=end_date)
+            whiteflag_data = whiteflag_data.filter(
+                submitted_at__date__lte=end_date
+        )
         except ValueError:
             pass
 
