@@ -13,11 +13,13 @@ It manages:
 This view supports both GET and POST requests for interactive form handling.
 """
 
-from django.shortcuts import render
-from django.http import HttpResponseRedirect
-from shelters.form import ShelterInputForm
-from shelters.models import get_shelter_capacity
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.shortcuts import redirect, render
+from django.utils import timezone
+
+from shelters.form import ShelterInputForm
+from shelters.models import ShelterInputModel, get_shelter_capacity
 
 @login_required
 def shelters_home(request):
@@ -32,33 +34,49 @@ def shelters_home(request):
     - Redirect user after successful submission
     """
 
-    # Determine selected shelter type from request
-    if request.method == "POST": shelter = request.POST.get("shelter", "")
-    else: shelter = request.GET.get("shelter", "")
+    shelter = request.POST.get('shelter', '') if request.method == 'POST' else request.GET.get('shelter', '')
+    if shelter not in {'mens', 'womens', 'diversion'}:
+        return redirect('mainscreen')
 
-    capacity = get_shelter_capacity(shelter) if shelter in {'mens', 'womens', 'diversion'} else {
-        'total_beds': 0,
-        'respite_beds': 0,
-    }
+    capacity = get_shelter_capacity(shelter)
+    record = None
 
     # Handle form submission (POST request)
     if request.method == "POST":
-        form_data = ShelterInputForm(request.POST)
+        record_id = request.POST.get('record_id')
+        if record_id:
+            if not record_id.isdigit():
+                messages.error(request, 'Select a valid record before saving.')
+                return redirect(f'/shelters/?shelter={shelter}')
+            record = ShelterInputModel.objects.filter(pk=record_id, shelter=shelter).first()
+            if record is None:
+                messages.error(request, 'The shelter record no longer exists.')
+                return redirect(f'/shelters/?shelter={shelter}')
+
+        form_data = ShelterInputForm(request.POST, instance=record)
 
         # Validate form before saving to database
         if form_data.is_valid():
-            record = form_data.save(commit=False)
-            record.save()
+            record = form_data.save()
+            messages.success(request, f'Record #{record.pk} saved successfully.')
+            return redirect(f'/shelters/?shelter={record.shelter}')
 
-            # Redirect to same page with selected shelter type
-            return HttpResponseRedirect(f"/shelters/?shelter={record.shelter}")
-        else:
-            # Debugging output for form validation issues
-            print("FORM ERRORS:", form_data.errors)
-            print("POST DATA:", request.POST)
+        form = form_data
 
-    # Initialize form with preselected shelter value
-    form = ShelterInputForm(initial={'shelter': shelter})
+    else:
+        if request.GET.get('new') != '1':
+            record = ShelterInputModel.objects.filter(
+                shelter=shelter,
+                date=timezone.localdate(),
+            ).order_by('-id').first()
+        form = ShelterInputForm(instance=record, initial={'shelter': shelter})
+
+    def available(field, total):
+        try:
+            occupied = int(form[field].value() or 0)
+        except (TypeError, ValueError):
+            occupied = 0
+        return max(0, total - occupied)
 
     # Render shelters page with context data
     return render(
@@ -69,6 +87,9 @@ def shelters_home(request):
             'shelter': shelter,
             'capacity': capacity['total_beds'],
             'respite_capacity': capacity['respite_beds'],
+            'regular_open': available('regular', capacity['total_beds']),
+            'respite_open': available('respite', capacity['respite_beds']),
+            'record': record,
         }
 
     )

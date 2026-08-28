@@ -402,23 +402,28 @@
     <form method="POST" action="/shelters/" id="shelterForm">
       {% csrf_token %}
       <input type="hidden" name="shelter" value="{{ shelter }}">
+      {% if record %}<input type="hidden" name="record_id" value="{{ record.id }}">{% endif %}
+
+      {% if form.errors %}
+        <div class="toast error" style="display:block;">{{ form.errors }}</div>
+      {% endif %}
 
       <!-- Regular Beds -->
       <div class="section-label">Regular Beds</div>
       <div class="fields">
         <div class="field-row">
           <input id="regular_occupied" class="s-input" type="number" name="regular" min="0"
-                 value="{% if record %}{{ record.regular }}{% else %}0{% endif %}">
+                 value="{{ form.regular.value|default:0 }}">
           <label>Regular Beds Occupied</label>
         </div>
         <div class="field-row">
           <input id="regular_open" class="s-input" type="number" name="regular_open" min="0"
-                 value="0">
+                 value="{{ regular_open }}">
           <label>Regular Open Beds</label>
         </div>
         <div class="field-row">
           <input class="s-input" type="number" name="guests" min="0"
-                 value="{% if record %}{{ record.guests }}{% else %}0{% endif %}">
+                 value="{{ form.guests.value|default:0 }}">
           <label>Guests On Pass</label>
         </div>
       </div>
@@ -430,27 +435,27 @@
       <div class="fields">
         <div class="field-row">
           <input class="s-input" type="number" name="hospital" min="0"
-                 value="{% if record %}{{ record.hospital }}{% else %}0{% endif %}">
+                 value="{{ form.hospital.value|default:0 }}">
           <label>Hospital</label>
         </div>
         <div class="field-row">
           <input class="s-input" type="number" name="jail" min="0"
-                 value="{% if record %}{{ record.jail }}{% else %}0{% endif %}">
+                 value="{{ form.jail.value|default:0 }}">
           <label>Jail</label>
         </div>
         <div class="field-row">
           <input class="s-input" type="number" name="no_show" min="0"
-                 value="{% if record %}{{ record.no_show }}{% else %}0{% endif %}">
+                 value="{{ form.no_show.value|default:0 }}">
           <label>No Call / No Show</label>
         </div>
         <div class="field-row">
           <input class="s-input" type="number" name="barred" min="0"
-                 value="{% if record %}{{ record.barred }}{% else %}0{% endif %}">
+                 value="{{ form.barred.value|default:0 }}">
           <label>Barred</label>
         </div>
         <div class="field-row">
           <input class="s-input" type="number" name="hold" min="0"
-                 value="{% if record %}{{ record.hold }}{% else %}0{% endif %}">
+                 value="{{ form.hold.value|default:0 }}">
           <label>Hold</label>
         </div>
       </div>
@@ -465,12 +470,12 @@
       <div class="fields">
         <div class="field-row">
           <input id="respite_occupied" class="s-input" type="number" name="respite" min="0"
-                 value="{% if record %}{{ record.respite }}{% else %}0{% endif %}">
+                 value="{{ form.respite.value|default:0 }}">
           <label>Respite Occupied</label>
         </div>
         <div class="field-row">
           <input id="respite_open" class="s-input" type="number" name="respite_open" min="0"
-                 value="0">
+                 value="{{ respite_open }}">
           <label>Respite Open</label>
         </div>
       </div>
@@ -483,7 +488,7 @@
         <div class="last-submitted-group">
           <label>Last Submitted</label>
           <div class="last-sub-box" id="lastSubBox">
-            {% if record %}{{ record.submitted_at|date:"g:i A" }}{% endif %}
+            {% if record %}#{{ record.id }}{% endif %}
           </div>
         </div>
       </div>
@@ -493,13 +498,13 @@
         <button type="submit" class="btn-submit {% if record %}resubmit{% endif %}" id="submitBtn">
           {% if record %}Re-Submit{% else %}Submit{% endif %}
         </button>
-        <a href="/shelters/?shelter={{ shelter }}" class="btn-new-record">New Record</a>
+        {% if record %}<a href="/shelters/?shelter={{ shelter }}&new=1" class="btn-new-record">New Record</a>{% endif %}
       </div>
 
     </form>
 
     <div class="last-submitted-ts">
-      {% if record %}Last submitted: {{ record.submitted_at|date:"m/d/Y g:i A" }}{% endif %}
+      {% if record %}Last submitted: {{ record.date|date:"m/d/Y" }}{% endif %}
     </div>
 
     <div class="toast" id="toast">
@@ -533,8 +538,10 @@
 
   regular_occupied.addEventListener('input', update.bind(null, "regular_open"));
   regular_open.addEventListener('input', update.bind(null, "regular_occupied"));
-  respite_occupied.addEventListener('input', update.bind(null, "respite_open"));
-  respite_open.addEventListener('input', update.bind(null, "respite_occupied"));
+  if (respite_occupied && respite_open) {
+    respite_occupied.addEventListener('input', update.bind(null, "respite_open"));
+    respite_open.addEventListener('input', update.bind(null, "respite_occupied"));
+  }
 </script>
 
 {% endblock %}
