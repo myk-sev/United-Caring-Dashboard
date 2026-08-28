@@ -67,3 +67,36 @@ class WhiteFlagTests(TestCase):
         })
         self.assertEqual(response.status_code, 400)
         self.assertFalse(WhiteFlag.objects.exists())
+
+    def test_submission_cannot_exceed_capacity(self):
+        self.client.login(username="white", password="secret123")
+        response = self.client.post(reverse("whiteflag_submission"), {
+            "men": 81,
+            "women": 0,
+            "children": 0,
+            "non_binary": 0,
+        })
+        self.assertEqual(response.status_code, 400)
+        self.assertContains(response, "cannot exceed the White Flag capacity of 80", status_code=400)
+        self.assertFalse(WhiteFlag.objects.exists())
+
+    def test_second_submission_updates_todays_record(self):
+        self.client.login(username="white", password="secret123")
+        record = WhiteFlag.objects.create(men=1)
+        response = self.client.post(reverse("whiteflag_submission"), {
+            "men": 2,
+            "women": 1,
+            "children": 0,
+            "non_binary": 0,
+        })
+        self.assertRedirects(response, reverse("whiteflag_edit", kwargs={"pk": record.pk}))
+        self.assertEqual(WhiteFlag.objects.count(), 1)
+        record.refresh_from_db()
+        self.assertEqual(record.total, 3)
+
+    def test_edit_page_shows_remaining_availability_without_new_record_link(self):
+        self.client.login(username="white", password="secret123")
+        record = WhiteFlag.objects.create(men=50, women=20)
+        response = self.client.get(reverse("whiteflag_edit", kwargs={"pk": record.pk}))
+        self.assertEqual(response.context["availability"], 10)
+        self.assertNotContains(response, "New Record")
