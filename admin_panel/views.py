@@ -13,6 +13,7 @@ It provides:
 This module is restricted to authenticated admin users only.
 """
 
+import logging
 from datetime import date, timedelta
 
 from django.conf import settings
@@ -21,14 +22,20 @@ from django.contrib.auth import get_user_model, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
+from django.db import transaction
+from django.http import HttpResponseForbidden
 from django.shortcuts import redirect, render
 from django.utils import timezone
 from django.utils.crypto import constant_time_compare
 
+from reports.models import ShiftReport
 from shelters.form import ShelterInputForm
 from shelters.models import DEFAULT_CAPACITIES, Shelter, ShelterInputModel, get_shelter_capacity
 from whiteflag.forms import WhiteFlagForm
 from whiteflag.models import WhiteFlag
+
+
+logger = logging.getLogger(__name__)
 
 
 def capacity_settings():
@@ -152,7 +159,7 @@ def admin_page_one(request):
 # -----------------------------------------------------------
 @login_required
 def admin_page_two(request):
-    """Administration Page 2 of 2 — Alter Records / Settings."""
+    """Administration Page 2 of 3 — Alter Records / Settings."""
     record = None #ensure default display is empty
     record_type = None
 
@@ -335,6 +342,48 @@ def admin_page_two(request):
 
     context.update(record=record, record_type=record_type)
     return render(request, 'admin_panel/admin_page_two.html', context)
+
+
+@login_required
+def admin_page_three(request):
+    """Display administrative tools and clear operational test records."""
+    if not request.session.get('is_admin'):
+        return redirect('admin_login')
+
+    models = {
+        'shelter': ShelterInputModel,
+        'whiteflag': WhiteFlag,
+        'legacy_reports': ShiftReport,
+    }
+
+    if request.method == 'POST' and 'clear_database' in request.POST:
+        if not request.user.is_superuser:
+            return HttpResponseForbidden('Superuser permission is required.')
+        if request.POST.get('confirmation', '') != 'DELETE':
+            messages.error(request, 'Enter DELETE in all caps to continue.')
+            return redirect('admin_page_three')
+
+        with transaction.atomic():
+            deleted = {name: model.objects.count() for name, model in models.items()}
+            for model in models.values():
+                model.objects.all().delete()
+
+        logger.warning(
+            'Operational database records cleared by user_id=%s: %s',
+            request.user.pk,
+            deleted,
+        )
+        messages.success(
+            request,
+            'Operational records cleared. Accounts and capacity settings were preserved.',
+        )
+        return redirect('admin_page_three')
+
+    return render(request, 'admin_panel/admin_page_three.html', {
+        'record_counts': {
+            name: model.objects.count() for name, model in models.items()
+        },
+    })
 
 # -----------------------------------------------------------
 # Admin Logout
