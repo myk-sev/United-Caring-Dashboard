@@ -5,7 +5,10 @@
   .tools-page { max-width: 860px; margin: 2rem auto; }
   .tools-header { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
   .tools-nav { display: flex; gap: 0.5rem; }
-  .danger-card { margin-top: 2rem; padding: 1.5rem; border: 2px solid #a32121; border-radius: 6px; background: #fff5f5; }
+  .database-tool { margin-top: 2rem; }
+  .tool-button { display: inline-block; padding: 0.4rem 0.75rem; border-radius: 4px; background: #a32121; color: white; font-size: 0.85rem; font-weight: bold; cursor: pointer; list-style: none; }
+  .tool-button::-webkit-details-marker { display: none; }
+  .danger-card { margin-top: 1rem; padding: 1.5rem; border: 2px solid #a32121; border-radius: 6px; background: #fff5f5; }
   .danger-card h2 { color: #8b0000; }
   .record-counts { margin: 1rem 0; }
   .confirm-input { width: 12rem; padding: 0.5rem; border: 2px solid #8b0000; border-radius: 4px; }
@@ -32,6 +35,8 @@
     {% endfor %}
   {% endif %}
 
+  <details class="database-tool">
+    <summary class="tool-button">Clear Operational Data</summary>
   <section class="danger-card" aria-labelledby="clear-data-title">
     <h2 id="clear-data-title">Clear Operational Database</h2>
     <p>This permanently deletes shelter and White Flag submissions. The Reports page is cleared because it reads these records.</p>
@@ -57,12 +62,13 @@
           spellcheck="false"
           required
         >
-        <button class="danger-button" type="submit">Clear Operational Data</button>
+        <button class="danger-button" type="submit">Permanently Clear Operational Data</button>
       </form>
     {% else %}
       <p class="alert alert-warning" role="alert">A superuser account is required to use this tool.</p>
     {% endif %}
   </section>
+  </details>
 </main>
 
 {% endblock %}

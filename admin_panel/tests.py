@@ -220,6 +220,11 @@ class AdminPanelTests(TestCase):
         self.enter_admin()
         response = self.client.get(reverse("admin_page_three"))
         self.assertEqual(response.status_code, 200)
+        self.assertContains(
+            response,
+            '<summary class="tool-button">Clear Operational Data</summary>',
+            html=True,
+        )
         self.assertContains(response, "A superuser account is required")
         self.assertNotContains(response, 'name="clear_database"')
 
