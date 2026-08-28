@@ -12,6 +12,14 @@ from django import forms
 from django.db import models
 
 
+DEFAULT_CAPACITIES = {
+    'mens': {'total_beds': 50, 'respite_beds': 7},
+    'womens': {'total_beds': 22, 'respite_beds': 4},
+    'diversion': {'total_beds': 5, 'respite_beds': 0},
+    'whiteflag': {'total_beds': 80, 'respite_beds': 0},
+}
+
+
 class ShelterInputModel(models.Model):
     """
     Represents a daily shelter intake record.
@@ -67,3 +75,9 @@ class Shelter(models.Model):
         """
         
         return self.name
+
+
+def get_shelter_capacity(name):
+    """Return persisted capacity values, falling back to system defaults."""
+    saved = Shelter.objects.filter(name=name).values('total_beds', 'respite_beds').first()
+    return saved or DEFAULT_CAPACITIES[name].copy()

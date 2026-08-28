@@ -383,7 +383,7 @@
       <div class="badges-col">
         <div class="availability-badge">
           <span class="label">Regular Beds</span>
-          <div class="avail-box">{{ test_settings_db.capacity }}</div>
+          <div class="avail-box">{{ capacity }}</div>
           <span class="avail-unit">Available</span>
         </div>
 
@@ -391,9 +391,7 @@
         <div class="availability-badge">
           <span class="label">Respite Beds</span>
           <div class="avail-box">
-            {% if shelter == "mens" %}7
-            {% elif shelter == "womens" %}4
-            {% endif %}
+            {{ respite_capacity }}
           </div>
           <span class="avail-unit">Available</span>
         </div>
@@ -525,8 +523,7 @@
 <script>
   function update(target_id, event) {
     let target = document.getElementById(target_id);
-    //event.currentTarget.value = ({{ test_settings_db.capacity }} - free_el.value);
-     target.value = {{ test_settings_db.capacity }} - event.currentTarget.value;
+     target.value = {{ capacity }} - event.currentTarget.value;
   }
 
   const regular_occupied = document.getElementById('regular_occupied');
