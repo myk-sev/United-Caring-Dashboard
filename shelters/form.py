@@ -14,7 +14,7 @@ These forms handle:
 """
 
 from django import forms
-from shelters.models import ShelterInputModel
+from shelters.models import ShelterInputModel, get_shelter_capacity
 from whiteflag.models import WhiteFlag
 
 class ShelterInputForm(forms.ModelForm):
@@ -39,6 +39,24 @@ class ShelterInputForm(forms.ModelForm):
                    "no_show",
                    "barred",
                    "hold" ]
+
+    def clean(self):
+        cleaned = super().clean()
+        shelter = cleaned.get('shelter')
+        if shelter not in {'mens', 'womens', 'diversion'}:
+            self.add_error('shelter', 'Select a valid shelter.')
+            return cleaned
+
+        for field in self.Meta.fields[1:]:
+            if cleaned.get(field) is not None and cleaned[field] < 0:
+                self.add_error(field, 'Enter zero or a positive number.')
+
+        capacity = get_shelter_capacity(shelter)
+        if (cleaned.get('regular') or 0) > capacity['total_beds']:
+            self.add_error('regular', 'Occupied beds cannot exceed capacity.')
+        if (cleaned.get('respite') or 0) > capacity['respite_beds']:
+            self.add_error('respite', 'Occupied respite beds cannot exceed capacity.')
+        return cleaned
         
 class WhiteFlagForm(forms.ModelForm):
     """
