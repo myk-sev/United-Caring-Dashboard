@@ -16,7 +16,7 @@
             <p class="instructions">Instructions: Enter the number of Openings taken then press the SUBMIT button.</p>
             <div class="availability-badge">
               <span class="label">Availability</span>
-              <div class="avail-box">{{ capacity }}</div>
+              <div class="avail-box" id="availabilityBox">{{ availability }}</div>
               <span class="avail-unit">Openings</span>
             </div>
           </div>
@@ -72,7 +72,6 @@
               <button type="submit" class="btn-submit {% if record %}resubmit{% endif %}" id="submitBtn">
                 {% if record %}Re-Submit{% else %}Submit{% endif %}
               </button>
-              <a href="{% url 'whiteflag' %}" class="btn-new-record">New Record</a>
             </div>
             {% if record %}
                 <input type="hidden" name="record_number" value="{{ record.record_number }}">
@@ -102,6 +101,7 @@
         });
         const box = document.getElementById('totalBox');
         const row = document.getElementById('totalRow');
+        document.getElementById('availabilityBox').textContent = Math.max(0, CAPACITY - total);
         box.textContent = total;
         total > CAPACITY ? row.classList.add('over-cap') : row.classList.remove('over-cap');
       }

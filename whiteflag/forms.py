@@ -13,6 +13,8 @@ The form ensures:
 """
 
 from django import forms
+from shelters.models import get_shelter_capacity
+
 from .models import WhiteFlag
 
 
@@ -45,3 +47,13 @@ class WhiteFlagForm(forms.ModelForm):
             'children'  : forms.NumberInput(attrs={'min': 0, 'placeholder': '0', 'class': 'wf-input'}),
             'non_binary': forms.NumberInput(attrs={'min': 0, 'placeholder': '0', 'class': 'wf-input'}),
         }
+
+    def clean(self):
+        cleaned_data = super().clean()
+        total = sum(cleaned_data.get(field) or 0 for field in self.Meta.fields)
+        capacity = get_shelter_capacity("whiteflag")["total_beds"]
+        if total > capacity:
+            raise forms.ValidationError(
+                f"Total openings taken cannot exceed the White Flag capacity of {capacity}."
+            )
+        return cleaned_data
