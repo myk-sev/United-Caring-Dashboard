@@ -2,7 +2,9 @@ from django.contrib.auth import get_user_model
 from django.test import TestCase, override_settings
 from django.urls import reverse
 
+from reports.models import ShiftReport
 from shelters.models import Shelter, ShelterInputModel
+from whiteflag.models import WhiteFlag
 
 
 @override_settings(ADMIN_PANEL_PASSWORD="integration-admin")
@@ -214,3 +216,66 @@ class AdminPanelTests(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response.url, reverse("mainscreen"))
         self.assertNotIn("is_admin", self.client.session)
+
+    def test_database_tool_requires_a_superuser(self):
+        self.enter_admin()
+        response = self.client.get(reverse("admin_page_three"))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "A superuser account is required")
+        self.assertNotContains(response, 'name="clear_database"')
+
+        response = self.client.post(reverse("admin_page_three"), {
+            "clear_database": "1",
+            "confirmation": "DELETE",
+        })
+        self.assertEqual(response.status_code, 403)
+
+    def test_database_tool_requires_admin_session(self):
+        self.client.login(username="adminuser", password="secret123")
+        response = self.client.get(reverse("admin_page_three"))
+        self.assertRedirects(response, reverse("admin_login"))
+
+    def test_database_tool_requires_exact_delete_confirmation(self):
+        self.user.is_staff = True
+        self.user.is_superuser = True
+        self.user.save(update_fields=["is_staff", "is_superuser"])
+        self.enter_admin()
+        record = ShelterInputModel.objects.create(
+            shelter="mens", regular=1, respite=0, guests=0, hospital=0,
+            jail=0, no_show=0, barred=0, hold=0,
+        )
+
+        response = self.client.post(reverse("admin_page_three"), {
+            "clear_database": "1",
+            "confirmation": "delete",
+        }, follow=True)
+
+        self.assertTrue(ShelterInputModel.objects.filter(pk=record.pk).exists())
+        self.assertContains(response, "Enter DELETE in all caps to continue")
+
+    def test_database_tool_clears_only_operational_records(self):
+        self.user.is_staff = True
+        self.user.is_superuser = True
+        self.user.save(update_fields=["is_staff", "is_superuser"])
+        self.enter_admin()
+        capacity = Shelter.objects.create(name="mens", total_beds=50, respite_beds=7)
+        ShelterInputModel.objects.create(
+            shelter="mens", regular=1, respite=0, guests=0, hospital=0,
+            jail=0, no_show=0, barred=0, hold=0,
+        )
+        WhiteFlag.objects.create(men=1)
+        ShiftReport.objects.create(
+            shelter="mens", shift="close", beds_used=1, beds_available=49,
+        )
+
+        response = self.client.post(reverse("admin_page_three"), {
+            "clear_database": "1",
+            "confirmation": "DELETE",
+        }, follow=True)
+
+        self.assertFalse(ShelterInputModel.objects.exists())
+        self.assertFalse(WhiteFlag.objects.exists())
+        self.assertFalse(ShiftReport.objects.exists())
+        self.assertTrue(get_user_model().objects.filter(pk=self.user.pk).exists())
+        self.assertTrue(Shelter.objects.filter(pk=capacity.pk).exists())
+        self.assertContains(response, "Accounts and capacity settings were preserved")
