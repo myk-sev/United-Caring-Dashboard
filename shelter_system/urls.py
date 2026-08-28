@@ -18,10 +18,17 @@ This acts as the central routing hub for the entire application.
 
 from django.contrib import admin
 from django.urls import path, include
+from django.views.generic import RedirectView
 
 import mainscreen.views
 
 urlpatterns = [
+    # Preserve the original URL used by early versions of the application.
+    path(
+        'mainscreen/',
+        RedirectView.as_view(pattern_name='mainscreen', permanent=True, query_string=True),
+    ),
+
     # Main landing page (home screen)
     path('', include('mainscreen.urls')),
 
