@@ -1,86 +1,64 @@
-"""
-WhiteFlag Views
+"""Create and edit authenticated WhiteFlag occupancy records."""
 
-This module handles the WhiteFlag workflow in the UCS system,
-including creating and editing WhiteFlag records.
-
-The system allows authenticated users to:
-- Submit new WhiteFlag entries
-- Edit existing entries
-- Track capacity-related data for shelter management
-
-Access is restricted to logged-in users only for security purposes.
-"""
-
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
+from django.utils import timezone
+
 from .forms import WhiteFlagForm
 from .models import WhiteFlag
-from django.contrib.auth.decorators import login_required
 
-# Maximum capacity constant used in shelter tracking logic
 CAPACITY = 80
 
+
 @login_required
-def white_flag(request):
-     
-    """
-    Handles creation of new WhiteFlag records.
+def flow_control(request):
+    """Open today's record, or display a blank form."""
+    latest_record = WhiteFlag.objects.first()
+    if (
+        latest_record
+        and timezone.localdate(latest_record.submitted_at) == timezone.localdate()
+    ):
+        return redirect("whiteflag_edit", pk=latest_record.pk)
+    return blank_page(request)
 
-    - Displays an empty form on GET requests
-    - Processes form submission on POST requests
-    - Saves valid data to the database
-    - Redirects user to edit page after successful submission
-    """
-     
-    if request.method == 'POST':
-        form = WhiteFlagForm(request.POST)
 
-        # Validate submitted form data before saving
-        if form.is_valid():
-            record = form.save()
-
-            # Redirect to edit page for further updates
-            return redirect('white_flag_edit', pk=record.pk)
-    else:
-        # Initialize empty form for new entry
-        form = WhiteFlagForm()
-
-    # Render form page with capacity information
-    return render(request, 'whiteflag/white_flag.html', {
-        'form': form,
-        'capacity': CAPACITY,
-        'record': None,
+def blank_page(request):
+    """Display an empty WhiteFlag form."""
+    return render(request, "whiteflag/white_flag.html", {
+        "form": WhiteFlagForm(),
+        "capacity": CAPACITY,
+        "record": None,
     })
 
 
 @login_required
-def white_flag_edit(request, pk):
-    """
-    Handles editing of existing WhiteFlag records.
+def handle_submission(request):
+    """Create or update a record from the shared form."""
+    if request.method != "POST":
+        return redirect("whiteflag")
 
-    - Retrieves record using primary key (pk)
-    - Pre-fills form with existing data
-    - Updates record when valid POST data is submitted
-    - Saves changes and reloads edit page
-    """
+    record_number = request.POST.get("record_number")
+    record = get_object_or_404(WhiteFlag, pk=record_number) if record_number else None
+    form = WhiteFlagForm(request.POST, instance=record)
+    if form.is_valid():
+        record = form.save()
+        messages.success(request, f"Record #{record.pk} saved successfully.")
+        return redirect("whiteflag_edit", pk=record.pk)
 
-    # Retrieve record or return 404 if not found
+    return render(request, "whiteflag/white_flag.html", {
+        "form": form,
+        "capacity": CAPACITY,
+        "record": record,
+    }, status=400)
+
+
+@login_required
+def edit_page(request, pk):
+    """Display an existing WhiteFlag record for editing."""
     record = get_object_or_404(WhiteFlag, pk=pk)
-
-    if request.method == 'POST':
-        form = WhiteFlagForm(request.POST, instance=record)
-
-        # Validate and update existing record
-        if form.is_valid():
-            record = form.save()
-            return redirect('white_flag_edit', pk=record.pk)
-    else:
-        # Load form with existing record data
-        form = WhiteFlagForm(instance=record)
-
-    # Render edit page with current record data
-    return render(request, 'whiteflag/white_flag.html', {
-        'form': form,
-        'capacity': CAPACITY,
-        'record': record,
+    return render(request, "whiteflag/white_flag.html", {
+        "form": WhiteFlagForm(instance=record),
+        "capacity": CAPACITY,
+        "record": record,
     })

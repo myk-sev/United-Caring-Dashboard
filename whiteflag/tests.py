@@ -11,16 +11,52 @@ class WhiteFlagTests(TestCase):
 
     def test_create_whiteflag_record_and_redirect_to_edit(self):
         self.client.login(username="white", password="secret123")
-        response = self.client.post(reverse("white_flag"), {"men": 2, "women": 1, "children": 1, "non_binary": 0})
+        response = self.client.post(reverse("whiteflag_submission"), {
+            "men": 2,
+            "women": 1,
+            "children": 1,
+            "non_binary": 0,
+        })
         self.assertEqual(response.status_code, 302)
         record = WhiteFlag.objects.get()
         self.assertEqual(record.total, 4)
-        self.assertEqual(response.url, reverse("white_flag_edit", kwargs={"pk": record.pk}))
+        self.assertEqual(response.url, reverse("whiteflag_edit", kwargs={"pk": record.pk}))
 
     def test_edit_whiteflag_record_updates_counts(self):
         self.client.login(username="white", password="secret123")
         record = WhiteFlag.objects.create(men=1, women=1, children=0, non_binary=0)
-        response = self.client.post(reverse("white_flag_edit", kwargs={"pk": record.pk}), {"men": 3, "women": 1, "children": 1, "non_binary": 1})
+        response = self.client.post(reverse("whiteflag_submission"), {
+            "record_number": record.pk,
+            "men": 3,
+            "women": 1,
+            "children": 1,
+            "non_binary": 1,
+        })
         self.assertEqual(response.status_code, 302)
         record.refresh_from_db()
         self.assertEqual(record.total, 6)
+
+    def test_landing_page_handles_an_empty_database(self):
+        self.client.login(username="white", password="secret123")
+        response = self.client.get(reverse("whiteflag"))
+        self.assertEqual(response.status_code, 200)
+
+    def test_landing_page_opens_todays_record(self):
+        self.client.login(username="white", password="secret123")
+        record = WhiteFlag.objects.create(men=1)
+        response = self.client.get(reverse("whiteflag"))
+        self.assertRedirects(
+            response,
+            reverse("whiteflag_edit", kwargs={"pk": record.pk}),
+        )
+
+    def test_invalid_submission_returns_form_errors(self):
+        self.client.login(username="white", password="secret123")
+        response = self.client.post(reverse("whiteflag_submission"), {
+            "men": -1,
+            "women": 0,
+            "children": 0,
+            "non_binary": 0,
+        })
+        self.assertEqual(response.status_code, 400)
+        self.assertFalse(WhiteFlag.objects.exists())

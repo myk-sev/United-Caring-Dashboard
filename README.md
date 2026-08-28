@@ -101,13 +101,13 @@ United-Caring-Dashboard/
 
 ## Admin Panel Password
 
-The admin panel password is stored as a hashed value in the database — it is never stored in plain text in code or environment variables.
+The initial admin panel password is read from `ADMIN_PANEL_PASSWORD` when migrations run and stored only as a hash in the database. It is never stored in plain text in the database or source code.
 
-After running migrations (step 4), a default password is seeded. Contact the project administrator for login credentials.
+After running migrations (step 4), use the configured `ADMIN_PANEL_PASSWORD` value for the first login. Contact the project administrator for credentials.
 
 **This password should be changed immediately after any fresh deployment or database reset** using the password change feature inside the admin panel.
 
-If the production database is ever deleted or recreated, migrations will reseed the default password and it must be changed again. Never delete the production database without first noting the current admin password or coordinating with the site administrator.
+If the production database is ever deleted or recreated, migrations will seed the configured password and it must be changed again. Never delete the production database without first noting the current admin password or coordinating with the site administrator.
 
 ## Notes
 
