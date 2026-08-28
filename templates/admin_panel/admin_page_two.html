@@ -489,6 +489,7 @@
       </div>
     </div>
   </form>
+  {% if record %}
   <!-- Table -->
 <form method="POST">
 {% csrf_token %}
@@ -553,22 +554,18 @@
     </table>
   </div>
 
-  <!-- Dual Save buttons -->
+  <!-- Save button -->
   <div class="save-row">
     <!-- left spacer to balance layout -->
     <div style="flex:1;"></div>
 
     <!-- centre: Save Changes to Database -->
     <div class="save-center">
-      <button class="btn-save" type="submit">SAVE CHANGES<br>TO DATABASE</button>
-    </div>
-
-    <!-- right: Save Changes for White Flag -->
-    <div class="save-right">
-      <button class="btn-save" type="submit">SAVE CHANGES<br>FOR WHITE FLAG</button>
+      <button class="btn-save" type="submit">SAVE CHANGES</button>
     </div>
   </div>
 </form>
+  {% endif %}
 
 </div>
 

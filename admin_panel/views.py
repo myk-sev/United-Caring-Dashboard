@@ -13,6 +13,8 @@ It provides:
 This module is restricted to authenticated admin users only.
 """
 
+from datetime import date
+
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import get_user_model
@@ -150,26 +152,47 @@ def admin_page_two(request):
         # Record Search Functionality
         # -------------------------------------------------------
         elif "search_records" in request.POST:
-            search_input_id = request.POST.get('search_input_id', '')
+            search_input_id = request.POST.get('search_input_id', '').strip()
             search_input_date = request.POST.get('search_input_date', '')
             search_input_shelter = request.POST.get('search_input_shelter', '')
 
+            if not search_input_id and not search_input_date:
+                messages.error(request, 'Enter a record number or date.')
+                return redirect('admin_page_two')
+
+            if search_input_id and not search_input_id.isdigit():
+                messages.error(request, 'Record number must be numeric.')
+                return redirect('admin_page_two')
+
+            search_date = None
+            if not search_input_id:
+                try:
+                    search_date = date.fromisoformat(search_input_date)
+                except ValueError:
+                    messages.error(request, 'Enter a valid record date.')
+                    return redirect('admin_page_two')
+
             if search_input_shelter == 'whiteflag':
-                if search_input_id != "":
-                    record = WhiteFlag.objects.get(record_number=int(search_input_id))
-
-                else:
-                    record = WhiteFlag.objects.filter(submitted_at__date=search_input_date).first()
-
+                records = WhiteFlag.objects.all()
+                record = (
+                    records.filter(record_number=search_input_id).first()
+                    if search_input_id
+                    else records.filter(submitted_at__date=search_date).first()
+                )
                 record_type = 'whiteflag'
-
             else:
-                if search_input_id != "":
-                    record = ShelterInputModel.objects.get(id=int(search_input_id))
-                else:
-                    record = ShelterInputModel.objects.filter(date=search_input_date).get(shelter=search_input_shelter)
-
+                records = ShelterInputModel.objects.filter(shelter=search_input_shelter)
+                record = (
+                    records.filter(id=search_input_id).first()
+                    if search_input_id
+                    else records.filter(date=search_date).order_by('-id').first()
+                )
                 record_type = 'shelter'
+
+            if record is None:
+                messages.error(request, 'No matching record was found.')
+                return redirect('admin_page_two')
+
             return render(request, 'admin_panel/admin_page_two.html', {"record": record, "record_type": record_type})
 
         # -------------------------------------------------------
@@ -179,34 +202,51 @@ def admin_page_two(request):
             record_type = request.POST.get('record_type', 'shelter')
             old_id = request.POST.get("old_id")
 
+            if not old_id or not old_id.isdigit():
+                messages.error(request, 'Select a valid record before saving.')
+                return redirect('admin_page_two')
+
             if record_type == 'whiteflag':
-                old_record = WhiteFlag.objects.get(record_number=old_id)
+                old_record = WhiteFlag.objects.filter(record_number=old_id).first()
+                if old_record is None:
+                    messages.error(request, 'The White Flag record no longer exists.')
+                    return redirect('admin_page_two')
+
                 form_data = WhiteFlagForm(request.POST, instance=old_record)
 
                 if form_data.is_valid():
                     form_data.save()
-                    record = None
-                    record_type = None
+                    messages.success(request, 'White Flag record updated.')
+                    return redirect('admin_page_two')
 
                 else:
                     record = old_record
+                    messages.error(request, 'Correct the invalid White Flag values.')
 
             else:
-                old_record = ShelterInputModel.objects.get(id=old_id)
-                old_record.delete()
-                form_data = ShelterInputForm(request.POST)
+                old_record = ShelterInputModel.objects.filter(id=old_id).first()
+                if old_record is None:
+                    messages.error(request, 'The shelter record no longer exists.')
+                    return redirect('admin_page_two')
+
+                form_data = ShelterInputForm(request.POST, instance=old_record)
 
                 if form_data.is_valid():
-                    record = form_data.save(commit=False)
-                    record.save()
-                    record = None
-                    record_type = None
+                    try:
+                        form_data.instance.date = date.fromisoformat(request.POST.get('date', ''))
+                    except ValueError:
+                        record = old_record
+                        record_type = 'shelter'
+                        messages.error(request, 'Enter a valid record date.')
+                    else:
+                        form_data.save()
+                        messages.success(request, 'Shelter record updated.')
+                        return redirect('admin_page_two')
 
                 else:
-                    print("FORM ERRORS:", form_data.errors)
-                    print("POST DATA:", request.POST)
                     record = old_record
                     record_type = 'shelter'
+                    messages.error(request, 'Correct the invalid shelter values.')
 
     return render(
         request,
