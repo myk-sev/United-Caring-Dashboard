@@ -17,8 +17,10 @@ from datetime import date, timedelta
 
 from django.conf import settings
 from django.contrib import messages
-from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
 from django.shortcuts import redirect, render
 from django.utils import timezone
 from django.utils.crypto import constant_time_compare
@@ -192,6 +194,10 @@ def admin_page_two(request):
 
         elif 'change_login_password' in request.POST:
 
+            if not request.user.has_perm('auth.change_user'):
+                messages.error(request, 'You do not have permission to change login passwords.')
+                return redirect('admin_page_two')
+
             username = request.POST.get('target_username', '').strip()
             new_pw1 = request.POST.get('login_new_password1', '')
             new_pw2 = request.POST.get('login_new_password2', '')
@@ -207,18 +213,25 @@ def admin_page_two(request):
 
             if new_pw1 != new_pw2:
                 messages.error(request, 'New passwords do not match.')
+                return redirect('admin_page_two')
 
-            elif len(new_pw1) < 4:
-                messages.error(request, 'New password is too short.')
+            try:
+                validate_password(new_pw1, user=user)
+            except ValidationError as errors:
+                for error in errors.messages:
+                    messages.error(request, error)
+                return redirect('admin_page_two')
 
-            else:
-                user.set_password(new_pw1)
-                user.save()
+            user.set_password(new_pw1)
+            user.save()
+            if user == request.user:
+                update_session_auth_hash(request, user)
 
-                messages.success(
-                    request,
-                    f'Password successfully changed for {username}.'
-                )
+            messages.success(
+                request,
+                f'Password successfully changed for {username}.'
+            )
+            return redirect('admin_page_two')
         # -------------------------------------------------------
         # Record Search Functionality
         # -------------------------------------------------------

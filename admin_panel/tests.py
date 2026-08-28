@@ -37,18 +37,49 @@ class AdminPanelTests(TestCase):
         self.assertNotIn("is_admin", self.client.session)
 
     def test_admin_can_change_an_application_password(self):
+        self.user.is_staff = True
+        self.user.is_superuser = True
+        self.user.save(update_fields=["is_staff", "is_superuser"])
         self.enter_admin()
 
         response = self.client.post(reverse("admin_page_two"), {
             "change_login_password": "1",
             "target_username": self.user.username,
-            "login_new_password1": "updated-password",
-            "login_new_password2": "updated-password",
+            "login_new_password1": "Stronger-Login-Password-934!",
+            "login_new_password2": "Stronger-Login-Password-934!",
         })
 
         self.user.refresh_from_db()
-        self.assertEqual(response.status_code, 200)
-        self.assertTrue(self.user.check_password("updated-password"))
+        self.assertRedirects(response, reverse("admin_page_two"))
+        self.assertTrue(self.user.check_password("Stronger-Login-Password-934!"))
+
+    def test_non_privileged_admin_cannot_change_application_passwords(self):
+        self.enter_admin()
+        target = get_user_model().objects.create_user(username="target", password="original-pass-934")
+        response = self.client.post(reverse("admin_page_two"), {
+            "change_login_password": "1",
+            "target_username": target.username,
+            "login_new_password1": "Stronger-Login-Password-934!",
+            "login_new_password2": "Stronger-Login-Password-934!",
+        }, follow=True)
+        target.refresh_from_db()
+        self.assertTrue(target.check_password("original-pass-934"))
+        self.assertContains(response, "do not have permission to change login passwords")
+
+    def test_password_change_uses_django_password_validation(self):
+        self.user.is_staff = True
+        self.user.is_superuser = True
+        self.user.save(update_fields=["is_staff", "is_superuser"])
+        self.enter_admin()
+        response = self.client.post(reverse("admin_page_two"), {
+            "change_login_password": "1",
+            "target_username": self.user.username,
+            "login_new_password1": "password",
+            "login_new_password2": "password",
+        }, follow=True)
+        self.user.refresh_from_db()
+        self.assertTrue(self.user.check_password("secret123"))
+        self.assertContains(response, "This password is too common")
 
     def test_admin_panel_password_is_not_editable_in_the_app(self):
         self.enter_admin()
@@ -56,6 +87,7 @@ class AdminPanelTests(TestCase):
         response = self.client.get(reverse("admin_page_two"))
         self.assertEqual(response.status_code, 200)
         self.assertNotContains(response, 'name="change_password"')
+        self.assertNotContains(response, 'name="change_login_password"')
 
     def test_record_search_handles_invalid_or_missing_input(self):
         self.enter_admin()
