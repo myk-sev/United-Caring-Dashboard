@@ -3,8 +3,7 @@ from django.test import TestCase
 from django.urls import reverse
 
 # Create your tests here.
-from shelters.models import ShelterInputModel
-from shelters.views import TestSettingsModel
+from shelters.models import Shelter, ShelterInputModel
 
 
 class SheltersViewTests(TestCase):
@@ -15,7 +14,12 @@ class SheltersViewTests(TestCase):
         self.client.login(username="shelter", password="secret123")
         response = self.client.get(f"{reverse('shelters')}?shelter=womens")
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(TestSettingsModel.capacity, TestSettingsModel.womens_regular)
+        self.assertEqual(response.context["capacity"], 22)
+
+        Shelter.objects.create(name="womens", total_beds=30, respite_beds=6)
+        response = self.client.get(f"{reverse('shelters')}?shelter=womens")
+        self.assertEqual(response.context["capacity"], 30)
+        self.assertEqual(response.context["respite_capacity"], 6)
 
     def test_post_creates_record_and_redirects(self):
         self.client.login(username="shelter", password="secret123")

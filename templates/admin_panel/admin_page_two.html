@@ -389,35 +389,39 @@
 
   <div class="divider"></div>
 
+  <form method="POST">
+  {% csrf_token %}
+  <input type="hidden" name="change_capacities" value="1">
+
   <!-- Regular Beds row -->
   <div class="shelter-headers" style="font-weight:normal; margin-top:8px;">
     <div class="bed-group">
-      <input class="num-box" type="text" value="50">
-      <span class="bed-label">Alter Regular Beds</span>
+      <input class="num-box" type="number" min="0" name="mens_regular_capacity" value="{{ capacities.mens.total_beds }}">
+      <span class="bed-label">Regular Beds</span>
     </div>
     <div class="bed-group">
-      <input class="num-box" type="text" value="22">
-      <span class="bed-label">Alter Regular Beds</span>
+      <input class="num-box" type="number" min="0" name="womens_regular_capacity" value="{{ capacities.womens.total_beds }}">
+      <span class="bed-label">Regular Beds</span>
     </div>
     <div class="bed-group">
-      <input class="num-box" type="text" value="5">
-      <span class="bed-label">Alter Regular Beds</span>
+      <input class="num-box" type="number" min="0" name="diversion_regular_capacity" value="{{ capacities.diversion.total_beds }}">
+      <span class="bed-label">Regular Beds</span>
     </div>
     <div class="bed-group">
-      <input class="num-box" type="text" value="80">
-      <span class="bed-label">Alter Openings</span>
+      <input class="num-box" type="number" min="0" name="whiteflag_capacity" value="{{ capacities.whiteflag.total_beds }}">
+      <span class="bed-label">Openings</span>
     </div>
   </div>
 
   <!-- Respite Beds row -->
   <div class="shelter-headers" style="font-weight:normal; margin-top:8px;">
     <div class="bed-group">
-      <input class="num-box" type="text" value="7">
-      <span class="bed-label">Alter Respite Beds</span>
+      <input class="num-box" type="number" min="0" name="mens_respite_capacity" value="{{ capacities.mens.respite_beds }}">
+      <span class="bed-label">Respite Beds</span>
     </div>
     <div class="bed-group">
-      <input class="num-box" type="text" value="4">
-      <span class="bed-label">Alter Respite Beds</span>
+      <input class="num-box" type="number" min="0" name="womens_respite_capacity" value="{{ capacities.womens.respite_beds }}">
+      <span class="bed-label">Respite Beds</span>
     </div>
     <div></div>
     <div></div>
@@ -564,6 +568,11 @@
       <button class="btn-save" type="submit">SAVE CHANGES</button>
     </div>
   </div>
+
+  <div style="text-align:center; margin:10px 0;">
+    <button class="btn-save" type="submit">UPDATE CAPACITIES</button>
+  </div>
+  </form>
 </form>
   {% endif %}
 

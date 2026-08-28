@@ -5,10 +5,10 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 
+from shelters.models import get_shelter_capacity
+
 from .forms import WhiteFlagForm
 from .models import WhiteFlag
-
-CAPACITY = 80
 
 
 @login_required
@@ -27,7 +27,7 @@ def blank_page(request):
     """Display an empty WhiteFlag form."""
     return render(request, "whiteflag/white_flag.html", {
         "form": WhiteFlagForm(),
-        "capacity": CAPACITY,
+        "capacity": get_shelter_capacity('whiteflag')['total_beds'],
         "record": None,
     })
 
@@ -48,7 +48,7 @@ def handle_submission(request):
 
     return render(request, "whiteflag/white_flag.html", {
         "form": form,
-        "capacity": CAPACITY,
+        "capacity": get_shelter_capacity('whiteflag')['total_beds'],
         "record": record,
     }, status=400)
 
@@ -59,6 +59,6 @@ def edit_page(request, pk):
     record = get_object_or_404(WhiteFlag, pk=pk)
     return render(request, "whiteflag/white_flag.html", {
         "form": WhiteFlagForm(instance=record),
-        "capacity": CAPACITY,
+        "capacity": get_shelter_capacity('whiteflag')['total_beds'],
         "record": record,
     })

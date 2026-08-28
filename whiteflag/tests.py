@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
 
+from shelters.models import Shelter
 from whiteflag.models import WhiteFlag
 
 
@@ -40,6 +41,12 @@ class WhiteFlagTests(TestCase):
         self.client.login(username="white", password="secret123")
         response = self.client.get(reverse("whiteflag"))
         self.assertEqual(response.status_code, 200)
+
+    def test_landing_page_uses_persisted_capacity(self):
+        self.client.login(username="white", password="secret123")
+        Shelter.objects.create(name="whiteflag", total_beds=90, respite_beds=0)
+        response = self.client.get(reverse("whiteflag"))
+        self.assertEqual(response.context["capacity"], 90)
 
     def test_landing_page_opens_todays_record(self):
         self.client.login(username="white", password="secret123")

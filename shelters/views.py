@@ -16,24 +16,8 @@ This view supports both GET and POST requests for interactive form handling.
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from shelters.form import ShelterInputForm
+from shelters.models import get_shelter_capacity
 from django.contrib.auth.decorators import login_required
-
-class TestSettingsModel:
-    """
-    Temporary configuration class used to store shelter capacity values.
-
-    This simulates dynamic shelter settings for:
-    - Men's shelter
-    - Women's shelter
-    - Diversion shelter
-
-    NOTE: This is a simple in-memory structure and not persistent in the database.
-    """
-
-    mens_regular = 50
-    womens_regular = 40
-    diversion_regular = 5
-    capacity = -1
 
 @login_required
 def shelters_home(request):
@@ -52,13 +36,10 @@ def shelters_home(request):
     if request.method == "POST": shelter = request.POST.get("shelter", "")
     else: shelter = request.GET.get("shelter", "")
 
-    # Assign capacity based on selected shelter type
-    if (shelter == 'mens'): TestSettingsModel.capacity = TestSettingsModel.mens_regular
-    elif (shelter == 'womens'): TestSettingsModel.capacity = TestSettingsModel.womens_regular
-    elif (shelter == 'diversion'): TestSettingsModel.capacity = TestSettingsModel.diversion_regular
-    #else: raise
-
-    # NOTE: Could add validation for unexpected shelter types
+    capacity = get_shelter_capacity(shelter) if shelter in {'mens', 'womens', 'diversion'} else {
+        'total_beds': 0,
+        'respite_beds': 0,
+    }
 
     # Handle form submission (POST request)
     if request.method == "POST":
@@ -86,7 +67,8 @@ def shelters_home(request):
         {
             'form': form,
             'shelter': shelter,
-            "test_settings_db": TestSettingsModel
+            'capacity': capacity['total_beds'],
+            'respite_capacity': capacity['respite_beds'],
         }
 
     )

@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model
 from django.test import TestCase, override_settings
 from django.urls import reverse
 
-from shelters.models import ShelterInputModel
+from shelters.models import Shelter, ShelterInputModel
 
 
 @override_settings(ADMIN_PANEL_PASSWORD="integration-admin")
@@ -133,6 +133,41 @@ class AdminPanelTests(TestCase):
         self.enter_admin()
         response = self.client.get(reverse("admin_page_two"))
         self.assertNotContains(response, 'name="alter_records"')
+
+    def test_admin_can_persist_capacity_settings(self):
+        self.enter_admin()
+        response = self.client.post(reverse("admin_page_two"), {
+            "change_capacities": "1",
+            "mens_regular_capacity": 51,
+            "mens_respite_capacity": 8,
+            "womens_regular_capacity": 23,
+            "womens_respite_capacity": 5,
+            "diversion_regular_capacity": 6,
+            "whiteflag_capacity": 81,
+        })
+
+        self.assertRedirects(response, reverse("admin_page_two"))
+        self.assertEqual(Shelter.objects.get(name="mens").total_beds, 51)
+        self.assertEqual(Shelter.objects.get(name="womens").respite_beds, 5)
+        self.assertEqual(Shelter.objects.get(name="whiteflag").total_beds, 81)
+
+    def test_admin_dashboard_uses_current_records_and_capacities(self):
+        self.enter_admin()
+        ShelterInputModel.objects.create(
+            shelter="womens", regular=10, respite=2, guests=0, hospital=0,
+            jail=0, no_show=0, barred=0, hold=0,
+        )
+        ShelterInputModel.objects.create(
+            shelter="diversion", regular=3, respite=0, guests=0, hospital=0,
+            jail=0, no_show=0, barred=0, hold=0,
+        )
+
+        response = self.client.get(reverse("admin_page_one"))
+
+        self.assertEqual(response.context["womens_regular_available"], 12)
+        self.assertEqual(response.context["womens_respite_available"], 2)
+        self.assertEqual(response.context["diversion_regular_available"], 2)
+        self.assertEqual(response.context["womens_utilization"], 46)
 
     def test_admin_logout_clears_admin_session(self):
         self.client.login(username="adminuser", password="secret123")

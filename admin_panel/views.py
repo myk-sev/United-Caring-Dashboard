@@ -13,19 +13,31 @@ It provides:
 This module is restricted to authenticated admin users only.
 """
 
-from datetime import date
+from datetime import date, timedelta
 
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
+from django.utils import timezone
 from django.utils.crypto import constant_time_compare
 
 from shelters.form import ShelterInputForm
-from shelters.models import ShelterInputModel
+from shelters.models import DEFAULT_CAPACITIES, Shelter, ShelterInputModel, get_shelter_capacity
 from whiteflag.forms import WhiteFlagForm
 from whiteflag.models import WhiteFlag
+
+
+def capacity_settings():
+    return {name: get_shelter_capacity(name) for name in DEFAULT_CAPACITIES}
+
+
+def utilization(records, capacity, fields):
+    values = list(records.values_list(*fields))
+    if not values or capacity <= 0:
+        return 0
+    return round(100 * sum(sum(row) for row in values) / (capacity * len(values)))
 
 
 # -----------------------------------------------------------
@@ -61,44 +73,75 @@ def admin_page_one(request):
     if not request.session.get('is_admin'):
         return redirect('admin_login')
     
-    # Retrieve latest records for each shelter type
-    mens_data = ShelterInputModel.objects.filter(shelter='mens').last()
-    womens_data = ShelterInputModel.objects.filter(shelter='womens').last()
-    diversion_data = ShelterInputModel.objects.filter(shelter='diversion').last()
+    capacities = capacity_settings()
+    since = timezone.localdate() - timedelta(days=29)
+    mens_records = ShelterInputModel.objects.filter(shelter='mens')
+    womens_records = ShelterInputModel.objects.filter(shelter='womens')
+    diversion_records = ShelterInputModel.objects.filter(shelter='diversion')
+    whiteflag_records = WhiteFlag.objects.all()
+
+    # Retrieve the chronologically latest record for each shelter type.
+    mens_data = mens_records.order_by('-date', '-id').first()
+    womens_data = womens_records.order_by('-date', '-id').first()
+    diversion_data = diversion_records.order_by('-date', '-id').first()
     whiteflag_data = WhiteFlag.objects.first()
-    
-    # Predefined shelter capacity values
-    mens_regular_total = 50
-    mens_respite_total = 7
-    womens_regular_total = 22
-    womens_respite_total = 4
-    diversion_regular_total = 5
-    whiteflag_total = 80
+
+    mens_regular_total = capacities['mens']['total_beds']
+    mens_respite_total = capacities['mens']['respite_beds']
+    womens_regular_total = capacities['womens']['total_beds']
+    womens_respite_total = capacities['womens']['respite_beds']
+    diversion_regular_total = capacities['diversion']['total_beds']
+    whiteflag_total = capacities['whiteflag']['total_beds']
 
     # Calculate available capacity for each shelter
-    mens_regular_available = mens_regular_total - mens_data.regular if mens_data else 0
-    mens_respite_available = mens_respite_total - mens_data.respite if mens_data else 0
-    womens_regular_available = womens_regular_total - womens_data.regular if womens_data else 0
-    womens_respite_available = womens_respite_total - womens_data.respite if womens_data else 0
-    
-    diversion_regular_available = diversion_regular_total - diversion_data.regular if diversion_data else 0
+    mens_regular_available = max(0, mens_regular_total - (mens_data.regular if mens_data else 0))
+    mens_respite_available = max(0, mens_respite_total - (mens_data.respite if mens_data else 0))
+    womens_regular_available = max(0, womens_regular_total - (womens_data.regular if womens_data else 0))
+    womens_respite_available = max(0, womens_respite_total - (womens_data.respite if womens_data else 0))
+    diversion_regular_available = max(0, diversion_regular_total - (diversion_data.regular if diversion_data else 0))
     
     # WhiteFlag calculations
     whiteflag_occupied = whiteflag_data.total if whiteflag_data else 0
-    whiteflag_available = whiteflag_total - whiteflag_occupied if whiteflag_data else 0
+    whiteflag_available = max(0, whiteflag_total - whiteflag_occupied)
 
     return render(request, 'admin_panel/admin_page_one.html', {
         'mens_data': mens_data,
+        'mens_regular_total': mens_regular_total,
+        'mens_respite_total': mens_respite_total,
         'mens_regular_available': mens_regular_available,
         'mens_respite_available': mens_respite_available,
+        'mens_utilization': utilization(
+            mens_records.filter(date__gte=since),
+            mens_regular_total + mens_respite_total,
+            ('regular', 'respite'),
+        ),
         'womens_data': womens_data,
+        'womens_regular_total': womens_regular_total,
+        'womens_respite_total': womens_respite_total,
         'womens_regular_available': womens_regular_available,
         'womens_respite_available': womens_respite_available,
+        'womens_utilization': utilization(
+            womens_records.filter(date__gte=since),
+            womens_regular_total + womens_respite_total,
+            ('regular', 'respite'),
+        ),
         'diversion_data': diversion_data,
+        'diversion_regular_total': diversion_regular_total,
         'diversion_regular_available': diversion_regular_available,
+        'diversion_utilization': utilization(
+            diversion_records.filter(date__gte=since),
+            diversion_regular_total,
+            ('regular',),
+        ),
         'whiteflag_data': whiteflag_data,
+        'whiteflag_total': whiteflag_total,
         'whiteflag_available': whiteflag_available,
         'whiteflag_occupied': whiteflag_occupied,
+        'whiteflag_utilization': utilization(
+            whiteflag_records.filter(submitted_at__date__gte=since),
+            whiteflag_total,
+            ('total',),
+        ),
     })
 
 
@@ -114,12 +157,40 @@ def admin_page_two(request):
     if not request.session.get('is_admin'):
         return redirect('admin_login')
 
+    context = {'capacities': capacity_settings()}
+
     if request.method == 'POST':
 
         # -------------------------------------------------------
         # App Login Password Change Functionality
         # -------------------------------------------------------
-        if 'change_login_password' in request.POST:
+        if 'change_capacities' in request.POST:
+            fields = {
+                'mens': ('mens_regular_capacity', 'mens_respite_capacity'),
+                'womens': ('womens_regular_capacity', 'womens_respite_capacity'),
+                'diversion': ('diversion_regular_capacity', None),
+                'whiteflag': ('whiteflag_capacity', None),
+            }
+            try:
+                updates = {
+                    name: {
+                        'total_beds': int(request.POST[regular]),
+                        'respite_beds': int(request.POST[respite]) if respite else 0,
+                    }
+                    for name, (regular, respite) in fields.items()
+                }
+            except (KeyError, TypeError, ValueError):
+                messages.error(request, 'All capacities must be whole numbers.')
+            else:
+                if any(value < 0 for item in updates.values() for value in item.values()):
+                    messages.error(request, 'Capacities cannot be negative.')
+                else:
+                    for name, values in updates.items():
+                        Shelter.objects.update_or_create(name=name, defaults=values)
+                    messages.success(request, 'Shelter capacities updated.')
+            return redirect('admin_page_two')
+
+        elif 'change_login_password' in request.POST:
 
             username = request.POST.get('target_username', '').strip()
             new_pw1 = request.POST.get('login_new_password1', '')
@@ -193,7 +264,8 @@ def admin_page_two(request):
                 messages.error(request, 'No matching record was found.')
                 return redirect('admin_page_two')
 
-            return render(request, 'admin_panel/admin_page_two.html', {"record": record, "record_type": record_type})
+            context.update(record=record, record_type=record_type)
+            return render(request, 'admin_panel/admin_page_two.html', context)
 
         # -------------------------------------------------------
         # Record Modification Functionality
@@ -248,11 +320,8 @@ def admin_page_two(request):
                     record_type = 'shelter'
                     messages.error(request, 'Correct the invalid shelter values.')
 
-    return render(
-        request,
-    'admin_panel/admin_page_two.html',
-    {"record": record, "record_type": record_type}
-    )
+    context.update(record=record, record_type=record_type)
+    return render(request, 'admin_panel/admin_page_two.html', context)
 
 # -----------------------------------------------------------
 # Admin Logout

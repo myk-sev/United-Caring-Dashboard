@@ -311,11 +311,11 @@
       <div class="section-label">Daily Depiction</div>
       <div class="data-rows">
         <div class="data-row centered">
-          <div class="val-box">50</div>
+          <div class="val-box">{{ mens_regular_total }}</div>
           <div class="val-label">Regular Beds Total</div>
         </div>
         <div class="data-row centered">
-          <div class="val-box">7</div>
+          <div class="val-box">{{ mens_respite_total }}</div>
           <div class="val-label">Respite Beds Total</div>
         </div>
         <div class="data-row centered">
@@ -323,7 +323,7 @@
           <div class="val-label">Regular Beds<br>Available</div>
         </div>
         <div class="data-row centered">
-          <div class="val-box">{{ mens_data.regular }}</div>
+          <div class="val-box">{{ mens_data.regular|default:0 }}</div>
           <div class="val-label">Regular Beds<br>occupied</div>
         </div>
         <div class="data-row centered">
@@ -331,7 +331,7 @@
           <div class="val-label">Respite Beds Available</div>
         </div>
         <div class="data-row centered">
-         <div class="val-box">{{ mens_data.respite }}</div>
+         <div class="val-box">{{ mens_data.respite|default:0 }}</div>
           <div class="val-label">Respite Beds occupied</div>
         </div>
         <div class="record-row">
@@ -340,7 +340,7 @@
         </div>
       </div>
       <div class="util-box-wrap">
-        <div class="util-box"></div>
+        <div class="util-box">{{ mens_utilization }}%</div>
         <div class="util-label">30 day<br>Utilization Rate</div>
       </div>
     </div>
@@ -365,27 +365,27 @@
       <div class="section-label">Daily Graph</div>
       <div class="data-rows">
         <div class="data-row centered">
-          <div class="val-box">22</div>
+          <div class="val-box">{{ womens_regular_total }}</div>
           <div class="val-label">Regular Beds Total</div>
         </div>
         <div class="data-row centered">
-          <div class="val-box">4</div>
+          <div class="val-box">{{ womens_respite_total }}</div>
           <div class="val-label">Respite Beds Total</div>
         </div>
         <div class="data-row centered">
-          <div class="val-box green">5</div>
+          <div class="val-box green">{{ womens_regular_available }}</div>
           <div class="val-label">Regular Beds<br>Available</div>
         </div>
         <div class="data-row centered">
-          <div class="val-box">17</div>
+          <div class="val-box">{{ womens_data.regular|default:0 }}</div>
           <div class="val-label">Regular Beds<br>occupied</div>
         </div>
         <div class="data-row centered">
-          <div class="val-box green">3</div>
+          <div class="val-box green">{{ womens_respite_available }}</div>
           <div class="val-label">Respite Beds Available</div>
         </div>
         <div class="data-row centered">
-          <div class="val-box">1</div>
+          <div class="val-box">{{ womens_data.respite|default:0 }}</div>
           <div class="val-label">Respite Beds occupied</div>
         </div>
         <div class="record-row">
@@ -394,7 +394,7 @@
         </div>
       </div>
       <div class="util-box-wrap">
-        <div class="util-box"></div>
+        <div class="util-box">{{ womens_utilization }}%</div>
         <div class="util-label">30 day<br>Utilization Rate</div>
       </div>
     </div>
@@ -414,12 +414,12 @@
       <div class="section-label">Daily Graph</div>
       <div class="data-rows">
         <div class="data-row centered">
-          <div class="val-box">5</div>
+          <div class="val-box">{{ diversion_regular_total }}</div>
           <div class="val-label">Regular Beds Total</div>
         </div>
         <div style="height:20px"></div>
         <div class="data-row centered">
-          <div class="val-box green">3</div>
+          <div class="val-box green">{{ diversion_regular_available }}</div>
           <div class="val-label">Regular Beds<br>Available</div>
         </div>
 
@@ -438,7 +438,7 @@
 
       </div>
       <div class="util-box-wrap">
-        <div class="util-box"></div>
+        <div class="util-box">{{ diversion_utilization }}%</div>
         <div class="util-label">30 day<br>Utilization Rate</div>
       </div>
     </div>
@@ -462,23 +462,23 @@
       <div class="section-label">Daily Graph</div>
       <div class="wf-data">
         <div class="wf-row">
-          <div class="wf-val">80</div>
+          <div class="wf-val">{{ whiteflag_total }}</div>
           <div class="wf-label">Openings Total</div>
         </div>
         <div class="wf-row">
-          <div class="wf-val">{{ whiteflag_data.men }}</div>
+          <div class="wf-val">{{ whiteflag_data.men|default:0 }}</div>
           <div class="wf-label">Number of Men</div>
         </div>
         <div class="wf-row">
-          <div class="wf-val">{{ whiteflag_data.women }}</div>
+          <div class="wf-val">{{ whiteflag_data.women|default:0 }}</div>
           <div class="wf-label">Number of<br>Women</div>
         </div>
         <div class="wf-row">
-          <div class="wf-val">{{ whiteflag_data.children }}</div>
+          <div class="wf-val">{{ whiteflag_data.children|default:0 }}</div>
           <div class="wf-label">Number of<br>Children</div>
         </div>
         <div class="wf-row">
-          <div class="wf-val">{{ whiteflag_data.non_binary }}</div>
+          <div class="wf-val">{{ whiteflag_data.non_binary|default:0 }}</div>
           <div class="wf-label">Number of Non-<br>Binary</div>
         </div>
         <div class="wf-row">
@@ -495,7 +495,7 @@
         </div>
       </div>
       <div class="util-box-wrap">
-        <div class="util-box"></div>
+        <div class="util-box">{{ whiteflag_utilization }}%</div>
         <div class="util-label">30 day<br>Utilization Rate</div>
       </div>
     </div>
@@ -529,41 +529,41 @@
 
   // Mens Regular — scale to 50 (Regular Beds Total)
 makeBar('mensRegChart', [''], [
-    { label: 'Occupied', data: [{{ mens_data.regular }}], backgroundColor: '#4472c4', barPercentage: 0.5 },
+    { label: 'Occupied', data: [{{ mens_data.regular|default:0 }}], backgroundColor: '#4472c4', barPercentage: 0.5 },
     { label: 'Available', data: [{{ mens_regular_available }}], backgroundColor: '#70ad47', barPercentage: 0.5 }
-], 50);
+], {{ mens_regular_total }});
 
 makeBar('mensRespChart', [''], [
-    { label: 'Occupied', data: [{{ mens_data.respite }}], backgroundColor: '#ed7d31', barPercentage: 0.5 },
+    { label: 'Occupied', data: [{{ mens_data.respite|default:0 }}], backgroundColor: '#ed7d31', barPercentage: 0.5 },
     { label: 'Available', data: [{{ mens_respite_available }}], backgroundColor: '#70ad47', barPercentage: 0.5 }
-], 7);
+], {{ mens_respite_total }});
 
   // Womens Regular — scale to 22 (Regular Beds Total)
   makeBar('womensRegChart', [''], [
-    { label: 'Occupied', data: [17], backgroundColor: '#ed7d31', barPercentage: 0.5 },
-    { label: 'Available', data: [5], backgroundColor: '#70ad47', barPercentage: 0.5 }
-  ], 22);
+    { label: 'Occupied', data: [{{ womens_data.regular|default:0 }}], backgroundColor: '#ed7d31', barPercentage: 0.5 },
+    { label: 'Available', data: [{{ womens_regular_available }}], backgroundColor: '#70ad47', barPercentage: 0.5 }
+  ], {{ womens_regular_total }});
 
   // Womens Respite — scale to 4 (Respite Beds Total)
   makeBar('womensRespChart', [''], [
-    { label: 'Occupied', data: [1], backgroundColor: '#ed7d31', barPercentage: 0.5 },
-    { label: 'Available', data: [3], backgroundColor: '#70ad47', barPercentage: 0.5 }
-  ], 4);
+    { label: 'Occupied', data: [{{ womens_data.respite|default:0 }}], backgroundColor: '#ed7d31', barPercentage: 0.5 },
+    { label: 'Available', data: [{{ womens_respite_available }}], backgroundColor: '#70ad47', barPercentage: 0.5 }
+  ], {{ womens_respite_total }});
 
   // Diversion Center — scale to 5 (Regular Beds Total)
   makeBar('divChart', [''], [
-    { label: 'Occupied', data: [2], backgroundColor: '#7f7f7f', barPercentage: 0.5 },
-    { label: 'Available', data: [3], backgroundColor: '#70ad47', barPercentage: 0.5 }
-  ], 5);
+    { label: 'Occupied', data: [{{ diversion_data.regular|default:0 }}], backgroundColor: '#7f7f7f', barPercentage: 0.5 },
+    { label: 'Available', data: [{{ diversion_regular_available }}], backgroundColor: '#70ad47', barPercentage: 0.5 }
+  ], {{ diversion_regular_total }});
 
   // White Flag — scale to 80 (Openings Total)
 makeBar('wfChart', [''], [
     { label: 'Occupied',   data: [{{ whiteflag_occupied }}], backgroundColor: '#4472c4', barPercentage: 0.5 },
     { label: 'Available',  data: [{{ whiteflag_available }}], backgroundColor: '#70ad47', barPercentage: 0.5 },
-    { label: 'Men',        data: [{{ whiteflag_data.men }}], backgroundColor: '#ed7d31', barPercentage: 0.5 },
-    { label: 'Women',      data: [{{ whiteflag_data.women }}], backgroundColor: '#ffc000', barPercentage: 0.5 },
-    { label: 'Children',   data: [{{ whiteflag_data.children }}], backgroundColor: '#5b9bd5', barPercentage: 0.5 },
-    { label: 'Non-Binary', data: [{{ whiteflag_data.non_binary }}], backgroundColor: '#7030a0', barPercentage: 0.5 }
-], 80);
+    { label: 'Men',        data: [{{ whiteflag_data.men|default:0 }}], backgroundColor: '#ed7d31', barPercentage: 0.5 },
+    { label: 'Women',      data: [{{ whiteflag_data.women|default:0 }}], backgroundColor: '#ffc000', barPercentage: 0.5 },
+    { label: 'Children',   data: [{{ whiteflag_data.children|default:0 }}], backgroundColor: '#5b9bd5', barPercentage: 0.5 },
+    { label: 'Non-Binary', data: [{{ whiteflag_data.non_binary|default:0 }}], backgroundColor: '#7030a0', barPercentage: 0.5 }
+], {{ whiteflag_total }});
 </script>
 {% endblock %}
