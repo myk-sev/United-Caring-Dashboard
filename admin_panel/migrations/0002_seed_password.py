@@ -1,3 +1,5 @@
+import os
+
 from django.db import migrations
 from django.contrib.auth.hashers import make_password
 
@@ -5,7 +7,7 @@ from django.contrib.auth.hashers import make_password
 def seed_admin_password(apps, schema_editor):
     AdminSettings = apps.get_model('admin_panel', 'AdminSettings')
     AdminSettings.objects.create(
-        admin_password=make_password('admin1234')
+        admin_password=make_password(os.getenv('ADMIN_PANEL_PASSWORD'))
     )
 
 
