@@ -54,25 +54,20 @@ The project is organized as a multi-app Django system:
    pip install -r requirements.txt
    ```
 
-4. Configure environment variables in a local `.env` file as needed:
 
-   ```env
-   ADMIN_PANEL_PASSWORD=your-local-admin-password
-   ```
-
-5. Run database migrations:
+4. Run database migrations:
 
    ```bash
    python manage.py migrate
    ```
 
-6. Start the development server:
+5. Start the development server:
 
    ```bash
    python manage.py runserver
    ```
 
-7. Open the local site:
+6. Open the local site:
 
    [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
 
@@ -103,6 +98,16 @@ United-Caring-Dashboard/
 - `/white-flag/`: White-flag reporting workflow.
 - `/reports/`: Reports view.
 - `/admin-panel/`: Custom admin panel login.
+
+## Admin Panel Password
+
+The admin panel password is stored as a hashed value in the database — it is never stored in plain text in code or environment variables.
+
+After running migrations (step 4), a default password is seeded. Contact the project administrator for login credentials.
+
+**This password should be changed immediately after any fresh deployment or database reset** using the password change feature inside the admin panel.
+
+If the production database is ever deleted or recreated, migrations will reseed the default password and it must be changed again. Never delete the production database without first noting the current admin password or coordinating with the site administrator.
 
 ## Notes
 
