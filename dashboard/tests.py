@@ -13,8 +13,7 @@ class DashboardViewTests(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertIn("/login/", response.url)
 
-    def test_home_renders_for_authenticated_user(self):
+    def test_home_redirects_to_the_live_dashboard(self):
         self.client.login(username="dash", password="secret123")
         response = self.client.get(reverse("home"))
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "dashboard.html")
+        self.assertRedirects(response, reverse("admin_page_one"), fetch_redirect_response=False)

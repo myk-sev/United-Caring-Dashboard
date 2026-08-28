@@ -25,7 +25,7 @@
         </div>
 
         <div class="dropdown-section">
-            <form method="GET" action="" id="mainForm">
+            <form method="GET" action="{% url 'mainscreen' %}" id="mainForm">
                 <select name="shelter" id="shelterSelect">
                     <option value="mens">Men's Shelter</option>
                     <option value="womens">Woman's Shelter</option>
@@ -33,7 +33,7 @@
                     <option value="whiteflag">White Flag</option>
                 </select>
                 <p>Select the Drop-Down menu for the Shelter to Report on and press Go below</p>
-                <button type="button" class="go-btn" onclick="handleGo()">Go</button>
+                <button type="submit" class="go-btn">Go</button>
             </form>
         </div>
 
@@ -46,16 +46,5 @@
 
     </div>
     </div>
-
-    <script>
-        function handleGo() {
-            const shelter = document.getElementById('shelterSelect').value;
-            if (shelter === 'whiteflag') {
-                window.location.href = '/white-flag/';
-            } else {
-                window.location.href = '/shelters/?shelter=' + encodeURIComponent(shelter);
-            }
-        }
-    </script>
 
 {% endblock %}

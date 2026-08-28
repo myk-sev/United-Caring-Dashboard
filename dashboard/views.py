@@ -1,9 +1,8 @@
-from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
+from django.shortcuts import redirect
+
 
 @login_required
 def home(request):
-    # form_retrieval = ShelterInputModel.objects.last()
-    # shelter = form_retrieval.shelter
-    # return render(request, 'dashboard.html', {"shelter": shelter})
-    return render(request, 'dashboard.html')
+    """Keep the legacy URL pointed at the live administrative dashboard."""
+    return redirect("admin_page_one")
