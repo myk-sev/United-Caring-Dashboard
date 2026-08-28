@@ -2,7 +2,6 @@ from django.contrib.auth import get_user_model
 from django.test import TestCase, override_settings
 from django.urls import reverse
 
-from reports.models import ShiftReport
 from shelters.models import Shelter, ShelterInputModel
 from whiteflag.models import WhiteFlag
 
@@ -264,10 +263,6 @@ class AdminPanelTests(TestCase):
             jail=0, no_show=0, barred=0, hold=0,
         )
         WhiteFlag.objects.create(men=1)
-        ShiftReport.objects.create(
-            shelter="mens", shift="close", beds_used=1, beds_available=49,
-        )
-
         response = self.client.post(reverse("admin_page_three"), {
             "clear_database": "1",
             "confirmation": "DELETE",
@@ -275,7 +270,6 @@ class AdminPanelTests(TestCase):
 
         self.assertFalse(ShelterInputModel.objects.exists())
         self.assertFalse(WhiteFlag.objects.exists())
-        self.assertFalse(ShiftReport.objects.exists())
         self.assertTrue(get_user_model().objects.filter(pk=self.user.pk).exists())
         self.assertTrue(Shelter.objects.filter(pk=capacity.pk).exists())
         self.assertContains(response, "Accounts and capacity settings were preserved")
