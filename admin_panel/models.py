@@ -12,17 +12,13 @@ from django.db import models
 # Create your models here.
 class AdminSettings(models.Model):
     """
-    Stores system-wide administrative configuration values.
+    Legacy table retained for migration compatibility.
 
-    Currently used to store the admin panel password.
-
-    NOTE:
-    This implementation is intended for development/testing purposes.
-    In production, this should be replaced with Django's built-in
-    authentication system and hashed passwords for security.
+    Admin-panel authentication now reads ADMIN_PANEL_PASSWORD directly
+    from the environment.
     """
 
-    # Admin login password (temporary implementation)
+    # Legacy field retained for migration compatibility.
     admin_password = models.CharField(max_length=128)
 
     class Meta:

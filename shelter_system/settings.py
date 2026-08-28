@@ -19,6 +19,8 @@ in production environments.
 
 from pathlib import Path
 import os
+
+from django.core.exceptions import ImproperlyConfigured
 from dotenv import load_dotenv
 
 PRODUCTION = False
@@ -38,6 +40,10 @@ SECRET_KEY = 'django-insecure-4q35w89iwpaf%c=5tvz6=65*i_$zcxmybvqllv-ip9kotw$350
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+ADMIN_PANEL_PASSWORD = os.environ.get("ADMIN_PANEL_PASSWORD")
+
+if not DEBUG and not ADMIN_PANEL_PASSWORD:
+    raise ImproperlyConfigured("ADMIN_PANEL_PASSWORD must be configured.")
 
 if not DEBUG: # Productions settings for cookies and redirects
     SECURE_SSL_REDIRECT = True
