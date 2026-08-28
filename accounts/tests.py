@@ -1,3 +1,5 @@
+from unittest.mock import patch
+
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
@@ -16,6 +18,14 @@ class AccountsViewsTests(TestCase):
         self.assertEqual(response.status_code, 200)
         messages = list(response.context["messages"])
         self.assertTrue(any("Invalid username or password." in str(m) for m in messages))
+
+    @patch.dict("os.environ", {
+        "DJANGO_SUPERUSER_USERNAME": "automatic-admin",
+        "DJANGO_SUPERUSER_PASSWORD": "unsafe-bootstrap-password",
+    })
+    def test_login_page_does_not_create_users_from_environment_variables(self):
+        self.client.get(reverse("login"))
+        self.assertFalse(get_user_model().objects.filter(username="automatic-admin").exists())
 
     def test_logout_clears_session_and_redirects(self):
         self.client.login(username="tester", password="secret123")

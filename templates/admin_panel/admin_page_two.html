@@ -440,13 +440,14 @@
       </div>
     {% endfor %}
   {% endif %}
+  {% if perms.auth.change_user %}
   <form method="POST">
     {% csrf_token %}
     <input type="hidden" name="change_login_password" value="1">
     <div style="font-size:15px; font-weight:bold; margin: 8px 8px -30px;">APP LOGIN CHANGE</div>
     <div class="password-section">
       <div class="pw-group">
-       <input class="pw-input" type="text" name="target_username">
+       <input class="pw-input" type="text" name="target_username" autocomplete="username">
        <span class="pw-label">USERNAME</span>
       </div>
       <div class="pw-group">
@@ -460,6 +461,7 @@
       <button class="btn-change-pw" type="submit">CHANGE<br>LOGIN<br>PASSWORD</button>
     </div>
   </form>
+  {% endif %}
   <div style="height:6px;"></div>
 
   <!-- Alter Records -->
