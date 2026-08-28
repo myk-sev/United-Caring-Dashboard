@@ -136,6 +136,10 @@ class AdminPanelTests(TestCase):
 
     def test_admin_can_persist_capacity_settings(self):
         self.enter_admin()
+        page = self.client.get(reverse("admin_page_two"))
+        self.assertContains(page, 'name="change_capacities"')
+        self.assertContains(page, "UPDATE CAPACITIES")
+
         response = self.client.post(reverse("admin_page_two"), {
             "change_capacities": "1",
             "mens_regular_capacity": 51,
