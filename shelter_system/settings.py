@@ -89,7 +89,7 @@ INSTALLED_APPS = [
     'dashboard',
     'reports',
     'shelters',
-    #'mainscreen',
+    'mainscreen',
     'whiteflag',
     'admin_panel',
 ]

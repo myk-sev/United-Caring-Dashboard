@@ -74,4 +74,4 @@ def mainscreen(request):
                 messages.error(request, 'Please select a shelter.')
 
     # Render main dashboard page
-    return render(request, 'mainscreen.html')
+    return render(request, "mainscreen/mainscreen.html")
