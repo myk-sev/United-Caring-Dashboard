@@ -28,7 +28,6 @@ from django.shortcuts import redirect, render
 from django.utils import timezone
 from django.utils.crypto import constant_time_compare
 
-from reports.models import ShiftReport
 from shelters.form import ShelterInputForm
 from shelters.models import DEFAULT_CAPACITIES, Shelter, ShelterInputModel, get_shelter_capacity
 from whiteflag.forms import WhiteFlagForm
@@ -353,7 +352,6 @@ def admin_page_three(request):
     models = {
         'shelter': ShelterInputModel,
         'whiteflag': WhiteFlag,
-        'legacy_reports': ShiftReport,
     }
 
     if request.method == 'POST' and 'clear_database' in request.POST:

@@ -34,13 +34,12 @@
 
   <section class="danger-card" aria-labelledby="clear-data-title">
     <h2 id="clear-data-title">Clear Operational Database</h2>
-    <p>This permanently deletes shelter submissions, White Flag submissions, and legacy shift reports.</p>
+    <p>This permanently deletes shelter and White Flag submissions. The Reports page is cleared because it reads these records.</p>
     <p><strong>User accounts, passwords, administrator settings, and shelter capacity settings are preserved.</strong></p>
 
     <ul class="record-counts">
       <li>Shelter submissions: {{ record_counts.shelter }}</li>
       <li>White Flag submissions: {{ record_counts.whiteflag }}</li>
-      <li>Legacy shift reports: {{ record_counts.legacy_reports }}</li>
     </ul>
 
     {% if request.user.is_superuser %}
