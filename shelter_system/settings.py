@@ -19,6 +19,8 @@ in production environments.
 import dj_database_url
 from pathlib import Path
 import os
+
+from django.core.exceptions import ImproperlyConfigured
 from dotenv import load_dotenv
 
 # Base directory of the project
@@ -38,6 +40,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get("SECRET_KEY")
 DATABASE_URL = os.environ.get("DATABASE_URL")
 DEBUG = os.environ.get("DEBUG", "false").lower() in {"1", "true", "yes", "on"}
+ADMIN_PANEL_PASSWORD = os.environ.get("ADMIN_PANEL_PASSWORD")
+
+if not DEBUG and not ADMIN_PANEL_PASSWORD:
+    raise ImproperlyConfigured("ADMIN_PANEL_PASSWORD must be configured.")
+
 ALLOWED_HOSTS = [
     host.strip()
     for host in os.environ.get(
