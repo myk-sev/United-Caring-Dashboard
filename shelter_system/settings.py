@@ -21,8 +21,6 @@ from pathlib import Path
 import os
 from dotenv import load_dotenv
 
-PRODUCTION = False
-
 # Base directory of the project
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -39,11 +37,23 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 ### Production Variables ###
 SECRET_KEY = os.environ.get("SECRET_KEY")
 DATABASE_URL = os.environ.get("DATABASE_URL")
-DEBUG = os.environ.get("DEBUG")
-
-# Allowed hosts for deployment
-ALLOWED_HOSTS = ["united-caring-dashboard.onrender.com"]
-# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = os.environ.get("DEBUG", "false").lower() in {"1", "true", "yes", "on"}
+ALLOWED_HOSTS = [
+    host.strip()
+    for host in os.environ.get(
+        "ALLOWED_HOSTS",
+        "united-caring-dashboard.onrender.com",
+    ).split(",")
+    if host.strip()
+]
+CSRF_TRUSTED_ORIGINS = [
+    origin.strip()
+    for origin in os.environ.get(
+        "CSRF_TRUSTED_ORIGINS",
+        "https://united-caring-dashboard.onrender.com",
+    ).split(",")
+    if origin.strip()
+]
 
 if not DEBUG: # Productions settings for cookies and redirects
     SECURE_SSL_REDIRECT = True
@@ -61,13 +71,6 @@ if not DEBUG: # Productions settings for cookies and redirects
     SECURE_CONTENT_TYPE_NOSNIFF = True
     REFERRER_POLICY = "same-origin"
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
-
-# Allowed hosts for deployment (empty in development)
-ALLOWED_HOSTS = []
-if PRODUCTION:
-    ALLOWED_HOSTS = [os.getenv("ALLOWED_HOSTS")]
-    CSRF_TRUSTED_ORIGINS  = [os.getenv("CSRF_TRUSTED_ORIGINS")]
-
 
 # ---------------------------------------------------
 # Application Definition
@@ -96,6 +99,7 @@ INSTALLED_APPS = [
 # ---------------------------------------------------
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -178,7 +182,7 @@ USE_I18N = True
 USE_TZ = True
 
 # Custom admin panel configuration
-ADMIN_PANEL_PASSWORD = os.getenv("ADMIN_PANEL_PASSWORD")
+
 
 
 # ---------------------------------------------------
