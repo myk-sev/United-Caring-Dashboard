@@ -30,6 +30,13 @@ class ReportsViewsTests(TestCase):
         shelter_data = list(response.context["shelter_data"])
         self.assertEqual(len(shelter_data), 1)
         self.assertEqual(shelter_data[0].shelter, "mens")
+        self.assertEqual(list(response.context["whiteflag_data"]), [])
+
+    def test_reports_can_filter_whiteflag_records(self):
+        self.client.login(username="reports", password="secret123")
+        response = self.client.get(reverse("reports"), {"shelter": "whiteflag"})
+        self.assertEqual(list(response.context["shelter_data"]), [])
+        self.assertEqual(len(response.context["whiteflag_data"]), 2)
 
     def test_export_includes_csv_header(self):
         self.client.login(username="reports", password="secret123")
@@ -37,6 +44,24 @@ class ReportsViewsTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response["Content-Type"], "text/csv")
         self.assertIn("Type,Date,Shelter", response.content.decode("utf-8"))
+
+    def test_default_export_link_has_no_none_parameters(self):
+        self.client.login(username="reports", password="secret123")
+        response = self.client.get(reverse("reports"))
+        self.assertContains(response, 'href="/reports/export/"')
+        self.assertNotContains(response, "None")
+
+    def test_invalid_export_date_returns_bad_request(self):
+        self.client.login(username="reports", password="secret123")
+        response = self.client.get(reverse("export"), {"start": "not-a-date"})
+        self.assertEqual(response.status_code, 400)
+        self.assertContains(response, "Start date must be a valid date", status_code=400)
+
+    def test_whiteflag_export_excludes_shelter_rows(self):
+        self.client.login(username="reports", password="secret123")
+        response = self.client.get(reverse("export"), {"shelter": "whiteflag"})
+        rows = list(csv.reader(StringIO(response.content.decode("utf-8"))))
+        self.assertEqual({row[0] for row in rows[1:]}, {"WhiteFlag"})
 
     def test_date_filter_applies_to_whiteflag_reports_and_exports(self):
         self.client.login(username="reports", password="secret123")
@@ -62,5 +87,29 @@ class ReportsViewsTests(TestCase):
 
         response = self.client.post(reverse("import"), {"file": upload})
         self.assertEqual(response.status_code, 302)
-        self.assertTrue(ShelterInputModel.objects.filter(shelter="diversion", regular=3).exists())
-        self.assertTrue(WhiteFlag.objects.filter(record_number=99, total=4).exists())
+        shelter = ShelterInputModel.objects.get(shelter="diversion", regular=3)
+        self.assertEqual(shelter.date.isoformat(), "2026-01-02")
+        whiteflag = WhiteFlag.objects.get(record_number=99, total=4)
+        self.assertEqual(timezone.localdate(whiteflag.submitted_at).isoformat(), "2026-01-02")
+
+    def test_invalid_import_is_atomic_and_reports_the_row(self):
+        self.client.login(username="reports", password="secret123")
+        csv_content = ",".join([
+            "Type", "Date", "Shelter", "Regular Beds", "Respite Beds",
+            "Guests On Pass", "Hospital", "Jail", "No Show", "Barred", "Hold",
+            "Record Number", "Men", "Women", "Children", "Non Binary", "Total",
+            "Submitted At",
+        ]) + "\n"
+        csv_content += "Shelter,2026-01-02,diversion,3,0,0,0,0,0,0,0,,,,,,,\n"
+        csv_content += "Shelter,2026-01-03,invalid,3,0,0,0,0,0,0,0,,,,,,,\n"
+        upload = SimpleUploadedFile("import.csv", csv_content.encode("utf-8"), content_type="text/csv")
+
+        response = self.client.post(reverse("import"), {"file": upload}, follow=True)
+        self.assertContains(response, "Import failed: Row 3: select a valid shelter")
+        self.assertFalse(ShelterInputModel.objects.filter(shelter="diversion").exists())
+
+    def test_import_rejects_non_csv_files_without_crashing(self):
+        self.client.login(username="reports", password="secret123")
+        upload = SimpleUploadedFile("import.txt", b"not csv", content_type="text/plain")
+        response = self.client.post(reverse("import"), {"file": upload}, follow=True)
+        self.assertContains(response, "Import failed: Select a CSV file")
